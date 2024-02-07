@@ -1,7 +1,7 @@
-const Home = () => {
+const LandingPage = () => {
   return (
     <div className="text-center text-5xl font-bold text-red-500">Deb tour</div>
   );
 };
 
-export default Home;
+export default LandingPage;
