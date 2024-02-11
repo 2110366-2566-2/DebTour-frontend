@@ -115,10 +115,10 @@ const TourCreationForm = () => {
         toast({ title: "Form submitted!", description: JSON.stringify(values) })
     }
     return (
-        <div className="p-3">
+        <div className="p-5">
             <Link className={buttonVariants({ variant: "outline" })} href="/agency/tour">Back</Link>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-7 mx-10 overflow-hidden">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-7 mx-10 overflow-hidden p-5">
                     <FormField
                         control={form.control}
                         name="tourname"
