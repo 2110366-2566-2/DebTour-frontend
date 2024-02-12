@@ -290,7 +290,7 @@ const TourCreationForm = () => {
                                             </FormControl>
                                             <SelectContent>
                                                 {location_types.map((type) => (
-                                                    <SelectItem key={type} value={type}>
+                                                    <SelectItem key={type+index*10} value={type}>
                                                         {type}
                                                     </SelectItem>
                                                 ))}
