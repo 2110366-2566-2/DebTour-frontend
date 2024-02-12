@@ -22,39 +22,55 @@ import DateInput from './TourCreationFormInput/DateInput';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { create } from 'domain';
+import createTour from '@/lib/createTour';
 
+const location_types = ["Hotel", "Attraction", "Restaurant", "Meeting Point", "Other"]
 const formSchema = z.object({
-    tourname: z.string().min(1).max(50),
-    start_date: z.date({
+    name: z.string().min(1).max(50),
+    startDate: z.date({
         required_error: "A start date is required",
     }),
-    end_date: z.date({
+    endDate: z.date({
         required_error: "An end date is required",
     }),
-    refund_due_date: z.date({
+    refundDueDate: z.date({
         required_error: "A refund due date is required",
     }),
-    overview_location_name: z.string().min(1).max(100),
+    overviewLocation: z.string().min(1).max(100),
     description: z.string().min(2).max(5000),
-    cost: z.number().or(z.string().regex(/\d+/).transform(Number)),
-    max_number: z.array(z.number().int().min(1)),
+    price: z.number().or(z.string().regex(/\d+/).transform(Number)),
+    maxMemberCount: z.array(z.number()).length(1),
     activities: z.array(
         z.object({
             name: z.string().min(1).max(50), 
             description: z.string().min(1).max(500), 
-            activity_start_date: z.date(), 
-            activity_end_date: z.date(), 
-            location: z.string().min(1).max(50), 
-            coor: z.tuple([z.number(), z.number()])}
-        )).min(1).max(50),
+            startTimestamp: z.date(), 
+            endTimestamp: z.date(), 
+            location: z.object({
+                name: z.string().min(1).max(50), 
+                latitude: z.number(),
+                longtitude: z.number(),
+                type: z.enum(["Hotel", "Attraction", "Restaurant", "Meeting Point", "Other"]),
+                address: z.string().min(1).max(100),
+            })
+        })
+        ).min(1).max(50),
 }).refine((data) => {
-    if (data.start_date >= data.end_date) {
-        return { message: "Start date must be before end date", path: ["start_date", "end_date"] }
+    if (data.startDate >= data.endDate) {
+        return { message: "Start date must be before end date", path: ["startDate", "endDate"] }
     }
     return true
 }).refine((data) => {
-    if (data.refund_due_date >= data.start_date) {
-        return { message: "Refund due date must be before start date", path: ["start_date","refund_due_date"] }
+    if (data.refundDueDate >= data.startDate) {
+        return { message: "Refund due date must be before start date", path: ["startDate","refundDueDate"] }
     }
     return true
 })
@@ -64,24 +80,29 @@ const TourCreationForm = () => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            tourname: "",
-            start_date: new Date(),
-            end_date: new Date(),
-            refund_due_date: new Date(),
+            name: "",
+            startDate: new Date(),
+            endDate: new Date(),
+            refundDueDate: new Date(),
+            overviewLocation: "",
             description: "",
-            cost: 0,
-            max_number: [50],
-            overview_location_name: "",
+            price: 0,
+            maxMemberCount: [50],
             activities: [
                 {
                     name: "",
                     description: "",
-                    activity_start_date: new Date(),
-                    activity_end_date: new Date(),
-                    location: "",
-                    coor: [0,0],
-                },
-            ],
+                    startTimestamp: new Date(),
+                    endTimestamp: new Date(),
+                    location: {
+                        name: "",
+                        latitude: 0,
+                        longtitude: 0,
+                        type: "Other",
+                        address: "",
+                    }
+                }
+            ]
         },
     })
     const { fields, append, remove } = useFieldArray({
@@ -89,30 +110,18 @@ const TourCreationForm = () => {
         name: "activities",
     })
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated. (Only run when valid)
-        // Example values when form is submitted:
-        // {
-        //     "tourname":"sdasda",
-        //     "start_date":"2024-02-11T13:04:00.741Z",
-        //     "end_date":"2024-02-11T13:04:00.741Z",
-        //     "refund_due_date":"2024-02-11T13:04:00.741Z",
-        //     "overview_location_name":"asdsad",
-        //     "description":"sadsad","cost":0,
-        //     "max_number":[50],
-        //     "activities":[
-        //         {
-        //             "name":"sadasd",
-        //             "description":"sadasd",
-        //             "activity_start_date":"2024-02-11T13:04:00.741Z",
-        //             "activity_end_date":"2024-02-11T13:04:00.741Z",
-        //             "location":"saddsa",
-        //             "coor":[0,0]
-        //         }
-        //     ]
-        // }
-        toast({ title: "Form submitted!", description: JSON.stringify(values) })
+        // {"name":"dsa","startDate":"2024-02-12T06:07:54.717Z","endDate":"2024-02-12T06:07:54.717Z","refundDueDate":"2024-02-12T06:07:54.717Z","overviewLocation":"sda","description":"asd","price":0,"maxMemberCount":50,"activities":[{"name":"asdasd","description":"dasd","startTimestamp":"2024-02-12T06:07:54.717Z","endTimestamp":"2024-02-12T06:07:54.717Z","location":{"name":"saddsa","latitude":0,"longtitude":0,"type":"Other","address":"sadadsasd"}}]}
+        const tempMax = values.maxMemberCount[0]
+        const sentValues = JSON.stringify(values).replace(/"maxMemberCount":\[\d+\]/, `"maxMemberCount":${tempMax}`)
+        const res = await createTour("token", values)
+        if (!res.ok) {
+            toast({ title: "Failed to create tour", description: "Please try again" })
+            return
+        }
+        toast({ title: "Form submitted!", description: sentValues })
     }
     return (
         <div className="p-5">
@@ -121,7 +130,7 @@ const TourCreationForm = () => {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-7 mx-10 overflow-hidden p-5">
                     <FormField
                         control={form.control}
-                        name="tourname"
+                        name="name"
                         render={({ field }) => (
                             <FormItem>
                                 <FormControl>
@@ -132,13 +141,13 @@ const TourCreationForm = () => {
                         )}
                     />
                     <div className="flex flex-wrap gap-8">
-                        <DateInput form={form} name="start_date" label="Start Date" />
-                        <DateInput form={form} name="end_date" label="End Date" />
-                        <DateInput form={form} name="refund_due_date" label="Refund Due Date" />
+                        <DateInput form={form} name="startDate" label="Start Date" />
+                        <DateInput form={form} name="endDate" label="End Date" />
+                        <DateInput form={form} name="refundDueDate" label="Refund Due Date" />
                     </div>
                     <FormField
                         control={form.control}
-                        name="overview_location_name"
+                        name="overviewLocation"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Overview Location</FormLabel>
@@ -164,7 +173,7 @@ const TourCreationForm = () => {
                     />
                     <FormField
                         control={form.control}
-                        name="cost"
+                        name="price"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Cost</FormLabel>
@@ -177,7 +186,7 @@ const TourCreationForm = () => {
                     />
                     <FormField
                         control={form.control}
-                        name="max_number"
+                        name="maxMemberCount"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Maximum number of people: <span>{field.value}</span></FormLabel>
@@ -226,16 +235,79 @@ const TourCreationForm = () => {
                                     </FormItem>
                                 )}
                             />
-                            <DateInput form={form} name={`activities.${index}.activity_start_date`} label="Activity Start Date" grow/>
-                            <DateInput form={form} name={`activities.${index}.activity_end_date`} label="Activity End Date" grow/>
+                            <DateInput form={form} name={`activities.${index}.startTimestamp`} label="Activity Start Date" grow/>
+                            <DateInput form={form} name={`activities.${index}.endTimestamp`} label="Activity End Date" grow/>
                             <FormField
                                 control={form.control}
-                                name={`activities.${index}.location`}
+                                name={`activities.${index}.location.name`}
                                 render={({ field }) => (
                                     <FormItem className="flex flex-col grow">
-                                        <FormLabel>Location</FormLabel>
+                                        <FormLabel>Location Name</FormLabel>
                                         <FormControl>
                                             <Input placeholder="ex. Doi Inthanon" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name={`activities.${index}.location.latitude`}
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col grow">
+                                        <FormLabel>Latitude</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name={`activities.${index}.location.longtitude`}
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col grow">
+                                        <FormLabel>Longtitude</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name={`activities.${index}.location.type`}
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col grow">
+                                        <FormLabel>Location Type</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a location type" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {location_types.map((type) => (
+                                                    <SelectItem key={type} value={type}>
+                                                        {type}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name={`activities.${index}.location.address`}
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col grow">
+                                        <FormLabel>Address</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="ex. 123/4 Doi Inthanon" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -249,10 +321,15 @@ const TourCreationForm = () => {
                             {
                                 name: "",
                                 description: "",
-                                activity_start_date: new Date(),
-                                activity_end_date: new Date(),
-                                location: "",
-                                coor: [0,0],
+                                startTimestamp: new Date(),
+                                endTimestamp: new Date(),
+                                location: {
+                                    name: "",
+                                    latitude: 0,
+                                    longtitude: 0,
+                                    type: "Other",
+                                    address: "",
+                                }
                             }
                         ),e.preventDefault()}} className="rounded-full w-12 h-12 text-2xl">+</Button>
                         <Label htmlFor="addActivity" className='text-slate-400'>Add activity</Label>
