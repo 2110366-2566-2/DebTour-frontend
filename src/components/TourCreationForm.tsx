@@ -206,7 +206,7 @@ const TourCreationForm = () => {
                     />
                     <Label>Activities</Label>
                     {/* add a button to create more input for activities */}
-                    {fields.map((activity, index) => (<div className='flex gap-4'>
+                    {fields.map((activity, index) => (<div className='flex gap-4' key={index}>
                         <Button onClick={() => remove(index)} className="rounded-full w-12 h-12 text-2xl">-</Button>
                         <div key={activity.id} className="flex flex-wrap gap-4">
                             <FormField
