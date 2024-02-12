@@ -5,8 +5,9 @@ const WhoOnDebTourBanner = () => {
   return (
     <div>
       <p className="m-5">
-        <span className="text-3xl font-bold text-black">Who's on </span>
+        <span className="text-3xl font-bold text-black">Who is on </span>
         <span className="text-3xl font-bold text-[#6366F1]">DebTour</span>
+        <span className="text-3xl font-bold text-black">?</span>
       </p>
       <div className="flex place-items-center justify-center">
         <div className="m-3">
