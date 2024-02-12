@@ -69,7 +69,7 @@ const AgencyRegisterPage = () => {
   };
 
   return (
-    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
+    <div className="absolute left-1/2  -translate-x-1/2  transform">
       <div className="mx-auto mt-8 w-[1000px] max-w-md rounded bg-white p-6 shadow-lg">
         <Form {...form}>
           <h1 className="mb-6 text-center text-2xl font-bold">
