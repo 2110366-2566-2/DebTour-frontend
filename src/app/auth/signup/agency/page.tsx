@@ -1,5 +1,11 @@
-const page = () => {
-  return <div>page</div>;
+import MultiStepForm from "@/components/MultistepForm";
+
+const AgencyRegisterPage = () => {
+  return (
+    <div>
+      <MultiStepForm></MultiStepForm>
+    </div>
+  );
 };
 
-export default page;
+export default AgencyRegisterPage;
