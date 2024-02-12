@@ -4,11 +4,12 @@ export default async function createTour(token: string, tour: object) {
         headers: {
             "Content-Type": "application/json",
             // "Authorization": `Bearer ${token}`,
-            "Access-Control-Allow-Origin": "*"
+            // "Access-Control-Allow-Origin": "*"
         },
         body: JSON.stringify(tour),
     });
-    console.log(response);
+    // const res = await response.json()
+    // console.log(res)
     if (!response.ok) {
         throw new Error("Failed to create tour");
     }
