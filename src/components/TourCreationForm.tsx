@@ -31,6 +31,8 @@ import {
 } from "@/components/ui/select"
 import { create } from 'domain';
 import createTour from '@/lib/createTour';
+import getTour from '@/lib/getTour';
+import updateTour from '@/lib/updateTour';
 
 const location_types = ["Hotel", "Attraction", "Restaurant", "Meeting Point", "Other"]
 const formSchema = z.object({
@@ -75,11 +77,12 @@ const formSchema = z.object({
     return true
 })
 
-const TourCreationForm = () => {
+export default function TourCreationForm({tourId}:{tourId?:string}){
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
+        defaultValues: (tourId)? () => getTour(tourId):
+        {
             name: "",
             startDate: new Date(),
             endDate: new Date(),
@@ -116,12 +119,24 @@ const TourCreationForm = () => {
         // {"name":"dsa","startDate":"2024-02-12T06:07:54.717Z","endDate":"2024-02-12T06:07:54.717Z","refundDueDate":"2024-02-12T06:07:54.717Z","overviewLocation":"sda","description":"asd","price":0,"maxMemberCount":50,"activities":[{"name":"asdasd","description":"dasd","startTimestamp":"2024-02-12T06:07:54.717Z","endTimestamp":"2024-02-12T06:07:54.717Z","location":{"name":"saddsa","latitude":0,"longtitude":0,"type":"Other","address":"sadadsasd"}}]}
         const tempMax = values.maxMemberCount[0]
         const sentValues = JSON.stringify(values).replace(/"maxMemberCount":\[\d+\]/, `"maxMemberCount":${tempMax}`)
-        const res = await createTour("token", values)
-        if (!res.ok) {
-            toast({ title: "Failed to create tour", description: "Please try again" })
+        if(!tourId){
+            const res = await createTour("token", values)
+            if (!res.ok) {
+                toast({ title: "Failed to create tour", description: "Please try again" })
+                return
+            }
+            toast({ title: "Form submitted!", description: sentValues })
             return
         }
-        toast({ title: "Form submitted!", description: sentValues })
+        else{
+            const res = await updateTour("token", values, tourId)
+            if (!res.ok) {
+                toast({ title: "Failed to update tour", description: "Please try again" })
+                return
+            }
+            toast({ title: "Form submitted!", description: sentValues })
+            return
+        }
     }
     return (
         <div className="p-5">
@@ -343,4 +358,3 @@ const TourCreationForm = () => {
         </div>
     )
 }
-export default TourCreationForm;

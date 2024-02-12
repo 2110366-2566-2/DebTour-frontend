@@ -4,6 +4,7 @@ export default async function createTour(token: string, tour: object) {
         headers: {
             "Content-Type": "application/json",
             // "Authorization": `Bearer ${token}`,
+            "Access-Control-Allow-Origin": "*"
         },
         body: JSON.stringify(tour),
     });
