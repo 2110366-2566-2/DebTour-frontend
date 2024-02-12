@@ -31,6 +31,9 @@ import {
 } from "@/components/ui/select"
 import { create } from 'domain';
 import createTour from '@/lib/createTour';
+import getTour from '@/lib/getTour';
+import updateTour from '@/lib/updateTour';
+import { useEffect } from 'react';
 
 const location_types = ["Hotel", "Attraction", "Restaurant", "Meeting Point", "Other"]
 const formSchema = z.object({
@@ -73,20 +76,26 @@ const formSchema = z.object({
         return { message: "Refund due date must be before start date", path: ["startDate","refundDueDate"] }
     }
     return true
+}).refine((data) => {
+    if (data.price <= 0){
+        return { message: "Price must be more than zero", path: ["price"]}
+    }
+    return true;
 })
 
-const TourCreationForm = () => {
+export default function TourCreationForm({tourId}:{tourId?:string}){
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
+        defaultValues: 
+        {
             name: "",
             startDate: new Date(),
             endDate: new Date(),
             refundDueDate: new Date(),
             overviewLocation: "",
             description: "",
-            price: 0,
+            price: 1,
             maxMemberCount: [50],
             activities: [
                 {
@@ -113,16 +122,44 @@ const TourCreationForm = () => {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated. (Only run when valid)
-        // {"name":"dsa","startDate":"2024-02-12T06:07:54.717Z","endDate":"2024-02-12T06:07:54.717Z","refundDueDate":"2024-02-12T06:07:54.717Z","overviewLocation":"sda","description":"asd","price":0,"maxMemberCount":50,"activities":[{"name":"asdasd","description":"dasd","startTimestamp":"2024-02-12T06:07:54.717Z","endTimestamp":"2024-02-12T06:07:54.717Z","location":{"name":"saddsa","latitude":0,"longtitude":0,"type":"Other","address":"sadadsasd"}}]}
         const tempMax = values.maxMemberCount[0]
-        const sentValues = JSON.stringify(values).replace(/"maxMemberCount":\[\d+\]/, `"maxMemberCount":${tempMax}`)
-        const res = await createTour("token", values)
-        if (!res.ok) {
-            toast({ title: "Failed to create tour", description: "Please try again" })
+        const sentValues = JSON.parse(JSON.stringify(values).replace(/"maxMemberCount":\[\d+\]/, `"maxMemberCount":${tempMax}`))
+        if(!tourId){
+            const res = await createTour("token", sentValues)
+            if (!res.success) {
+                toast({ title: "Failed to create tour", description: "Please try again" })
+                return
+            }
+            toast({ title: "Form submitted!", description: `${sentValues.name} is created` })
             return
         }
-        toast({ title: "Form submitted!", description: sentValues })
+        else{
+            const res = await updateTour("token", sentValues, tourId)
+            if (!res.success) {
+                toast({ title: "Failed to update tour", description: "Please try again" })
+                return
+            }
+            toast({ title: "Form submitted!", description: `${sentValues.name} is updated` })
+            return
+        }
     }
+    async function getValue(){
+        if(tourId){
+            const res = await getTour(tourId)
+            // console.log(res.data)
+            let values = res.data
+            values.startDate = new Date(values.startDate)
+            values.endDate = new Date(values.endDate)
+            values.refundDueDate = new Date(values.refundDueDate)
+            values.maxMemberCount = [values.maxMemberCount]
+            // values.activities need to be added
+            console.log(values)
+            form.reset(res.data)
+        }
+    }
+    useEffect(() => {
+        getValue()
+    },[tourId])
     return (
         <div className="p-5">
             <Link className={buttonVariants({ variant: "outline" })} href="/agency/tour">Back</Link>
@@ -335,7 +372,7 @@ const TourCreationForm = () => {
                         <Label htmlFor="addActivity" className='text-slate-400'>Add activity</Label>
                     </div>
                     <div className="flex gap-4 justify-end items-center">
-                        <Label htmlFor="submitBtn" className='text-slate-400'>Create new tour!</Label>
+                        <Label htmlFor="submitBtn" className='text-slate-400'>{(tourId)?'Update the tour!':'Create new tour!'}</Label>
                         <Button id="submitBtn" type="submit" className="rounded-full w-12 h-12 text-2xl">+</Button>
                     </div>
                 </form>
@@ -343,4 +380,3 @@ const TourCreationForm = () => {
         </div>
     )
 }
-export default TourCreationForm;
