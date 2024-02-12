@@ -1,8 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { JSX, SVGProps } from "react";
+import { useUserStore } from "@/context/store";
 
 const Navbar = () => {
+  const user = useUserStore((state) => state.role);
+  console.log("User:", user);
+
   return (
     <nav className="grid min-h-[60px] w-full items-center border-b-2 dark:bg-gray-800">
       <div className="container flex items-center justify-start px-4 lg:px-6">
@@ -25,11 +31,8 @@ const Navbar = () => {
           </Link>
         </nav>
         <div className="ml-auto hidden gap-6 lg:flex">
-          <Button variant="outline">
-            <Link href="/auth">Log In</Link>
-          </Button>
           <Button>
-            <Link href="/auth">Sign up</Link>
+            <Link href="/auth">Log In / Sign Up</Link>
           </Button>
         </div>
         <div className="ml-auto lg:hidden">
