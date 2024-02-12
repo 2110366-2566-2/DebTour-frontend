@@ -1,8 +1,41 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+
+const formSchema = z.object({
+  username: z.string().min(2).max(50),
+});
 
 const MultiStepForm = () => {
+  // 1. Define your form.
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+    },
+  });
+
+  // 2. Define a submit handler.
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values);
+  }
+
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -27,80 +60,76 @@ const MultiStepForm = () => {
     setStep((prevStep) => prevStep - 1);
   };
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted:", formData);
-  };
-
   return (
     <div className="mx-auto mt-8 max-w-md rounded bg-white p-6 shadow-lg">
-      <form onSubmit={handleSubmit}>
-        {step === 1 && (
-          <>
-            <input
-              type="text"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              placeholder="First Name"
-              className="input-field"
-            />
-            <input
-              type="text"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              placeholder="Last Name"
-              className="input-field"
-            />
-          </>
-        )}
-        {step === 2 && (
-          <>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Email"
-              className="input-field"
-            />
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Password"
-              className="input-field"
-            />
-          </>
-        )}
-        <div className="mt-4 flex justify-between">
-          {step > 1 && (
-            <button
-              type="button"
-              onClick={handlePrevStep}
-              className="btn-secondary"
-            >
-              Previous
-            </button>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          {step === 1 && (
+            <>
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Step1</FormLabel>
+                    <FormControl>
+                      <Input placeholder="shadcn" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      This is your public display name.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
           )}
-          {step < 2 ? (
-            <button
-              type="button"
-              onClick={handleNextStep}
-              className="btn-primary"
-            >
-              Next
-            </button>
-          ) : (
-            <button type="submit" className="btn-primary">
-              Submit
-            </button>
+          {step === 2 && (
+            <>
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Step2</FormLabel>
+                    <FormControl>
+                      <Input placeholder="shadcn" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      This is your public display name.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
           )}
-        </div>
-      </form>
+          <div className="mt-4 flex justify-between">
+            {step > 1 && (
+              <button
+                type="button"
+                onClick={handlePrevStep}
+                className="btn-secondary"
+              >
+                Previous
+              </button>
+            )}
+            {step < 2 ? (
+              <button
+                type="button"
+                onClick={handleNextStep}
+                className="btn-primary"
+              >
+                Next
+              </button>
+            ) : (
+              <button type="submit" className="btn-primary">
+                Submit
+              </button>
+            )}
+          </div>
+        </form>
+      </Form>
     </div>
   );
 };
