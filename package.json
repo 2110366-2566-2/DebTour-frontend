@@ -4,12 +4,11 @@
   "homepage": "https://2110366-2566-2.github.io/DebTour-frontend",
   "private": true,
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "export": "next export",
+    "deploy": "npm run build && gh-pages -d out -t true"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
