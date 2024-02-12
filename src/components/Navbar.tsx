@@ -12,27 +12,21 @@ const Navbar = () => {
         </Link>
         <nav className="hidden w-full flex-1 justify-center gap-4 lg:flex">
           <Link
-            className="hover:text-primary inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium text-gray-500 focus:outline-none focus:ring-1 dark:text-gray-400 dark:hover:text-gray-50 dark:focus:ring-gray-50"
-            href="#"
+            className="inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium text-gray-500 hover:text-primary focus:outline-none focus:ring-1 dark:text-gray-400 dark:hover:text-gray-50 dark:focus:ring-gray-50"
+            href="/"
           >
             Home
           </Link>
           <Link
-            className="hover:text-primary inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium text-gray-500 focus:outline-none focus:ring-1 dark:text-gray-400 dark:hover:text-gray-50 dark:focus:ring-gray-50"
-            href="#"
+            className="inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium text-gray-500 hover:text-primary focus:outline-none focus:ring-1 dark:text-gray-400 dark:hover:text-gray-50 dark:focus:ring-gray-50"
+            href="/tourist/tours"
           >
-            Tour List
-          </Link>
-          <Link
-            className="hover:text-primary inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium text-gray-500 focus:outline-none focus:ring-1 dark:text-gray-400 dark:hover:text-gray-50 dark:focus:ring-gray-50"
-            href="#"
-          >
-            Suggestion
+            Tours
           </Link>
         </nav>
         <div className="ml-auto hidden gap-6 lg:flex">
           <Button variant="outline">
-            <Link href="#">Sign In</Link>
+            <Link href="#">Log In</Link>
           </Button>
           <Button>
             <Link href="#">Register</Link>
