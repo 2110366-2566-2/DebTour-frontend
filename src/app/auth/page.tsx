@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Link from "next/link";
 
 const Login = () => {
   return (
@@ -61,22 +62,27 @@ const Login = () => {
               Register As
             </h2>
             <div className="flex gap-4">
-              <Card className="duration-75 hover:scale-105 hover:cursor-pointer hover:bg-gray-200">
-                <CardHeader>
-                  <CardTitle className="text-xl">Tourist</CardTitle>
-                  <CardDescription>
-                    Find interesting tours and have fun!
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-              <Card className="duration-75 hover:scale-105 hover:cursor-pointer hover:bg-gray-200">
-                <CardHeader>
-                  <CardTitle className="text-xl">Agency</CardTitle>
-                  <CardDescription>
-                    Post your tours and gain the profit!
-                  </CardDescription>
-                </CardHeader>
-              </Card>
+              <Link href={"/auth/signup/tourist"}>
+                <Card className="duration-75 hover:scale-105 hover:cursor-pointer hover:bg-gray-200">
+                  <CardHeader>
+                    <CardTitle className="text-xl">Tourist</CardTitle>
+                    <CardDescription>
+                      Find interesting tours and have fun!
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </Link>
+
+              <Link href={"/auth/signup/agency"}>
+                <Card className="duration-75 hover:scale-105 hover:cursor-pointer hover:bg-gray-200">
+                  <CardHeader>
+                    <CardTitle className="text-xl">Agency</CardTitle>
+                    <CardDescription>
+                      Post your tours and gain the profit!
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </Link>
             </div>
           </div>
         </TabsContent>
