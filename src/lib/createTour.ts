@@ -9,7 +9,7 @@ export default async function createTour(token: string, tour: object) {
         body: JSON.stringify(tour),
     });
     // const res = await response.json()
-    // console.log(res)
+    console.log(response)
     if (!response.ok) {
         throw new Error("Failed to create tour");
     }

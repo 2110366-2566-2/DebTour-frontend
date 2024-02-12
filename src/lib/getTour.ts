@@ -9,7 +9,7 @@ export default async function getTour(tourId: string) {
         },
     });
     // const res = await response.json()
-    // console.log(res)
+    console.log(response)
     if (!response.ok) {
         throw new Error("Failed to get tour");
     }

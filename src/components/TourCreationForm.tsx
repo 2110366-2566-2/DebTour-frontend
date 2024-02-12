@@ -146,7 +146,14 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
     async function getValue(){
         if(tourId){
             const res = await getTour(tourId)
-            console.log(res.data)
+            // console.log(res.data)
+            let values = res.data
+            values.startDate = new Date(values.startDate)
+            values.endDate = new Date(values.endDate)
+            values.refundDueDate = new Date(values.refundDueDate)
+            values.maxMemberCount = [values.maxMemberCount]
+            // values.activities need to be added
+            console.log(values)
             form.reset(res.data)
         }
     }
@@ -365,7 +372,7 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
                         <Label htmlFor="addActivity" className='text-slate-400'>Add activity</Label>
                     </div>
                     <div className="flex gap-4 justify-end items-center">
-                        <Label htmlFor="submitBtn" className='text-slate-400'>Create new tour!</Label>
+                        <Label htmlFor="submitBtn" className='text-slate-400'>{(tourId)?'Update the tour!':'Create new tour!'}</Label>
                         <Button id="submitBtn" type="submit" className="rounded-full w-12 h-12 text-2xl">+</Button>
                     </div>
                 </form>
