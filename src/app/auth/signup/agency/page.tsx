@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -138,6 +137,7 @@ const AgencyRegisterPage = () => {
                 </div>
               </>
             )}
+
             {step === 2 && (
               <>
                 <div className="flex flex-col gap-6">
@@ -234,6 +234,13 @@ const AgencyRegisterPage = () => {
                 </div>
               </>
             )}
+
+            {step === 3 && (
+              <p className="text-center text-gray-500">
+                (Identification coming soon..)
+              </p>
+            )}
+
             <div className="mt-8 flex justify-between">
               {step === 1 && (
                 <Link href={"/auth"}>
