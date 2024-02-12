@@ -26,10 +26,10 @@ const Navbar = () => {
         </nav>
         <div className="ml-auto hidden gap-6 lg:flex">
           <Button variant="outline">
-            <Link href="/login">Log In</Link>
+            <Link href="/auth">Log In</Link>
           </Button>
           <Button>
-            <Link href="/signup">Sign up</Link>
+            <Link href="/auth">Sign up</Link>
           </Button>
         </div>
         <div className="ml-auto lg:hidden">
