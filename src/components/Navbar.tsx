@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/context/store";
 import { SiYourtraveldottv } from "react-icons/si";
-import { CgProfile } from "react-icons/cg";
 
 const Navbar = () => {
   const userRole = useUserStore((state) => state.role);
@@ -47,7 +46,7 @@ const Navbar = () => {
               <Link href="/auth">Log In / Sign Up</Link>
             </Button>
           ) : (
-            <img src="/avatar.jpg" className="h-8 w-8 rounded-full" />
+            <img src="/avatar.webp" className="h-8 w-8 rounded-full" />
           )}
         </div>
         <div className="ml-auto lg:hidden">

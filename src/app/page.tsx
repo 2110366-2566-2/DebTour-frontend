@@ -18,7 +18,7 @@ const LandingPage = () => {
       <section
         className="mx-auto mt-8 flex h-[550px] max-w-[1300px] flex-col items-center justify-around rounded-[36px] bg-indigo-300 py-12 text-center"
         style={{
-          backgroundImage: "url('/banner.jpg')",
+          backgroundImage: "url('/landingPage/banner.webp')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -61,7 +61,7 @@ const LandingPage = () => {
           </div>
 
           <img
-            src="/debtour1.jpg"
+            src="/landingPage/tour.webp"
             className="mx-auto h-full max-h-[370px] w-full object-cover md:max-h-[500px] lg:max-h-full"
             alt=""
           />
@@ -78,21 +78,21 @@ const LandingPage = () => {
         <div className="mx-auto grid max-w-[1100px] grid-cols-3">
           <RecommendCard
             name={"Chiang Rai, Thailand"}
-            imgPath={"/wat-rong-kun.jpg"}
+            imgPath={"/landingPage/wat-rong-kun.webp"}
             alt={"Wat rong kun"}
             link={"/"}
           />
 
           <RecommendCard
             name={"Shibuya, Japan"}
-            imgPath={"/shibuya.jpg"}
+            imgPath={"/landingPage/shibuya.webp"}
             alt={"Shibuya"}
             link={"/"}
           />
 
           <RecommendCard
             name={"Paris, France"}
-            imgPath={"/eifel.jpg"}
+            imgPath={"/landingPage/eiffel.webp"}
             alt={"Eiffel tower"}
             link={"/"}
           />
