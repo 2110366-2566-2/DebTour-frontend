@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} relative h-screen`}>
         <Navbar />
-        <main className="container">{children}</main>
+        {children}
         <Toaster />
       </body>
     </html>
