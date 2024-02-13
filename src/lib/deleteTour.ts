@@ -1,7 +1,8 @@
-export default async function getTour(tourId: string) {
+export default async function deleteTour(token: string, tourId: string) {
+    console.log(token)
     const response = await fetch(`http://13.50.91.47:9000/api/v1/tours/${tourId}`,
     {
-        method: "GET",
+        method: "DELETE",
         headers: {
             "Content-Type": "application/json",
             // "Authorization": `Bearer ${token}`,
@@ -9,9 +10,9 @@ export default async function getTour(tourId: string) {
         },
     });
     // const res = await response.json()
-    // console.log(response)
+    // console.log(res.body)
     if (!response.ok) {
-        throw new Error("Failed to get tour");
+        throw new Error("Failed to delete tour");
     }
     return response.json();
 }
