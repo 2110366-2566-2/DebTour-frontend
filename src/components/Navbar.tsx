@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useUserStore } from "@/context/store";
 
 const Navbar = () => {
   const user = useUserStore((state) => state.role);
