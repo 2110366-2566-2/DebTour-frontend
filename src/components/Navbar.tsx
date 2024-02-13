@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useUserStore } from "../context/store";
+import { useUserStore } from "@/context/store";
 import { SiYourtraveldottv } from "react-icons/si";
 
 const Navbar = () => {
