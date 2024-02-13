@@ -4,9 +4,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/context/store";
 import { SiYourtraveldottv } from "react-icons/si";
+import { CgProfile } from "react-icons/cg";
 
 const Navbar = () => {
-  const user = useUserStore((state) => state.role);
+  const userRole = useUserStore((state) => state.role);
 
   return (
     <nav className="grid min-h-[60px] w-full items-center">
@@ -22,17 +23,32 @@ const Navbar = () => {
           >
             Home
           </Link>
+
           <Link
             className="inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium text-gray-500 hover:text-primary focus:outline-none"
             href="/tourist/tours"
           >
             Tours
           </Link>
+
+          {userRole === "agency" && (
+            <Link
+              className="inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium text-gray-500 hover:text-primary focus:outline-none"
+              href="/agency/tours"
+            >
+              Manage Tours
+            </Link>
+          )}
         </nav>
+
         <div className="ml-auto hidden gap-6 lg:flex">
-          <Button>
-            <Link href="/auth">Log In / Sign Up</Link>
-          </Button>
+          {userRole === "guest" ? (
+            <Button>
+              <Link href="/auth">Log In / Sign Up</Link>
+            </Button>
+          ) : (
+            <img src="/avatar.jpg" className="h-8 w-8 rounded-full" />
+          )}
         </div>
         <div className="ml-auto lg:hidden">
           <Button size="icon" variant="outline">
