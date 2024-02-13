@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/use-toast"
 
 import { Textarea } from "@/components/ui/textarea"
-import DateInput from './TourCreationFormInput/DateInput';
+import DateInput from '@/components/TourCreationFormInput/DateInput';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
@@ -29,11 +29,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { create } from 'domain';
 import createTour from '@/lib/createTour';
 import getTour from '@/lib/getTour';
 import updateTour from '@/lib/updateTour';
 import { useEffect } from 'react';
+import DeleteBtn from '@/components/TourCreationFormInput/DeleteBtn';
 
 const location_types = ["Hotel", "Attraction", "Restaurant", "Meeting Point", "Other"]
 const formSchema = z.object({
@@ -59,8 +59,8 @@ const formSchema = z.object({
             endTimestamp: z.date(), 
             location: z.object({
                 name: z.string().min(1).max(50), 
-                latitude: z.number(),
-                longtitude: z.number(),
+                latitude: z.number().or(z.string().regex(/\d+/).transform(Number)),
+                longitude: z.number().or(z.string().regex(/\d+/).transform(Number)),
                 type: z.enum(["Hotel", "Attraction", "Restaurant", "Meeting Point", "Other"]),
                 address: z.string().min(1).max(100),
             })
@@ -106,7 +106,7 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
                     location: {
                         name: "",
                         latitude: 0,
-                        longtitude: 0,
+                        longitude: 0,
                         type: "Other",
                         address: "",
                     }
@@ -135,6 +135,7 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
         }
         else{
             const res = await updateTour("token", sentValues, tourId)
+            // console.log(sentValues)
             if (!res.success) {
                 toast({ title: "Failed to update tour", description: "Please try again" })
                 return
@@ -148,11 +149,23 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
             const res = await getTour(tourId)
             // console.log(res.data)
             let values = res.data
+            console.log(values)
             values.startDate = new Date(values.startDate)
             values.endDate = new Date(values.endDate)
             values.refundDueDate = new Date(values.refundDueDate)
             values.maxMemberCount = [values.maxMemberCount]
-            // values.activities need to be added
+            values.activities = values.activities.map((activity:any) => {
+                activity.startTimestamp = new Date(activity.startTimestamp)
+                activity.endTimestamp = new Date(activity.endTimestamp)
+                activity.location = {
+                    name: activity.location.name,
+                    latitude: activity.location.latitude,
+                    longitude: activity.location.longitude,
+                    type: activity.location.type,
+                    address: activity.location.address
+                }
+                return activity
+            })
             console.log(values)
             form.reset(res.data)
         }
@@ -171,7 +184,15 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
                         render={({ field }) => (
                             <FormItem>
                                 <FormControl>
-                                    <input className='block outline-none font-bold text-5xl focus:underline decoration-1 underline-offset-2' placeholder='Tour Name' spellCheck="false" autoComplete="false" {...field}></input>
+                                    <div className="flex w-full justify-between">
+                                        <input className='block outline-none font-bold text-5xl focus:underline decoration-1 underline-offset-2' placeholder='Tour Name' spellCheck="false" autoComplete="false" {...field}></input>
+                                        {(tourId)?
+                                            <div className="flex gap-4 justify-end items-center">
+                                                <Label htmlFor="deleteBtn" className='text-slate-400'>Delete the tour?</Label>
+                                                <DeleteBtn token="token" tourId={tourId}/>
+                                            </div>:null
+                                        }
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -302,10 +323,10 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
                             />
                             <FormField
                                 control={form.control}
-                                name={`activities.${index}.location.longtitude`}
+                                name={`activities.${index}.location.longitude`}
                                 render={({ field }) => (
                                     <FormItem className="flex flex-col grow">
-                                        <FormLabel>Longtitude</FormLabel>
+                                        <FormLabel>Longitude</FormLabel>
                                         <FormControl>
                                             <Input type="number" {...field} />
                                         </FormControl>
@@ -363,7 +384,7 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
                                 location: {
                                     name: "",
                                     latitude: 0,
-                                    longtitude: 0,
+                                    longitude: 0,
                                     type: "Other",
                                     address: "",
                                 }
