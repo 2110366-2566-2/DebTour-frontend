@@ -38,11 +38,11 @@ const LandingPage = () => {
       </section>
 
       {/* Who's on DebTour */}
-      <section className="mt-16 bg-indigo-100 py-16">
-        <div className=" mx-auto grid max-w-[1300px] grid-cols-[55fr_45fr] gap-12 overflow-hidden rounded-[36px] bg-white">
+      <section className="mt-16 bg-indigo-100 py-20 shadow">
+        <div className=" mx-auto grid max-w-[1200px] grid-cols-1 overflow-hidden rounded-[36px] bg-white md:grid-cols-[55fr_45fr]">
           <div className="flex flex-col gap-4 px-12 py-8">
-            <h2 className="my-8 text-5xl font-extrabold">{`Who's on DebTour ?`}</h2>
-            <p className="max-w-[60ch] leading-9">
+            <h2 className="my-8  text-3xl font-extrabold md:text-[42px]">{`Who's on DebTour ?`}</h2>
+            <p className="max-w-[60ch] text-sm leading-8 md:text-base md:leading-8">
               <span className="font-bold">DebTour</span> is the perfect platform
               for both travelers seeking personalized experiences and agencies
               looking to create tailored tours for their clients. Whether you
@@ -51,7 +51,11 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <img src="/debtour1.jpg" className="mx-auto" alt="" />
+          <img
+            src="/debtour1.jpg"
+            className="mx-auto h-full max-h-[370px] w-full object-cover md:max-h-[500px] lg:max-h-full"
+            alt=""
+          />
         </div>
       </section>
     </div>
