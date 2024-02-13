@@ -1,6 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 import { Button } from "@/components/ui/button";
 import { MdArrowDropDownCircle } from "react-icons/md";
+import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import RecommendCard from "@/components/RecommendCard";
 
 const LandingPage = () => {
   return (
@@ -38,7 +47,7 @@ const LandingPage = () => {
       </section>
 
       {/* Who's on DebTour */}
-      <section className="mt-16 bg-indigo-100 py-20 shadow">
+      <section className="mt-16 bg-indigo-100 py-20">
         <div className=" mx-auto grid max-w-[1200px] grid-cols-1 overflow-hidden rounded-[36px] bg-white md:grid-cols-[55fr_45fr]">
           <div className="flex flex-col gap-4 px-12 py-8">
             <h2 className="my-8  text-3xl font-extrabold md:text-[42px]">{`Who's on DebTour ?`}</h2>
@@ -55,6 +64,37 @@ const LandingPage = () => {
             src="/debtour1.jpg"
             className="mx-auto h-full max-h-[370px] w-full object-cover md:max-h-[500px] lg:max-h-full"
             alt=""
+          />
+        </div>
+      </section>
+
+      {/* Recommend */}
+
+      <section className="py-20">
+        <h2 className="mb-12 text-center text-[40px] font-extrabold">
+          Recommended For You
+        </h2>
+
+        <div className="mx-auto grid max-w-[1100px] grid-cols-3">
+          <RecommendCard
+            name={"Chiang Rai, Thailand"}
+            imgPath={"/wat-rong-kun.jpg"}
+            alt={"Wat rong kun"}
+            link={"/"}
+          />
+
+          <RecommendCard
+            name={"Shibuya, Japan"}
+            imgPath={"/shibuya.jpg"}
+            alt={"Shibuya"}
+            link={"/"}
+          />
+
+          <RecommendCard
+            name={"Paris, France"}
+            imgPath={"/eifel.jpg"}
+            alt={"Eiffel tower"}
+            link={"/"}
           />
         </div>
       </section>
