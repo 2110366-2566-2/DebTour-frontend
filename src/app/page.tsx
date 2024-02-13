@@ -38,18 +38,20 @@ const LandingPage = () => {
       </section>
 
       {/* Who's on DebTour */}
-      <section className="mt-16 bg-indigo-200">
-        <h2 className="text-center text-5xl font-extrabold">{`Who's on DebTour`}</h2>
+      <section className="mt-16 bg-indigo-100 py-16">
+        <div className=" mx-auto grid max-w-[1300px] grid-cols-[55fr_45fr] gap-12 overflow-hidden rounded-[36px] bg-white">
+          <div className="flex flex-col gap-4 px-12 py-8">
+            <h2 className="my-8 text-5xl font-extrabold">{`Who's on DebTour ?`}</h2>
+            <p className="max-w-[60ch] leading-9">
+              <span className="font-bold">DebTour</span> is the perfect platform
+              for both travelers seeking personalized experiences and agencies
+              looking to create tailored tours for their clients. Whether you
+              are a traveler or a tour agency, DebTour provides the ideal
+              platform to connect and create unforgettable travel experiences.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-2 gap-12">
-          <p>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Laborum
-            enim, odio cum facilis, nulla quam, provident beatae perspiciatis
-            esse eum quis quasi? Quae laudantium adipisci ducimus eveniet, in
-            aut earum.
-          </p>
-
-          <img src="/public/WhoOnDebTour.png" alt="" />
+          <img src="/debtour1.jpg" className="mx-auto" alt="" />
         </div>
       </section>
     </div>
