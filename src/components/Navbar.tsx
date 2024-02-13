@@ -6,10 +6,9 @@ import { useUserStore } from "../context/store";
 
 const Navbar = () => {
   const user = useUserStore((state) => state.role);
-  console.log("User:", user);
 
   return (
-    <nav className="grid min-h-[60px] w-full items-center border-b-2 dark:bg-gray-800">
+    <nav className="grid min-h-[60px] w-full items-center">
       <div className="container flex items-center justify-start px-4 lg:px-6">
         <Link className="mr-6 flex items-center gap-2" href="#">
           <span className="font-semibold">DebTour</span>
