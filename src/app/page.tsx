@@ -71,7 +71,7 @@ const LandingPage = () => {
       {/* Recommend */}
 
       <section className="py-20">
-        <h2 className="mb-12 text-center text-[40px] font-extrabold">
+        <h2 className="mb-12 text-center text-4xl font-extrabold">
           Recommended For You
         </h2>
 
