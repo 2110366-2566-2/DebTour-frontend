@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 
 import { Textarea } from "@/components/ui/textarea";
-import DateInput from "./TourCreationFormInput/DateInput";
+import DateInput from "@/components/TourCreationFormInput/DateInput";
 import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -29,11 +29,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { create } from "domain";
 import createTour from "@/lib/createTour";
 import getTour from "@/lib/getTour";
 import updateTour from "@/lib/updateTour";
 import { useEffect } from "react";
+import DeleteBtn from "@/components/TourCreationFormInput/DeleteBtn";
+import formSchema from "@/model/formSchema";
 
 const location_types = [
   "Hotel",
@@ -42,72 +43,34 @@ const location_types = [
   "Meeting Point",
   "Other",
 ];
-const formSchema = z
-  .object({
-    name: z.string().min(1).max(50),
-    startDate: z.date({
-      required_error: "A start date is required",
-    }),
-    endDate: z.date({
-      required_error: "An end date is required",
-    }),
-    refundDueDate: z.date({
-      required_error: "A refund due date is required",
-    }),
-    overviewLocation: z.string().min(1).max(100),
-    description: z.string().min(2).max(5000),
-    price: z.number().or(z.string().regex(/\d+/).transform(Number)),
-    maxMemberCount: z.array(z.number()).length(1),
-    activities: z
-      .array(
-        z.object({
-          name: z.string().min(1).max(50),
-          description: z.string().min(1).max(500),
-          startTimestamp: z.date(),
-          endTimestamp: z.date(),
-          location: z.object({
-            name: z.string().min(1).max(50),
-            latitude: z.number(),
-            longtitude: z.number(),
-            type: z.enum([
-              "Hotel",
-              "Attraction",
-              "Restaurant",
-              "Meeting Point",
-              "Other",
-            ]),
-            address: z.string().min(1).max(100),
-          }),
-        }),
-      )
-      .min(1)
-      .max(50),
-  })
-  .refine((data) => {
-    if (data.startDate >= data.endDate) {
-      return {
-        message: "Start date must be before end date",
-        path: ["startDate", "endDate"],
-      };
-    }
-    return true;
-  })
-  .refine((data) => {
-    if (data.refundDueDate >= data.startDate) {
-      return {
-        message: "Refund due date must be before start date",
-        path: ["startDate", "refundDueDate"],
-      };
-    }
-    return true;
-  })
-  .refine((data) => {
-    if (data.price <= 0) {
-      return { message: "Price must be more than zero", path: ["price"] };
-    }
-    return true;
-  });
 
+let oldValues = {
+  name: "",
+  startDate: new Date(),
+  endDate: new Date(),
+  refundDueDate: new Date(),
+  overviewLocation: "",
+  description: "",
+  price: 1,
+  maxMemberCount: [50],
+  activities: [
+    {
+      name: "",
+      description: "",
+      startTimestamp: new Date(),
+      endTimestamp: new Date(),
+      location: {
+        name: "",
+        latitude: 0,
+        longitude: 0,
+        type: "Other",
+        address: "",
+      },
+    },
+  ],
+};
+
+const activityAPIinDEV = true; // need to check if the activity API is in development or not
 export default function TourCreationForm({ tourId }: { tourId?: string }) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -130,7 +93,7 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
           location: {
             name: "",
             latitude: 0,
-            longtitude: 0,
+            longitude: 0,
             type: "Other",
             address: "",
           },
@@ -153,6 +116,17 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
         `"maxMemberCount":${tempMax}`,
       ),
     );
+    sentValues.startDate = new Date(sentValues.startDate);
+    sentValues.endDate = new Date(sentValues.endDate);
+    sentValues.refundDueDate = new Date(sentValues.refundDueDate);
+    // sentValues.maxMemberCount = [sentValues.maxMemberCount]
+    if (sentValues.activities != null && sentValues.activities.length !== 0) {
+      sentValues.activities = sentValues.activities.map((activity: any) => {
+        activity.startTimestamp = new Date(activity.startTimestamp);
+        activity.endTimestamp = new Date(activity.endTimestamp);
+        return activity;
+      });
+    }
     if (!tourId) {
       const res = await createTour("token", sentValues);
       if (!res.success) {
@@ -168,7 +142,8 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
       });
       return;
     } else {
-      const res = await updateTour("token", sentValues, tourId);
+      // console.log(sentValues)
+      const res = await updateTour("token", sentValues, oldValues, tourId);
       if (!res.success) {
         toast({
           title: "Failed to update tour",
@@ -188,12 +163,20 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
       const res = await getTour(tourId);
       // console.log(res.data)
       let values = res.data;
+      // console.log(values)
       values.startDate = new Date(values.startDate);
       values.endDate = new Date(values.endDate);
       values.refundDueDate = new Date(values.refundDueDate);
       values.maxMemberCount = [values.maxMemberCount];
-      // values.activities need to be added
-      console.log(values);
+      if (values.activities != null && values.activities.length !== 0) {
+        values.activities = values.activities.map((activity: any) => {
+          activity.startTimestamp = new Date(activity.startTimestamp);
+          activity.endTimestamp = new Date(activity.endTimestamp);
+          return activity;
+        });
+      }
+      // console.log(values)
+      oldValues = values;
       form.reset(res.data);
     }
   }
@@ -204,7 +187,7 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
     <div className="p-5">
       <Link
         className={buttonVariants({ variant: "outline" })}
-        href="/agency/tour"
+        href="/agency/tours"
       >
         Back
       </Link>
@@ -219,13 +202,23 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <input
-                    className="block text-5xl font-bold decoration-1 underline-offset-2 outline-none focus:underline"
-                    placeholder="Tour Name"
-                    spellCheck="false"
-                    autoComplete="false"
-                    {...field}
-                  ></input>
+                  <div className="flex w-full justify-between">
+                    <input
+                      className="block text-5xl font-bold decoration-1 underline-offset-2 outline-none focus:underline"
+                      placeholder="Tour Name"
+                      spellCheck="false"
+                      autoComplete="false"
+                      {...field}
+                    ></input>
+                    {tourId ? (
+                      <div className="flex items-center justify-end gap-4">
+                        <Label htmlFor="deleteBtn" className="text-slate-400">
+                          Delete the tour?
+                        </Label>
+                        <DeleteBtn token="token" tourId={tourId} />
+                      </div>
+                    ) : null}
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -308,12 +301,21 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
           {/* add a button to create more input for activities */}
           {fields.map((activity, index) => (
             <div className="flex gap-4" key={index}>
-              <Button
-                onClick={() => remove(index)}
-                className="h-12 w-12 rounded-full text-2xl"
-              >
-                -
-              </Button>
+              {activityAPIinDEV && tourId ? (
+                <Button
+                  onClick={(e) => e.preventDefault()}
+                  className="h-12 w-12 rounded-full text-2xl"
+                >
+                  {index + 1}
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => remove(index)}
+                  className="h-12 w-12 rounded-full text-2xl"
+                >
+                  -
+                </Button>
+              )}
               <div key={activity.id} className="flex flex-wrap gap-4">
                 <FormField
                   control={form.control}
@@ -376,7 +378,7 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
                     <FormItem className="flex grow flex-col">
                       <FormLabel>Latitude</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} />
+                        <Input type="number" {...field} min="-90" max="90" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -384,12 +386,12 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
                 />
                 <FormField
                   control={form.control}
-                  name={`activities.${index}.location.longtitude`}
+                  name={`activities.${index}.location.longitude`}
                   render={({ field }) => (
                     <FormItem className="flex grow flex-col">
-                      <FormLabel>Longtitude</FormLabel>
+                      <FormLabel>Longitude</FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} />
+                        <Input type="number" {...field} min="-180" max="180" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -442,30 +444,34 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
             </div>
           ))}
           <div className="flex items-center justify-start gap-4">
-            <Button
-              onClick={(e) => {
-                append({
-                  name: "",
-                  description: "",
-                  startTimestamp: new Date(),
-                  endTimestamp: new Date(),
-                  location: {
-                    name: "",
-                    latitude: 0,
-                    longtitude: 0,
-                    type: "Other",
-                    address: "",
-                  },
-                }),
-                  e.preventDefault();
-              }}
-              className="h-12 w-12 rounded-full text-2xl"
-            >
-              +
-            </Button>
-            <Label htmlFor="addActivity" className="text-slate-400">
-              Add activity
-            </Label>
+            {activityAPIinDEV && tourId ? null : (
+              <>
+                <Button
+                  onClick={(e) => {
+                    append({
+                      name: "",
+                      description: "",
+                      startTimestamp: new Date(),
+                      endTimestamp: new Date(),
+                      location: {
+                        name: "",
+                        latitude: 0,
+                        longitude: 0,
+                        type: "Other",
+                        address: "",
+                      },
+                    }),
+                      e.preventDefault();
+                  }}
+                  className="h-12 w-12 rounded-full text-2xl"
+                >
+                  +
+                </Button>
+                <Label htmlFor="addActivity" className="text-slate-400">
+                  Add activity
+                </Label>
+              </>
+            )}
           </div>
           <div className="flex items-center justify-end gap-4">
             <Label htmlFor="submitBtn" className="text-slate-400">
