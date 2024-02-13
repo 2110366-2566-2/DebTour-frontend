@@ -34,55 +34,37 @@ import getTour from '@/lib/getTour';
 import updateTour from '@/lib/updateTour';
 import { useEffect } from 'react';
 import DeleteBtn from '@/components/TourCreationFormInput/DeleteBtn';
+import formSchema from '@/model/formSchema';
 
 const location_types = ["Hotel", "Attraction", "Restaurant", "Meeting Point", "Other"]
-const formSchema = z.object({
-    name: z.string().min(1).max(50),
-    startDate: z.date({
-        required_error: "A start date is required",
-    }),
-    endDate: z.date({
-        required_error: "An end date is required",
-    }),
-    refundDueDate: z.date({
-        required_error: "A refund due date is required",
-    }),
-    overviewLocation: z.string().min(1).max(100),
-    description: z.string().min(2).max(5000),
-    price: z.number().or(z.string().regex(/\d+/).transform(Number)),
-    maxMemberCount: z.array(z.number()).length(1),
-    activities: z.array(
-        z.object({
-            name: z.string().min(1).max(50), 
-            description: z.string().min(1).max(500), 
-            startTimestamp: z.date(), 
-            endTimestamp: z.date(), 
-            location: z.object({
-                name: z.string().min(1).max(50), 
-                latitude: z.number().or(z.string().regex(/\d+/).transform(Number)),
-                longitude: z.number().or(z.string().regex(/\d+/).transform(Number)),
-                type: z.enum(["Hotel", "Attraction", "Restaurant", "Meeting Point", "Other"]),
-                address: z.string().min(1).max(100),
-            })
-        })
-        ).min(1).max(50),
-}).refine((data) => {
-    if (data.startDate >= data.endDate) {
-        return { message: "Start date must be before end date", path: ["startDate", "endDate"] }
-    }
-    return true
-}).refine((data) => {
-    if (data.refundDueDate >= data.startDate) {
-        return { message: "Refund due date must be before start date", path: ["startDate","refundDueDate"] }
-    }
-    return true
-}).refine((data) => {
-    if (data.price <= 0){
-        return { message: "Price must be more than zero", path: ["price"]}
-    }
-    return true;
-})
 
+let oldValues = {
+    name: "",
+    startDate: new Date(),
+    endDate: new Date(),
+    refundDueDate: new Date(),
+    overviewLocation: "",
+    description: "",
+    price: 1,
+    maxMemberCount: [50],
+    activities: [
+        {
+            name: "",
+            description: "",
+            startTimestamp: new Date(),
+            endTimestamp: new Date(),
+            location: {
+                name: "",
+                latitude: 0,
+                longitude: 0,
+                type: "Other",
+                address: "",
+            }
+        }
+    ]
+}
+
+const activityAPIinDEV = true // need to check if the activity API is in development or not
 export default function TourCreationForm({tourId}:{tourId?:string}){
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
@@ -124,6 +106,17 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
         // ✅ This will be type-safe and validated. (Only run when valid)
         const tempMax = values.maxMemberCount[0]
         const sentValues = JSON.parse(JSON.stringify(values).replace(/"maxMemberCount":\[\d+\]/, `"maxMemberCount":${tempMax}`))
+        sentValues.startDate = new Date(sentValues.startDate)
+        sentValues.endDate = new Date(sentValues.endDate)
+        sentValues.refundDueDate = new Date(sentValues.refundDueDate)
+        // sentValues.maxMemberCount = [sentValues.maxMemberCount]
+        if(sentValues.activities != null && sentValues.activities.length !== 0 ){
+            sentValues.activities = sentValues.activities.map((activity:any) => {
+                activity.startTimestamp = new Date(activity.startTimestamp)
+                activity.endTimestamp = new Date(activity.endTimestamp)
+                return activity
+            })
+        }
         if(!tourId){
             const res = await createTour("token", sentValues)
             if (!res.success) {
@@ -134,8 +127,8 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
             return
         }
         else{
-            const res = await updateTour("token", sentValues, tourId)
             // console.log(sentValues)
+            const res = await updateTour("token", sentValues, oldValues, tourId)
             if (!res.success) {
                 toast({ title: "Failed to update tour", description: "Please try again" })
                 return
@@ -149,24 +142,20 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
             const res = await getTour(tourId)
             // console.log(res.data)
             let values = res.data
-            console.log(values)
+            // console.log(values)
             values.startDate = new Date(values.startDate)
             values.endDate = new Date(values.endDate)
             values.refundDueDate = new Date(values.refundDueDate)
             values.maxMemberCount = [values.maxMemberCount]
-            values.activities = values.activities.map((activity:any) => {
-                activity.startTimestamp = new Date(activity.startTimestamp)
-                activity.endTimestamp = new Date(activity.endTimestamp)
-                activity.location = {
-                    name: activity.location.name,
-                    latitude: activity.location.latitude,
-                    longitude: activity.location.longitude,
-                    type: activity.location.type,
-                    address: activity.location.address
-                }
-                return activity
-            })
-            console.log(values)
+            if(values.activities != null && values.activities.length !== 0 ){
+                values.activities = values.activities.map((activity:any) => {
+                    activity.startTimestamp = new Date(activity.startTimestamp)
+                    activity.endTimestamp = new Date(activity.endTimestamp)
+                    return activity
+                })
+            }
+            // console.log(values)
+            oldValues = values
             form.reset(res.data)
         }
     }
@@ -175,7 +164,7 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
     },[tourId])
     return (
         <div className="p-5">
-            <Link className={buttonVariants({ variant: "outline" })} href="/agency/tour">Back</Link>
+            <Link className={buttonVariants({ variant: "outline" })} href="/agency/tours">Back</Link>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-7 mx-10 overflow-hidden p-5">
                     <FormField
@@ -265,7 +254,11 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
                     <Label>Activities</Label>
                     {/* add a button to create more input for activities */}
                     {fields.map((activity, index) => (<div className='flex gap-4' key={index}>
+                        {(activityAPIinDEV && tourId)?
+                        <Button onClick={(e) => e.preventDefault()} className="rounded-full w-12 h-12 text-2xl">{index+1}</Button>
+                        :
                         <Button onClick={() => remove(index)} className="rounded-full w-12 h-12 text-2xl">-</Button>
+                        }
                         <div key={activity.id} className="flex flex-wrap gap-4">
                             <FormField
                                 control={form.control}
@@ -315,7 +308,7 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
                                     <FormItem className="flex flex-col grow">
                                         <FormLabel>Latitude</FormLabel>
                                         <FormControl>
-                                            <Input type="number" {...field} />
+                                            <Input type="number" {...field} min="-90" max="90"/>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -328,7 +321,7 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
                                     <FormItem className="flex flex-col grow">
                                         <FormLabel>Longitude</FormLabel>
                                         <FormControl>
-                                            <Input type="number" {...field} />
+                                            <Input type="number" {...field} min="-180" max="180"/>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -375,6 +368,7 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
                         </div>
                     ))}
                     <div className="flex gap-4 justify-start items-center">
+                        {(activityAPIinDEV && tourId)?null:<>
                         <Button onClick={(e) => {append(
                             {
                                 name: "",
@@ -390,7 +384,7 @@ export default function TourCreationForm({tourId}:{tourId?:string}){
                                 }
                             }
                         ),e.preventDefault()}} className="rounded-full w-12 h-12 text-2xl">+</Button>
-                        <Label htmlFor="addActivity" className='text-slate-400'>Add activity</Label>
+                        <Label htmlFor="addActivity" className='text-slate-400'>Add activity</Label></>}
                     </div>
                     <div className="flex gap-4 justify-end items-center">
                         <Label htmlFor="submitBtn" className='text-slate-400'>{(tourId)?'Update the tour!':'Create new tour!'}</Label>

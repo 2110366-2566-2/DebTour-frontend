@@ -1,4 +1,5 @@
 export default async function deleteTour(token: string, tourId: string) {
+    console.log(token)
     const response = await fetch(`http://13.50.91.47:9000/api/v1/tours/${tourId}`,
     {
         method: "DELETE",
