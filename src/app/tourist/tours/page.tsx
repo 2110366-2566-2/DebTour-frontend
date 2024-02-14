@@ -117,95 +117,49 @@ const formatDate = (dateString: string) => {
 
 const Tours = () => {
   return (
-    <div>
-      <div className="bg-[#E0E7FF]">
-        <h1 className="text-xl font-bold text-black">Tour List</h1>
+    <div className="container">
+      {/* header */}
 
-        <div>
-          <div className="flex w-full">
-            <div className="flex w-2/4 items-center">
-              <CiSearch className="h-6 w-6" />
-              <Input type="text" placeholder="Tour Name" />
-            </div>
-
-            <div className="flex w-2/4 items-center">
-              <IoLocationOutline className="h-6 w-6" />
-              <Input type="text" placeholder="Location" />
-            </div>
-          </div>
-          {/* the second one */}
-          <div className="flex">
-            <div className="flex items-center">
-              <LuCalendarDays className="h-12 w-12" />
-              <Input type="date" placeholder="Start Date" />
-              <Input type="date" placeholder="End Date" />
-            </div>
-            <div className="flex items-center">
-              <IoPeopleOutline className="h-6 w-6" />
-              <Input type="number" placeholder="Number of Member" />
-            </div>
-            <div className="flex items-center">
-              <GrMoney className="h-12 w-12" />
-              <Input type="number" placeholder="Min Price" />
-              <Input type="number" placeholder="Max Price" />
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* the searched component */}
-      {/* justify content space between */}
-      <div className="flex flex-wrap justify-around">
+      <div className="grid grid-cols-2 justify-around">
         {/* Map the tour list */}
         {tourList.data.map((tour) => (
-          // <div key={tour.tourId} className="m-4 w-1/3 bg-white p-4">
-          //   <div>
-          //     <p>name: {tour.name}</p>
-          //     <p>start date: {tour.startDate}</p>
-          //     <p>end date: {tour.endDate}</p>
-          //     <p>description: {tour.description}</p>
-          //     <p>overview location: {tour.overviewLocation}</p>
-          //     <p>price: {tour.price}</p>
-          //     <p>refund due date: {tour.refundDueDate}</p>
-          //     <p>max member count: {tour.maxMemberCount}</p>
-          //     <p>member count: {tour.memberCount}</p>
-          //     <p>status: {tour.status}</p>
-          //     <p>agency username: {tour.agencyUsername}</p>
-          //     <p>created timestamp: {tour.createdTimestamp}</p>
-          //   </div>
-          // </div>
           <div
             key={tour.tourId}
-            className="h-128 m-4 flex h-64 w-2/5 rounded-xl border border-solid border-gray-200 bg-white hover:cursor-pointer"
+            className="h-128 m-4 grid h-64 grid-cols-[2fr,3fr] rounded-xl border border-solid border-gray-200 bg-white hover:cursor-pointer"
           >
             {/* image */}
-            <div>
-              <img
-                src={
-                  "https://upload.wikimedia.org/wikipedia/commons/8/85/0020-%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%AA%E0%B8%B4%E0%B8%87%E0%B8%AB%E0%B9%8C%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3.jpg"
-                }
-                alt="tour image"
-                className="h-full w-56 rounded-l-xl"
-              />
-            </div>
+
+            <img
+              src={
+                "https://upload.wikimedia.org/wikipedia/commons/8/85/0020-%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%AA%E0%B8%B4%E0%B8%87%E0%B8%AB%E0%B9%8C%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3.jpg"
+              }
+              alt="tour image"
+              className="h-full rounded-l-xl"
+            />
+
             {/* Tour information */}
             <div className="m-3">
-              <p className="text-2xl font-bold">{tour.name}</p>
-              <p className="flex items-center">
+              <h2 className="text-2xl font-bold">{tour.name}</h2>
+
+              <div className="flex items-center">
                 <IoLocationOutline className="m-1 h-6 w-6" />
                 <span className="text-md">{tour.overviewLocation}</span>
-              </p>
-              <p className="flex items-center">
+              </div>
+
+              <div className="flex items-center">
                 <LuCalendarDays className="m-1 h-6 w-6" />
                 <span className="text-md">
                   {formatDate(tour.startDate)} - {formatDate(tour.endDate)}
                 </span>
-              </p>
-              <p className="flex items-center">
+              </div>
+
+              <div className="flex items-center">
                 <IoPeopleOutline className="m-1 h-6 w-6" />
                 <span className="text-md">
                   {tour.memberCount}/{tour.maxMemberCount} Members
                 </span>
-              </p>
+              </div>
+
               <p className="flex items-center">
                 <GrMoney className="m-1 h-6 w-6" />
                 <span className="text-md">{tour.price} Baht</span>
