@@ -30,16 +30,14 @@ const TourCard = ({ tour }: { tour: Tour }) => {
   return (
     <div
       key={tour.tourId}
-      className="h-128 m-4 grid h-48 grid-cols-[2fr,3fr] rounded-xl border border-solid border-gray-200 bg-white shadow duration-150 hover:scale-105 hover:cursor-pointer"
+      className="h-128 m-4 grid h-48 grid-cols-[2fr,3fr] overflow-hidden rounded-xl border border-solid border-gray-200 bg-white shadow duration-150 hover:scale-105 hover:cursor-pointer"
     >
       {/* image */}
 
       <img
-        src={
-          "https://upload.wikimedia.org/wikipedia/commons/8/85/0020-%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%AA%E0%B8%B4%E0%B8%87%E0%B8%AB%E0%B9%8C%E0%B8%A7%E0%B8%A3%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%A7%E0%B8%B4%E0%B8%AB%E0%B8%B2%E0%B8%A3.jpg"
-        }
-        alt="tour image"
-        className="h-full rounded-l-xl"
+        src={"/chiangrai-tower.webp"}
+        alt="sample image"
+        className="h-full w-full object-cover"
       />
 
       {/* Tour information */}
