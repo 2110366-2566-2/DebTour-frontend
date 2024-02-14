@@ -1,90 +1,98 @@
+/* eslint-disable @next/next/no-img-element */
 import { CiSearch } from "react-icons/ci";
 import { Input } from "@/components/ui/input";
 import { IoLocationOutline } from "react-icons/io5";
 import { LuCalendarDays } from "react-icons/lu";
 import { IoPeopleOutline } from "react-icons/io5";
 import { GrMoney } from "react-icons/gr";
+
 //dummy tour list
 const tourList = {
   count: 5,
   data: [
     {
-      tourId: 5,
-      name: "asdasd",
-      startDate: "2024-02-12T10:42:01.694Z",
-      endDate: "2024-02-12T10:42:01.694Z",
-      description: "sdadsa",
-      overviewLocation: "sdadsa",
-      price: 1,
-      refundDueDate: "2024-02-12T10:42:01.694Z",
-      maxMemberCount: 50,
+      tourId: 9,
+      name: "Mountain Trek Expedition",
+      startDate: "2024-03-01T08:00:00.000Z",
+      endDate: "2024-03-10T18:00:00.000Z",
+      description:
+        "Embark on an adventurous trek through breathtaking mountain trails.",
+      overviewLocation: "Mountain Range, XYZ Region",
+      price: 15000,
+      refundDueDate: "2024-02-20T23:59:59.000Z",
+      maxMemberCount: 20,
       memberCount: 0,
       status: "Available",
-      agencyUsername: "",
-      createdTimestamp: "2024-02-12T10:42:13.057426Z",
+      agencyUsername: "adventure_tours",
+      createdTimestamp: "2024-02-13T09:15:00.000Z",
     },
     {
-      tourId: 6,
-      name: "sdaasddsa",
-      startDate: "2024-02-12T10:42:42.195Z",
-      endDate: "2024-02-12T10:42:42.195Z",
-      description: "asdsdaasd",
-      overviewLocation: "dsadsas",
-      price: 1,
-      refundDueDate: "2024-02-12T10:42:42.195Z",
-      maxMemberCount: 50,
+      tourId: 10,
+      name: "City Nightlife Tour",
+      startDate: "2024-02-25T18:00:00.000Z",
+      endDate: "2024-02-26T02:00:00.000Z",
+      description:
+        "Experience the vibrant nightlife of the city with guided tours and club hopping.",
+      overviewLocation: "Downtown, CityName",
+      price: 8000,
+      refundDueDate: "2024-02-20T23:59:59.000Z",
+      maxMemberCount: 30,
       memberCount: 0,
       status: "Available",
-      agencyUsername: "",
-      createdTimestamp: "2024-02-12T10:43:15.859667Z",
+      agencyUsername: "nightlife_experts",
+      createdTimestamp: "2024-02-13T09:30:00.000Z",
     },
     {
-      tourId: 7,
-      name: "dsa",
-      startDate: "2024-02-12T10:43:38.026Z",
-      endDate: "2024-02-12T10:43:38.026Z",
-      description: "asddsa",
-      overviewLocation: "asdasd",
-      price: 1,
-      refundDueDate: "2024-02-12T10:43:38.026Z",
-      maxMemberCount: 50,
+      tourId: 11,
+      name: "Historical Walking Tour",
+      startDate: "2024-03-05T10:00:00.000Z",
+      endDate: "2024-03-05T14:00:00.000Z",
+      description:
+        "Explore the rich history and architecture of the city's landmarks.",
+      overviewLocation: "Old Town District, CityName",
+      price: 5000,
+      refundDueDate: "2024-02-20T23:59:59.000Z",
+      maxMemberCount: 25,
       memberCount: 0,
       status: "Available",
-      agencyUsername: "",
-      createdTimestamp: "2024-02-12T10:43:46.74695Z",
+      agencyUsername: "history_walks_inc",
+      createdTimestamp: "2024-02-13T10:00:00.000Z",
     },
     {
-      tourId: 8,
-      name: "dsa",
-      startDate: "2024-02-12T10:43:38.026Z",
-      endDate: "2024-02-12T10:43:38.026Z",
-      description: "asddsa",
-      overviewLocation: "asdasd",
-      price: 1,
-      refundDueDate: "2024-02-12T10:43:38.026Z",
-      maxMemberCount: 50,
+      tourId: 12,
+      name: "Beach Day Escape",
+      startDate: "2024-03-15T09:00:00.000Z",
+      endDate: "2024-03-15T17:00:00.000Z",
+      description:
+        "Relax and unwind on the sunny beaches with various water activities.",
+      overviewLocation: "Sandy Shores Beach, Coastal Area",
+      price: 10000,
+      refundDueDate: "2024-02-25T23:59:59.000Z",
+      maxMemberCount: 40,
       memberCount: 0,
       status: "Available",
-      agencyUsername: "",
-      createdTimestamp: "2024-02-12T10:44:21.539559Z",
+      agencyUsername: "beach_getaways",
+      createdTimestamp: "2024-02-13T10:30:00.000Z",
     },
     {
-      tourId: 8,
-      name: "dsa",
-      startDate: "2024-02-12T10:43:38.026Z",
-      endDate: "2024-02-12T10:43:38.026Z",
-      description: "asddsa",
-      overviewLocation: "asdasd",
-      price: 1,
-      refundDueDate: "2024-02-12T10:43:38.026Z",
-      maxMemberCount: 50,
+      tourId: 13,
+      name: "Cultural Cuisine Tour",
+      startDate: "2024-03-10T12:00:00.000Z",
+      endDate: "2024-03-10T16:00:00.000Z",
+      description:
+        "Indulge in a culinary journey exploring diverse local cuisines and flavors.",
+      overviewLocation: "Food District, CityName",
+      price: 7500,
+      refundDueDate: "2024-02-28T23:59:59.000Z",
+      maxMemberCount: 15,
       memberCount: 0,
       status: "Available",
-      agencyUsername: "",
-      createdTimestamp: "2024-02-12T10:44:21.539559Z",
+      agencyUsername: "taste_explorers",
+      createdTimestamp: "2024-02-13T11:00:00.000Z",
     },
   ],
 };
+
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   const day = date.getDate();
@@ -111,21 +119,15 @@ const Tours = () => {
   return (
     <div>
       <div className="bg-[#E0E7FF]">
-        <div className="flex items-center">
-          <CiSearch className="h-6 w-6" />
-          <p>
-            <span className="text-xl font-bold text-black">Tour List</span>
-          </p>
-        </div>
-        {/* the search field */}
+        <h1 className="text-xl font-bold text-black">Tour List</h1>
+
         <div>
-          {/* the first one */}
           <div className="flex w-full">
-            {/* Tour Name */}
             <div className="flex w-2/4 items-center">
               <CiSearch className="h-6 w-6" />
               <Input type="text" placeholder="Tour Name" />
             </div>
+
             <div className="flex w-2/4 items-center">
               <IoLocationOutline className="h-6 w-6" />
               <Input type="text" placeholder="Location" />
