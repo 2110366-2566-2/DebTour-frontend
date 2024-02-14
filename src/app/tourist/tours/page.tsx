@@ -107,7 +107,10 @@ const tours: { count: number; data: Tour[] } = {
 const Tours = () => {
   return (
     <div className="">
-      <TourSearchHeader />
+      <TourSearchHeader
+        heading={"Find your adventure"}
+        imgPath={"/sea-bg.webp"}
+      />
 
       <div className="bg-indigo-100 py-12">
         <div className="container grid grid-cols-2 justify-around ">

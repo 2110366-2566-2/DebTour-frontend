@@ -8,18 +8,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const TourSearchHeader = () => {
+interface Props {
+  heading: string;
+  imgPath: string;
+}
+
+const TourSearchHeader = ({ heading, imgPath }: Props) => {
   return (
     <div
       className="mx-auto mb-12 mt-10 h-[400px] max-w-[1300px] rounded-[36px] bg-indigo-100 object-cover py-12"
       style={{
-        backgroundImage: `url("/sea-bg.webp")`,
+        backgroundImage: `url("${imgPath}")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
       <h1 className="mb-10 text-center text-[54px] font-extrabold capitalize text-white drop-shadow">
-        Find your adventure
+        {heading}
       </h1>
 
       <div className="mx-auto grid max-w-[800px] grid-cols-5 gap-x-2 gap-y-8">
