@@ -107,7 +107,10 @@ const tours: { count: number; data: Tour[] } = {
 const ManageTour = () => {
   return (
     <div className="">
-      <TourSearchHeader />
+      <TourSearchHeader
+        heading={"Manage Tours"}
+        imgPath={"/header-agency.webp"}
+      />
 
       <div className="bg-indigo-100 py-12">
         <div className="container grid grid-cols-2 justify-around ">
