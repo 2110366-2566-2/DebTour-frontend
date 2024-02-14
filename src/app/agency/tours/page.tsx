@@ -116,7 +116,7 @@ const ManageTour = () => {
         <div className="container grid grid-cols-2 justify-around ">
           {tours.data.map((tour: Tour) => (
             <Link href={`/tourist/tours/${tour.tourId}`} key={tour.tourId}>
-              <TourCard tour={tour} />
+              <TourCard tour={tour} isEditable />
             </Link>
           ))}
         </div>
