@@ -1,4 +1,6 @@
 import TourCard from "@/components/TourCard";
+import TourSearchHeader from "@/components/TourSearchHeader";
+import Link from "next/link";
 
 export interface Tour {
   tourId: number;
@@ -104,13 +106,17 @@ const tours: { count: number; data: Tour[] } = {
 
 const Tours = () => {
   return (
-    <div className="container">
-      {/* header */}
+    <div className="">
+      <TourSearchHeader />
 
-      <div className="grid grid-cols-2 justify-around">
-        {tours.data.map((tour: Tour) => (
-          <TourCard tour={tour} key={tour.tourId} />
-        ))}
+      <div className="bg-indigo-100 py-12">
+        <div className="container grid grid-cols-2 justify-around ">
+          {tours.data.map((tour: Tour) => (
+            <Link href={`/tourist/tours/${tour.tourId}`} key={tour.tourId}>
+              <TourCard tour={tour} />
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

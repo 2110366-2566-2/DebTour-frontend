@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { Tour } from "@/app/tourist/tours/page";
+import Link from "next/link";
 import { GrMoney } from "react-icons/gr";
 import { IoLocationOutline, IoPeopleOutline } from "react-icons/io5";
 import { LuCalendarDays } from "react-icons/lu";
@@ -30,7 +31,7 @@ const TourCard = ({ tour }: { tour: Tour }) => {
   return (
     <div
       key={tour.tourId}
-      className="h-128 m-4 grid h-48 grid-cols-[2fr,3fr] overflow-hidden rounded-xl border border-solid border-gray-200 bg-white shadow duration-150 hover:scale-105 hover:cursor-pointer"
+      className="h-128 m-4 grid h-48 grid-cols-[2fr,3fr] overflow-hidden rounded-3xl border border-solid border-gray-200 bg-white shadow duration-150 hover:scale-105 hover:cursor-pointer"
     >
       {/* image */}
 
