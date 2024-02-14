@@ -25,7 +25,7 @@ const TourSearchHeader = () => {
       <div className="mx-auto grid max-w-[800px] grid-cols-5 gap-x-2 gap-y-8">
         <Input
           className="col-span-5 rounded-2xl"
-          placeholder="Search your destination"
+          placeholder="Search your destination or tour name"
         />
 
         <DatePicker placeholder={"Start Date"} />
