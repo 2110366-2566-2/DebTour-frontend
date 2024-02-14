@@ -125,7 +125,7 @@ const Tours = () => {
         {tourList.data.map((tour) => (
           <div
             key={tour.tourId}
-            className="h-128 m-4 grid h-64 grid-cols-[2fr,3fr] rounded-xl border border-solid border-gray-200 bg-white hover:cursor-pointer"
+            className="h-128 m-4 grid h-48 grid-cols-[2fr,3fr] rounded-xl border border-solid border-gray-200 bg-white shadow duration-150 hover:scale-105 hover:cursor-pointer"
           >
             {/* image */}
 
@@ -138,32 +138,32 @@ const Tours = () => {
             />
 
             {/* Tour information */}
-            <div className="m-3">
-              <h2 className="text-2xl font-bold">{tour.name}</h2>
+            <div className="px-8 py-1">
+              <h2 className="mb-4 mt-4 text-2xl font-bold">{tour.name}</h2>
 
               <div className="flex items-center">
-                <IoLocationOutline className="m-1 h-6 w-6" />
-                <span className="text-md">{tour.overviewLocation}</span>
+                <IoLocationOutline className="m-1 h-4 w-4" />
+                <span className="text-sm">{tour.overviewLocation}</span>
               </div>
 
               <div className="flex items-center">
-                <LuCalendarDays className="m-1 h-6 w-6" />
-                <span className="text-md">
+                <LuCalendarDays className="m-1 h-4 w-4" />
+                <span className="text-sm">
                   {formatDate(tour.startDate)} - {formatDate(tour.endDate)}
                 </span>
               </div>
 
               <div className="flex items-center">
-                <IoPeopleOutline className="m-1 h-6 w-6" />
-                <span className="text-md">
+                <IoPeopleOutline className="m-1 h-4 w-4" />
+                <span className="text-sm">
                   {tour.memberCount}/{tour.maxMemberCount} Members
                 </span>
               </div>
 
-              <p className="flex items-center">
-                <GrMoney className="m-1 h-6 w-6" />
-                <span className="text-md">{tour.price} Baht</span>
-              </p>
+              <div className="flex items-center">
+                <GrMoney className="m-1 h-4 w-4" />
+                <span className="text-sm">{tour.price} Baht</span>
+              </div>
             </div>
           </div>
         ))}
