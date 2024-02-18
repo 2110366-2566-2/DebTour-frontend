@@ -204,7 +204,7 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
                 <FormControl>
                   <div className="flex w-full justify-between">
                     <input
-                      className="block text-5xl font-bold decoration-1 underline-offset-2 outline-none focus:underline"
+                      className="block text-5xl font-bold decoration-1 underline-offset-2 outline-none focus:underline border-0"
                       placeholder="Tour Name"
                       spellCheck="false"
                       autoComplete="false"
