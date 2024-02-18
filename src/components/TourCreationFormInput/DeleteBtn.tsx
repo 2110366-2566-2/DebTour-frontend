@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation'
 import { Button } from "../ui/button"
 import {
     AlertDialog,
@@ -12,7 +11,11 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import deleteTour from "@/lib/deleteTour";
+
+import { useRouter } from 'next/navigation'
 export default function DeleteBtn({token, tourId}: Readonly<{token: string, tourId: string}>) {
+    const router = useRouter()
+    
     return (
         <div>
             <AlertDialog>
@@ -28,7 +31,7 @@ export default function DeleteBtn({token, tourId}: Readonly<{token: string, tour
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={()=>{deleteTour(token,tourId); redirect('/tour')}}>Continue</AlertDialogAction>
+                    <AlertDialogAction onClick={async ()=>{await deleteTour(token,tourId).then(()=>router.push("/agency/tours"))}}>Continue</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
