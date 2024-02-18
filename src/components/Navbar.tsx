@@ -17,7 +17,6 @@ const Navbar = () => {
 
   useEffect(() => {
     setActiveRoute(pathname);
-    console.log(activeRoute);
   }, [pathname]);
 
   return (

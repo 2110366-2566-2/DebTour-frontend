@@ -1,25 +1,8 @@
 "use client";
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
 
-import { Textarea } from "@/components/ui/textarea";
-import DateInput from "@/components/TourCreationFormInput/DateInput";
-import Image from "next/image";
+import { useEffect } from "react";
+
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -29,12 +12,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+import { useFieldArray, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+import Link from "next/link";
+
 import createTour from "@/lib/createTour";
 import getTour from "@/lib/getTour";
 import updateTour from "@/lib/updateTour";
-import { useEffect } from "react";
+
+import DateInput from "@/components/TourCreationFormInput/DateInput";
 import DeleteBtn from "@/components/TourCreationFormInput/DeleteBtn";
+
 import formSchema from "@/model/formSchema";
+import { buttonVariants } from "@/components/ui/button";
 
 const location_types = [
   "Hotel",
@@ -44,7 +48,31 @@ const location_types = [
   "Other",
 ];
 
-let oldValues = {
+interface Tour {
+  name: string;
+  startDate: Date;
+  endDate: Date;
+  refundDueDate: Date;
+  overviewLocation: string;
+  description: string;
+  price: number;
+  maxMemberCount: [number];
+  activities: {
+    name: string;
+    description: string;
+    startTimestamp: Date;
+    endTimestamp: Date;
+    location: {
+      name: string;
+      latitude: number;
+      longitude: number;
+      type: "Hotel" | "Attraction" | "Restaurant" | "Meeting Point" | "Other";
+      address: string;
+    };
+  }[];
+}
+
+let oldValues: Tour = {
   name: "",
   startDate: new Date(),
   endDate: new Date(),
@@ -182,7 +210,8 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
   }
   useEffect(() => {
     getValue();
-  }, [tourId]);
+  });
+
   return (
     <div className="p-5">
       <Link
@@ -204,7 +233,7 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
                 <FormControl>
                   <div className="flex w-full justify-between">
                     <input
-                      className="block text-5xl font-bold decoration-1 underline-offset-2 outline-none focus:underline border-0"
+                      className="block border-0 text-5xl font-bold decoration-1 underline-offset-2 outline-none focus:underline"
                       placeholder="Tour Name"
                       spellCheck="false"
                       autoComplete="false"
