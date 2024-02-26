@@ -16,6 +16,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import ReviewSection from "@/components/TourReviewComponent/ReviewSection";
 
 const TourInfo = ({ params }: { params: { tourId: string } }) => {
   return (
@@ -126,7 +127,7 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
         </div>
       </section>
 
-      <section className="container">
+      <section className="container mb-24">
         <h2 className="mb-12 text-3xl font-bold">Tour Activities</h2>
 
         <p className="leading-8">
@@ -150,6 +151,7 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
           Voluptate, deserunt sequi dolor ratione,
         </p>
       </section>
+      <ReviewSection tourId={params.tourId} />
     </main>
   );
 };
