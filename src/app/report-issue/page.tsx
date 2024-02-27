@@ -3,22 +3,19 @@ import {
     Dialog,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import ReportProblemForm from "@/components/ReportProblemForm";
+import ReportIssueForm from "@/components/ReportIssueForm";
 
 
-
-const ReportProblem = () => {
+export default function ReportIssue() {
     return (
         <div className="container flex justify-between mt-10">
-            <h1 className="text-2xl font-semibold">My Reported Problems</h1>
+            <h1 className="text-2xl font-semibold">My Reported Issues</h1>
             <Dialog>
                 <DialogTrigger asChild>
-                    <Button>Report problem</Button>
+                    <Button>Report an Issue</Button>
                 </DialogTrigger>
-                <ReportProblemForm />
+                <ReportIssueForm/>
             </Dialog>
         </div>
     );
 }
-
-export default ReportProblem;
