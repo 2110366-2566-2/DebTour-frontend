@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { MdOutlineStar } from "react-icons/md";
@@ -16,17 +17,80 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { IoLocationOutline } from "react-icons/io5";
+import { LuCalendarDays } from "react-icons/lu";
+import { IoPeopleOutline } from "react-icons/io5";
+
+import { useEffect, useState } from "react";
+import getTour from "@/lib/getTour";
+import getTourImage from "@/lib/getTourImage";
+import { Tour } from "@/app/tourist/tours/page";
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const monthIndex = date.getMonth();
+  const year = date.getFullYear();
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  return `${day} ${monthNames[monthIndex]} ${year}`;
+};
+
+export interface Location {
+  locationId: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+  type: string;
+  address: string;
+}
+
+export interface Activity {
+  tourId: number;
+  activityId: number;
+  name: string;
+  description: string;
+  startTimestamp: string;
+  endTimestamp: string;
+  location: Location;
+}
 
 const TourInfo = ({ params }: { params: { tourId: string } }) => {
+  const [tour, setTour] = useState<Tour | null>(null);
+  const [tourImage, setTourImage] = useState<string[] | null>(null);
+  useEffect(() => {
+    async function waitForGetTour() {
+      const t = await getTour(params.tourId);
+      setTour(t.data);
+      console.log(t.data);
+    }
+    async function waitForGetTourImage() {
+      const i = await getTourImage(params.tourId);
+      setTourImage(i.data);
+      console.log(i.data);
+    }
+    waitForGetTour();
+    waitForGetTourImage();
+  }, []);
+
   return (
     <main>
       <section className="mb-32 h-[350px] bg-indigo-100">
         <div className="container relative h-full py-12 text-center">
-          <h1 className=" my-6 text-5xl font-bold">
-            Chiang Mai Temple Tour 2024
-          </h1>
+          <h1 className=" my-6 text-5xl font-bold">{tour?.name}</h1>
           <p className="my-2 font-semibold text-indigo-700">
-            Agency: Tour Na Rok Company
+            Agency: {tour?.agencyUsername}
           </p>
 
           <div className="flex justify-center">
@@ -46,7 +110,7 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
               <MdLocationOn className="h-7 w-7 rounded-full p-1 shadow-lg" />
               <div className="text-left text-xs">
                 <p className="text-gray-500">Overview Location</p>
-                <p className="font-bold">Chiang Mai, Thailand</p>
+                <p className="font-bold">{tour?.overviewLocation}</p>
               </div>
             </div>
 
@@ -54,7 +118,9 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
               <MdCalendarMonth className="h-7 w-7 rounded-full p-1 shadow-lg" />
               <div className="text-left text-xs">
                 <p className="text-gray-500">Duration</p>
-                <p className="font-bold">21 Aug 2024 - 24 Aug 2024</p>
+                <p className="font-bold">
+                  {formatDate(tour?.startDate)} - {formatDate(tour?.endDate)}
+                </p>
               </div>
             </div>
 
@@ -62,7 +128,7 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
               <GrMoney className="h-7 w-7 rounded-full p-1 shadow-lg" />
               <div className="text-left text-xs">
                 <p className="text-gray-500">Price</p>
-                <p className="font-bold">45000.00 Baht</p>
+                <p className="font-bold">{tour?.price}</p>
               </div>
             </div>
 
@@ -70,7 +136,9 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
               <MdPeople className="h-7 w-7 rounded-full p-1 shadow-lg" />
               <div className="text-left text-xs">
                 <p className="text-gray-500">Members</p>
-                <p className="font-bold">23 / 50</p>
+                <p className="font-bold">
+                  {tour?.memberCount} / {tour?.maxMemberCount}
+                </p>
               </div>
             </div>
 
@@ -78,7 +146,7 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
               <RiRefund2Line className="h-7 w-7 rounded-full p-1 shadow-lg" />
               <div className="text-left text-xs">
                 <p className="text-gray-500">Refund Due Date</p>
-                <p className="font-bold">5 Aug 2024</p>
+                <p className="font-bold">{formatDate(tour?.refundDueDate)}</p>
               </div>
             </div>
           </div>
@@ -91,14 +159,17 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
         <div className="mx-auto grid max-w-[1200px] grid-cols-2">
           <Carousel className="w-full max-w-sm">
             <CarouselContent>
-              {Array.from({ length: 5 }).map((_, index) => (
-                <CarouselItem key={index}>
+              {tourImage?.images.map((image: string) => (
+                <CarouselItem>
                   <div className="p-1">
                     <Card>
                       <CardContent className="flex aspect-square items-center justify-center p-6">
-                        <span className="text-4xl font-semibold">
-                          {index + 1}
-                        </span>
+                        <img
+                          // the src is the base64 string of the image
+
+                          src={`data:image/jpeg;base64,${image}`}
+                          alt="tour image"
+                        />
                       </CardContent>
                     </Card>
                   </div>
@@ -109,27 +180,60 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
             <CarouselNext />
           </Carousel>
 
-          <p className="leading-8">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Omnis
-            expedita impedit sint excepturi quis reiciendis voluptas perferendis
-            tempora distinctio eligendi corporis animi enim consectetur, et non
-            iusto voluptatum maiores odio, nesciunt accusamus! Voluptatum
-            expedita, nulla voluptates culpa cupiditate autem provident ipsum
-            sit quos ducimus quis voluptatibus aspernatur perferendis tenetur
-            dolor quibusdam! Non quis hic inventore illum atque, molestiae esse
-            deserunt deleniti iste repellendus nulla, saepe error dolorem
-            voluptatem est quasi laborum nisi provident ipsum illo excepturi.
-            Alias itaque tenetur veritatis. Aliquam, distinctio expedita eos
-            accusamus veritatis debitis blanditiis harum deleniti perferendis
-            impedit sint dolor illum ducimus soluta numquam. Sint ut sapiente
-          </p>
+          <p className="leading-8">{tour?.description}</p>
         </div>
       </section>
 
       <section className="container">
         <h2 className="mb-12 text-3xl font-bold">Tour Activities</h2>
+        <div className="container grid grid-cols-3 justify-around ">
+          {tour?.activities.map((activity: Activity, index: number) => (
+            <Link
+              href={`http://maps.google.com/maps?q=${activity.location.latitude},${activity.location.longitude}`}
+              key={activity.activityId}
+            >
+              <div
+                key={activity.activityId}
+                className="m-4 overflow-hidden rounded-3xl border border-solid border-gray-200 bg-indigo-100 shadow duration-150 hover:scale-[1.03] hover:cursor-pointer"
+              >
+                <div className="px-8 py-6">
+                  <h2 className="mb-4 text-2xl font-bold">
+                    {index + 1} {activity.name}
+                  </h2>
 
-        <p className="leading-8">
+                  <div className="flex items-center">
+                    <IoLocationOutline className="m-1 h-4 w-4" />
+                    <span className="text-sm">{activity.location.address}</span>
+                  </div>
+
+                  <div className="flex items-center">
+                    <LuCalendarDays className="m-1 h-4 w-4" />
+                    <span className="text-sm">
+                      {formatDate(activity.startTimestamp)} -{" "}
+                      {formatDate(activity.endTimestamp)}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center">
+                    <IoPeopleOutline className="m-1 h-4 w-4" />
+                    <span className="text-sm">
+                      {tour.memberCount}/{tour.maxMemberCount} Members
+                    </span>
+                  </div>
+
+                  <div className="flex items-center">
+                    <GrMoney className="m-1 h-4 w-4" />
+                    <span className="text-sm">{tour.price} Baht</span>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+          {/* <Link href={`/tourist/tours/${tour.tourId}`} key={tour.tourId}>
+            <TourCard tour={tour} isEditable={false} />
+          </Link> */}
+        </div>
+        {/* <p className="leading-8">
           Lorem ipsum dolor sit, amet consectetur adipisicing elit. Omnis
           expedita impedit sint excepturi quis reiciendis voluptas perferendis
           tempora distinctio eligendi corporis animi enim consectetur, et non
@@ -148,7 +252,7 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
           quasi laboriosam ipsa laudantium nostrum doloribus eveniet, obcaecati
           voluptates sit perspiciatis, at minus in fugit ullam qui facere.
           Voluptate, deserunt sequi dolor ratione,
-        </p>
+        </p> */}
       </section>
     </main>
   );

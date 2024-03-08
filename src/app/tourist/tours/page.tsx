@@ -104,6 +104,8 @@ const tours: { count: number; data: Tour[] } = {
   ],
 };
 
+
+
 const Tours = () => {
   return (
     <div className="">
