@@ -122,7 +122,7 @@ export default function ReportIssueForm() {
                         )}
                     />
                     <DialogFooter>
-                        <Button type="submit">Save changes</Button>
+                        <Button type="submit">Report</Button>
                     </DialogFooter>
                 </form>
             </Form>
