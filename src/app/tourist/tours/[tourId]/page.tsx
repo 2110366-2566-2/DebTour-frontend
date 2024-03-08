@@ -65,6 +65,7 @@ export interface Activity {
   endTimestamp: string;
   location: Location;
 }
+import ReviewSection from "@/components/TourReviewComponent/ReviewSection";
 
 const TourInfo = ({ params }: { params: { tourId: string } }) => {
   const [tour, setTour] = useState<Tour | null>(null);
@@ -184,7 +185,7 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
         </div>
       </section>
 
-      <section className="container">
+      <section className="container mb-24">
         <h2 className="mb-12 text-3xl font-bold">Tour Activities</h2>
         <div className="container grid grid-cols-3 justify-around ">
           {tour?.activities.map((activity: Activity, index: number) => (
@@ -254,6 +255,7 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
           Voluptate, deserunt sequi dolor ratione,
         </p> */}
       </section>
+      <ReviewSection tourId={params.tourId} />
     </main>
   );
 };

@@ -104,7 +104,7 @@ export default function MemberJoinForm({tourId}: {tourId: string}) {
                     }
                 )}} className="w-[120px] mx-auto mt-4">Add Member</Button>
                 <div className='flex justify-between w-full mt-32'>
-                    <Link className={buttonVariants({ variant: "outline" })} href={`/tourist/tours/join/${tourId}`}>Back</Link>
+                    <Link className={buttonVariants({ variant: "outline" })} href={`/tourist/tours/${tourId}`}>Back</Link>
                     <Button type="submit">Submit</Button>
                 </div>
             </form>
