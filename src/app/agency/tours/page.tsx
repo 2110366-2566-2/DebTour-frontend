@@ -22,7 +22,7 @@ const tours: { count: number; data: Tour[] } = {
   count: 5,
   data: [
     {
-      tourId: 9,
+      tourId: 1,
       name: "Mountain Trek Expedition",
       startDate: "2024-03-01T08:00:00.000Z",
       endDate: "2024-03-10T18:00:00.000Z",
