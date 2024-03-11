@@ -122,6 +122,8 @@ const tours = await request.json();
 
 console.log(tours)
 
+
+
 const Tours = () => {
   return (
     <div className="">
