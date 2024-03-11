@@ -8,6 +8,7 @@ import { MdCalendarMonth } from "react-icons/md";
 import { GrMoney } from "react-icons/gr";
 import { MdPeople } from "react-icons/md";
 import { RiRefund2Line } from "react-icons/ri";
+import { GoGoal } from "react-icons/go";
 
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -45,6 +46,14 @@ const formatDate = (dateString: string) => {
     "December",
   ];
   return `${day} ${monthNames[monthIndex]} ${year}`;
+};
+
+const formatTimeSchedule = (StartTime: string, EndTime: string) => {
+  const StartDate = new Date(StartTime);
+  const EndDate = new Date(EndTime);
+  const time = `${StartDate.getHours().toString().padStart(2, "0")}:${StartDate.getMinutes().toString().padStart(2, "0")} - ${EndDate.getHours().toString().padStart(2, "0")}:${EndDate.getMinutes().toString().padStart(2, "0")}`;
+  const date = formatDate(StartTime);
+  return `${date}, ${time}`;
 };
 
 export interface Location {
@@ -133,15 +142,17 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
               </div>
             </div>
 
-            <div className="grid max-w-[200px] grid-cols-[30px,1fr] items-center gap-3">
-              <MdPeople className="h-7 w-7 rounded-full p-1 shadow-lg" />
-              <div className="text-left text-xs">
-                <p className="text-gray-500">Members</p>
-                <p className="font-bold">
-                  {tour?.memberCount} / {tour?.maxMemberCount}
-                </p>
+            <Link href={`/tourist/tours/member/${params.tourId}`}>
+              <div className="grid max-w-[200px] grid-cols-[30px,1fr] items-center gap-3">
+                <MdPeople className="h-7 w-7 rounded-full p-1 shadow-lg" />
+                <div className="text-left text-xs">
+                  <p className="text-gray-500">Members</p>
+                  <p className="font-bold">
+                    {tour?.memberCount} / {tour?.maxMemberCount}
+                  </p>
+                </div>
               </div>
-            </div>
+            </Link>
 
             <div className="grid max-w-[200px] grid-cols-[30px,1fr] items-center gap-3">
               <RiRefund2Line className="h-7 w-7 rounded-full p-1 shadow-lg" />
@@ -167,7 +178,7 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
                       <CardContent className="flex aspect-square items-center justify-center p-6">
                         <img
                           // the src is the base64 string of the image
-
+                          className="h-full w-full rounded-xl object-fill"
                           src={`data:image/jpeg;base64,${image}`}
                           alt="tour image"
                         />
@@ -187,7 +198,7 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
 
       <section className="container mb-24">
         <h2 className="mb-12 text-3xl font-bold">Tour Activities</h2>
-        <div className="container grid grid-cols-3 justify-around ">
+        <div className="container grid grid-cols-3 justify-around">
           {tour?.activities.map((activity: Activity, index: number) => (
             <Link
               href={`http://maps.google.com/maps?q=${activity.location.latitude},${activity.location.longitude}`}
@@ -195,7 +206,7 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
             >
               <div
                 key={activity.activityId}
-                className="m-4 overflow-hidden rounded-3xl border border-solid border-gray-200 bg-indigo-100 shadow duration-150 hover:scale-[1.03] hover:cursor-pointer"
+                className="relative m-4 h-[max-content] overflow-hidden rounded-3xl border border-solid border-gray-200 bg-indigo-100 shadow duration-150 hover:scale-[1.03] hover:cursor-pointer"
               >
                 <div className="px-8 py-6">
                   <h2 className="mb-4 text-2xl font-bold">
@@ -203,28 +214,25 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
                   </h2>
 
                   <div className="flex items-center">
+                    <GoGoal className="m-1 h-4 w-4" />
+                    <span className="text-sm">{activity.description}</span>
+                  </div>
+
+                  <div className="flex items-center">
                     <IoLocationOutline className="m-1 h-4 w-4" />
-                    <span className="text-sm">{activity.location.address}</span>
+                    <span className="text-sm">
+                      {activity.location.name} @ {activity.location.address}
+                    </span>
                   </div>
 
                   <div className="flex items-center">
                     <LuCalendarDays className="m-1 h-4 w-4" />
                     <span className="text-sm">
-                      {formatDate(activity.startTimestamp)} -{" "}
-                      {formatDate(activity.endTimestamp)}
+                      {formatTimeSchedule(
+                        activity.startTimestamp,
+                        activity.endTimestamp,
+                      )}
                     </span>
-                  </div>
-
-                  <div className="flex items-center">
-                    <IoPeopleOutline className="m-1 h-4 w-4" />
-                    <span className="text-sm">
-                      {tour.memberCount}/{tour.maxMemberCount} Members
-                    </span>
-                  </div>
-
-                  <div className="flex items-center">
-                    <GrMoney className="m-1 h-4 w-4" />
-                    <span className="text-sm">{tour.price} Baht</span>
                   </div>
                 </div>
               </div>
