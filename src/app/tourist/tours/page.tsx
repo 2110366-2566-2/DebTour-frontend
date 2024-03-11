@@ -18,7 +18,16 @@ export interface Tour {
   createdTimestamp: string;
 }
 
-const tours: { count: number; data: Tour[] } = {
+/*
+const tours: { count: number; data: Tour[] } = fetch(new Request("http://13.50.91.47:9000/api/v1/tours", {
+  method: "GET" // default, so we can ignore
+}));
+console.log(tours);
+
+*/
+
+/*
+var tours = {
   count: 5,
   data: [
     {
@@ -103,6 +112,15 @@ const tours: { count: number; data: Tour[] } = {
     },
   ],
 };
+*/
+ 
+
+const request = await fetch(new Request("http://13.50.91.47:9000/api/v1/tours", {
+  method: "GET" // default, so we can ignore
+}));
+const tours = await request.json();
+
+console.log(tours)
 
 
 
