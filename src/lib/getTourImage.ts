@@ -1,6 +1,6 @@
 export default async function getTourImage(tourId: string) {
   const response = await fetch(
-    `http://13.50.91.47:9000/api/v1/tours/images/${tourId}`,
+    `${process.env.BACKEND_URL}/api/v1/tours/images/${tourId}`,
     {
       method: "GET",
       headers: {
