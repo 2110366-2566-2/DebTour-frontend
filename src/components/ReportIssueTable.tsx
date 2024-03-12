@@ -1,50 +1,30 @@
 "use client";
 import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Dialog} from "@/components/ui/dialog";
-import {useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import ReportIssueDetailDisplay from "@/components/ReportIssueDetailDisplay";
-
+import getIssues from "@/lib/getIssues";
 
 export default function ReportIssueTable() {
-    const [selectedIssueID, setSelectedIssueID] = useState('' as string);
-    let issues = [
-        {
-            id: '1',
-            issueType: 'Agency Issue',
-            message: 'Hi, I am having issues with my agency. I am unable to create a tour. Please help me resolve this issue. Thanks.',
-            status: 'Pending'
-        },
-        {
-            id: '2',
-            issueType: 'Tour Issue',
-            message: 'Hi, I am having issues with my tour. I am unable to create a tour. Please help me resolve this issue. Thanks.',
-            status: 'Resolved'
-        },
-        {
-            id: '3',
-            issueType: 'Payment Issue',
-            message: 'Hi, I am having issues with my payment. I am unable to create a tour. Please help me resolve this issue. Thanks. Look forward to your response. Thanks. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus euismod, fermentum nunc nec, lacinia nunc',
-            status: 'In Progress'
-        },
-        {
-            id: '4',
-            issueType: 'Agency Issue',
-            message: 'Hi, I am having issues with my agency. I am unable to create a tour. Please help me resolve this issue. Thanks.',
-            status: 'Pending'
-        },
-        {
-            id: '5',
-            issueType: 'Tour Issue',
-            message: 'Hi, I am having issues with my tour. I am unable to create a tour. Please help me resolve this issue. Thanks.',
-            status: 'Cancelled'
-        },
-        {
-            id: '6',
-            issueType: 'Payment Issue',
-            message: 'Hi, I am having issues with my payment. I am unable to create a tour. Please help me resolve this issue. Thanks.',
-            status: 'In Progress'
+    const [selectedIssue, setSelectedIssue] = useState({
+        issueId: '',
+        issueType: '',
+        status: '',
+        message: '',
+        image: ''
+    } as any)
+    const [issues, setIssues] = useState([] as any[])
+
+
+    useEffect(() => {
+        async function get() {
+            const res = await getIssues("token", "");
+            // console.log(res.data)
+            setIssues(res.data);
         }
-    ];
+        get();
+
+    }, [])
     return (
         <div>
             <Table>
@@ -58,11 +38,13 @@ export default function ReportIssueTable() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {issues.map((issue) => (
-                        <>
-                            <TableRow key={issue.id} className="hover:cursor-pointer"
-                                      onClick={() => setSelectedIssueID(issue.id)}>
-                                <TableCell className="w-[50px]">{issue.id}</TableCell>
+                    {issues.length ? issues.map((issue) => (
+                            <TableRow key={issue.issueId + "table"} className="hover:cursor-pointer"
+                                      onClick={() => {
+                                          setSelectedIssue({...issue});
+                                      }
+                            }>
+                                <TableCell className="w-[50px]">{issue.issueId}</TableCell>
                                 <TableCell className="w-[150px]">{issue.issueType}</TableCell>
                                 <TableCell className="">
                                     <p className="line-clamp-1">
@@ -100,21 +82,25 @@ export default function ReportIssueTable() {
 
 
                             </TableRow>
-
-                            <Dialog
-                                open={selectedIssueID !== ''}
-                                onOpenChange={(isOpen) => {
-                                    if (!isOpen) {
-                                        setSelectedIssueID('')
-                                    }
-                                }}
-                                >
-                                <ReportIssueDetailDisplay issueId={selectedIssueID}/>
-                            </Dialog>
-                        </>
-                    ))}
+                    )) : <></>}
                 </TableBody>
-
+                <Dialog
+                    key={selectedIssue.issueId + "dialog"}
+                    open={selectedIssue.issueId !== ''}
+                    onOpenChange={(isOpen) => {
+                        if (!isOpen) {
+                            setSelectedIssue({
+                                issueId: '',
+                                issueType: '',
+                                status: '',
+                                message: '',
+                                image: ''
+                            })
+                        }
+                    }}
+                >
+                    <ReportIssueDetailDisplay key={selectedIssue.issueId + "display"} issue={selectedIssue}/>
+                </Dialog>
             </Table>
         </div>
     )
