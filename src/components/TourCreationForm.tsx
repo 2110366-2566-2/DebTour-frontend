@@ -226,7 +226,16 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
           return activity;
         });
       }
-      // console.log(values)
+      // change base64 string to file and add to the values
+      const reader = new FileReader();
+      reader.onload = function () {
+        const base64 = reader.result;
+        values.images = base64;
+      };
+      if (values.images) {
+        reader.readAsDataURL(values.images);
+      }
+      console.log(values)
       oldValues = values;
       form.reset(res.data);
     }
