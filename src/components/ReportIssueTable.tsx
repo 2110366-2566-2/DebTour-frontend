@@ -4,23 +4,56 @@ import {Dialog} from "@/components/ui/dialog";
 import {useEffect, useMemo, useState} from "react";
 import ReportIssueDetailDisplay from "@/components/ReportIssueDetailDisplay";
 import getIssues from "@/lib/getIssues";
+import {useUserStore} from "@/context/store";
 
-export default function ReportIssueTable() {
+export default function ReportIssueTable({role}: { role: string}) {
+    if (role === 'tourist' || role === 'agency') {
+        role = 'user'
+    }
+
     const [selectedIssue, setSelectedIssue] = useState({
         issueId: '',
         issueType: '',
         status: '',
         message: '',
-        image: ''
+        image: '',
+        reporterUsername: '',
+        reportTimestamp: '',
+        resolverAdminId: '',
+        resolveMessage: '',
+        resolveTimestamp: ''
     } as any)
-    const [issues, setIssues] = useState([] as any[])
 
+    const [issues, setIssues] = useState([] as any[])
 
     useEffect(() => {
         async function get() {
             const res = await getIssues("token", "");
-            // console.log(res.data)
-            setIssues(res.data);
+            let temp = []
+            for (let i = 0; i < res.data.length; i++) {
+                // parse date
+                let reportTime = new Date(res.data[i].reportTimestamp);
+                let resolveTime = new Date(res.data[i].resolveTimestamp);
+                let reportTimeStr = reportTime.toLocaleString();
+
+                let resolveTimeStr = "-"
+                if (res.data[i].resolveTimestamp !== null) {
+                    resolveTimeStr = resolveTime.toLocaleString();
+                }
+                temp.push({
+                    issueId: res.data[i].issueId,
+                    issueType: res.data[i].issueType,
+                    status: res.data[i].status,
+                    message: res.data[i].message,
+                    image: res.data[i].image,
+                    reporterUsername: res.data[i].reporterUsername,
+                    reportTimestamp: reportTimeStr,
+                    resolverAdminId: res.data[i].resolverAdminId,
+                    resolveMessage: res.data[i].resolveMessage,
+                    resolveTimestamp: resolveTimeStr
+                });
+            }
+            setIssues(temp);
         }
         get();
 
@@ -32,9 +65,11 @@ export default function ReportIssueTable() {
                 <TableHeader>
                     <TableRow>
                         <TableHead className="w-[100px]">Issue ID</TableHead>
+                        {role === 'admin' && <TableHead>Reporter</TableHead>}
                         <TableHead>Issue Type</TableHead>
-                        <TableHead>Message</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead>Report Time</TableHead>
+                        <TableHead>Resolve Time</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -45,13 +80,9 @@ export default function ReportIssueTable() {
                                       }
                             }>
                                 <TableCell className="w-[50px]">{issue.issueId}</TableCell>
+                                {role === 'admin' && <TableCell className="w-[150px]">{issue.reporterUsername}</TableCell>}
                                 <TableCell className="w-[150px]">{issue.issueType}</TableCell>
-                                <TableCell className="">
-                                    <p className="line-clamp-1">
-                                        {issue.message}
-                                    </p>
-                                </TableCell>
-                                <TableCell className="w-[200px] flex gap-1 items-center">
+                                <TableCell className="w-[150px] flex gap-1 items-center">
                                     {issue.status === 'Pending' &&
                                         <svg className="fill-gray-400" xmlns="http://www.w3.org/2000/svg" height="18"
                                              viewBox="0 -960 960 960" width="24">
@@ -78,8 +109,10 @@ export default function ReportIssueTable() {
                                         </svg>}
 
                                     <span className>{issue.status}</span>
-                                </TableCell>
 
+                                </TableCell>
+                                <TableCell className="w-[120px] text-xs">{issue.reportTimestamp}</TableCell>
+                                <TableCell className="w-[120px] text-xs">{issue.resolveTimestamp}</TableCell>
 
                             </TableRow>
                     )) : <></>}
@@ -94,7 +127,12 @@ export default function ReportIssueTable() {
                                 issueType: '',
                                 status: '',
                                 message: '',
-                                image: ''
+                                image: '',
+                                reporterUsername: '',
+                                reportTimestamp: '',
+                                resolverAdminId: '',
+                                resolveMessage: '',
+                                resolveTimestamp: ''
                             })
                         }
                     }}
