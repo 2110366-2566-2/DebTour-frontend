@@ -19,7 +19,7 @@ export default function ReportIssueTable({role}: { role: string}) {
         image: '',
         reporterUsername: '',
         reportTimestamp: '',
-        resolverAdminId: '',
+        resolverAdminId: 0,
         resolveMessage: '',
         resolveTimestamp: ''
     } as any)
@@ -43,16 +43,17 @@ export default function ReportIssueTable({role}: { role: string}) {
                 temp.push({
                     issueId: res.data[i].issueId,
                     issueType: res.data[i].issueType,
-                    status: res.data[i].status,
+                    status: res.data[i].status ? res.data[i].status : "",
                     message: res.data[i].message,
                     image: res.data[i].image,
                     reporterUsername: res.data[i].reporterUsername,
                     reportTimestamp: reportTimeStr,
-                    resolverAdminId: res.data[i].resolverAdminId,
-                    resolveMessage: res.data[i].resolveMessage,
+                    resolverAdminId: (res.data[i].resolverAdminId !== null) ? res.data[i].resolverAdminId :0,
+                    resolveMessage: (res.data[i].resolveMessage !== null) ? res.data[i].resolveMessage : '',
                     resolveTimestamp: resolveTimeStr
                 });
             }
+            temp.sort((a, b) => (a.issueId > b.issueId) ? -1 : 1);
             setIssues(temp);
         }
         get();
@@ -66,6 +67,7 @@ export default function ReportIssueTable({role}: { role: string}) {
                     <TableRow>
                         <TableHead className="w-[100px]">Issue ID</TableHead>
                         {role === 'admin' && <TableHead>Reporter</TableHead>}
+                        {role === 'admin' && <TableHead>Resolver Admin ID</TableHead>}
                         <TableHead>Issue Type</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Report Time</TableHead>
@@ -81,6 +83,7 @@ export default function ReportIssueTable({role}: { role: string}) {
                             }>
                                 <TableCell className="w-[50px]">{issue.issueId}</TableCell>
                                 {role === 'admin' && <TableCell className="w-[150px]">{issue.reporterUsername}</TableCell>}
+                                {role === 'admin' && <TableCell className="w-[150px]">{issue.resolverAdminId}</TableCell>}
                                 <TableCell className="w-[150px]">{issue.issueType}</TableCell>
                                 <TableCell className="w-[150px] flex gap-1 items-center">
                                     {issue.status === 'Pending' &&
@@ -130,14 +133,14 @@ export default function ReportIssueTable({role}: { role: string}) {
                                 image: '',
                                 reporterUsername: '',
                                 reportTimestamp: '',
-                                resolverAdminId: '',
+                                resolverAdminId: 0,
                                 resolveMessage: '',
                                 resolveTimestamp: ''
                             })
                         }
                     }}
                 >
-                    <ReportIssueDetailDisplay key={selectedIssue.issueId + "display"} issue={selectedIssue}/>
+                    <ReportIssueDetailDisplay key={selectedIssue.issueId + "display"} issue={selectedIssue} role={role}/>
                 </Dialog>
             </Table>
         </div>
