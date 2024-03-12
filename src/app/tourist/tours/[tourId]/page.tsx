@@ -52,8 +52,9 @@ const formatTimeSchedule = (StartTime: string, EndTime: string) => {
   const StartDate = new Date(StartTime);
   const EndDate = new Date(EndTime);
   const time = `${StartDate.getHours().toString().padStart(2, "0")}:${StartDate.getMinutes().toString().padStart(2, "0")} - ${EndDate.getHours().toString().padStart(2, "0")}:${EndDate.getMinutes().toString().padStart(2, "0")}`;
-  const date = formatDate(StartTime);
-  return `${date}, ${time}`;
+  const StartDateString = formatDate(StartTime);
+  const EndDateString = formatDate(EndTime);
+  return `${StartDateString} - ${EndDateString}`;
 };
 
 export interface Location {
@@ -78,7 +79,7 @@ import ReviewSection from "@/components/TourReviewComponent/ReviewSection";
 
 const TourInfo = ({ params }: { params: { tourId: string } }) => {
   const [tour, setTour] = useState<Tour | null>(null);
-  const [tourImage, setTourImage] = useState<string[] | null>(null);
+  const [tourImage, setTourImage] = useState<{ tourId: number; images: string[] } | null>(null);
   useEffect(() => {
     async function waitForGetTour() {
       const t = await getTour(params.tourId);
@@ -93,7 +94,6 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
     waitForGetTour();
     waitForGetTourImage();
   }, []);
-
   return (
     <main>
       <section className="mb-32 h-[350px] bg-indigo-100">
@@ -171,22 +171,38 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
         <div className="mx-auto grid max-w-[1200px] grid-cols-2">
           <Carousel className="w-full max-w-sm">
             <CarouselContent>
-              {tourImage?.images.map((image: string) => (
-                <CarouselItem>
-                  <div className="p-1">
-                    <Card>
-                      <CardContent className="flex aspect-square items-center justify-center p-6">
-                        <img
-                          // the src is the base64 string of the image
-                          className="h-full w-full rounded-xl object-fill"
-                          src={`data:image/jpeg;base64,${image}`}
-                          alt="tour image"
-                        />
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CarouselItem>
-              ))}
+              {
+              tourImage!=null && tourImage.images!=null?(
+                tourImage?.images.map((image: string) => (
+                  <CarouselItem>
+                    <div className="p-1">
+                      <Card>
+                        <CardContent className="flex aspect-square items-center justify-center p-6">
+                          <img
+                            // the src is the base64 string of the image
+                            className="h-full w-full rounded-xl object-fill"
+                            src={`data:image/jpeg;base64,${image}`}
+                            alt="tour image"
+                          />
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))
+              ):(<CarouselItem>
+                <div className="p-1">
+                  <Card>
+                    <CardContent className="flex aspect-square items-center justify-center p-6">
+                      <img
+                        // the src is the base64 string of the image
+                        className="h-full w-full rounded-xl object-fill"
+                        src="https://source.unsplash.com/600x600/?tour"
+                        alt="tour image"
+                      />
+                    </CardContent>
+                  </Card>
+                </div>
+              </CarouselItem>)}
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />

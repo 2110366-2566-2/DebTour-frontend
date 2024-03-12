@@ -8,8 +8,8 @@ export default async function ReviewCards({ tourId }: { tourId: string }) {
         <div className="mt-4 grid grid-flow-row-dense gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {
                 (reviews != null && reviews.length > 0) ?
-                    reviews.map((review: any) => (
-                        <ReviewCard description={review.description} ratingScore={review.ratingScore} touristUsername={review.touristUsername} />
+                    reviews.map((review: any, index: number) => (
+                        <ReviewCard key={index} description={review.description} ratingScore={review.ratingScore} touristUsername={review.touristUsername} />
                     ))
                     :
                     <p>No reviews yet</p>
