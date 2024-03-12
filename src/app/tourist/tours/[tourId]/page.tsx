@@ -75,6 +75,7 @@ export interface Activity {
   location: Location;
 }
 import ReviewSection from "@/components/TourReviewComponent/ReviewSection";
+import { set } from "date-fns";
 
 const TourInfo = ({ params }: { params: { tourId: string } }) => {
   const [tour, setTour] = useState<Tour | null>(null);
@@ -82,7 +83,13 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
   useEffect(() => {
     async function waitForGetTour() {
       const t = await getTour(params.tourId);
-      setTour(t.data);
+      if (t.data == null) {
+        // create empty tour array
+        const emptyArray: Tour[] = [];
+        setTour(emptyArray);
+      } else {
+        setTour(t.data);
+      }
       console.log(t.data);
     }
     async function waitForGetTourImage() {

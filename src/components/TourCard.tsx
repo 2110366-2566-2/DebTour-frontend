@@ -47,7 +47,7 @@ const TourCard = ({ tour, isEditable }: Props) => {
       />
 
       <div className="px-8 py-6">
-        <h2 className="mb-4 text-2xl font-bold">{tour.name}</h2>
+        <h2 className="mb-4 text-2xl font-bold">{tour.tourName}</h2>
 
         <div className="flex items-center">
           <IoLocationOutline className="m-1 h-4 w-4" />
@@ -74,9 +74,7 @@ const TourCard = ({ tour, isEditable }: Props) => {
         </div>
 
         <div className="flex justify-end">
-          {isEditable && (
-            <TourCardEditButton tourId={tour.tourId} />
-          )}
+          {isEditable && <TourCardEditButton tourId={tour.tourId} />}
         </div>
       </div>
     </div>
