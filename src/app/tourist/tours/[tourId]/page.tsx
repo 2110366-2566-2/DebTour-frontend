@@ -122,8 +122,11 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
           <div className="flex justify-center">
             {/* <MdOutlineStar className="h-8 w-8 text-yellow-500" />
             <MdOutlineStarHalf className="h-8 w-8 text-yellow-500" /> */}
-            {tourAvgRating != null ? (
-              <>
+            {
+            tourAvgRating != null ? 
+            tourAvgRating>0?
+            (
+              <> 
                 {[...Array(Math.floor(tourAvgRating))].map((_, i) => (
                   <MdOutlineStar className="h-8 w-8 text-yellow-500" />
                 ))}
@@ -136,7 +139,11 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
                   <MdOutlineStarBorder className="h-8 w-8 text-yellow-500" />
                 ))}
               </>
-            ) : null}
+            ):
+            <>
+              <span className="text-gray-500">No Rating Yet</span>
+            </>:""
+            }
           </div>
 
           <Link href={`/tourist/tours/join/${params.tourId}`}>
