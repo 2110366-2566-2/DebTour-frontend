@@ -38,7 +38,7 @@ export default async function RootLayout({
         <html lang="en">
         <body className={`${inter.className} relative h-screen`}>
         <NextAuthProvider session={nextAuthSession}>
-            <Navbar userRole={role ? role.value : "guest"} handleSignout={handleSignout}/>
+          <Navbar userRole={role? role.value:"Guest"} handleSignout={handleSignout}/>
             {children}
             <Toaster/>
         </NextAuthProvider>

@@ -85,7 +85,7 @@ function Navbar({userRole, handleSignout}: { userRole: string, handleSignout: ()
                     )}
                 </div>
 
-                {userRole === "guest" &&
+                {userRole === "Guest" &&
                         <Button>
                             <Link href="/auth">Log In / Sign Up</Link>
                         </Button>

@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { MdOutlineStar } from "react-icons/md";
+import { MdOutlineStar, MdOutlineStarBorder } from "react-icons/md";
 import { MdOutlineStarHalf } from "react-icons/md";
 import { MdLocationOn } from "react-icons/md";
 import { MdCalendarMonth } from "react-icons/md";
@@ -77,10 +77,12 @@ export interface Activity {
 }
 import ReviewSection from "@/components/TourReviewComponent/ReviewSection";
 import { set } from "date-fns";
+import getTourAvgRating from "@/lib/getTourAvgRating";
 
 const TourInfo = ({ params }: { params: { tourId: string } }) => {
   const [tour, setTour] = useState<Tour | null>(null);
   const [tourImage, setTourImage] = useState<{ tourId: number; images: string[] } | null>(null);
+  const [tourAvgRating, setTourAvgRating] = useState<number | null>(null);
   useEffect(() => {
     async function waitForGetTour() {
       const t = await getTour(params.tourId);
@@ -98,8 +100,15 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
       setTourImage(i.data);
       console.log(i.data);
     }
+    async function waitForGetTourAvgRating() {
+      const r = await getTourAvgRating(params.tourId);
+      const rating = Math.round(r.data * 2) / 2;
+      setTourAvgRating(rating);
+      console.log(rating);
+    }
     waitForGetTour();
     waitForGetTourImage();
+    waitForGetTourAvgRating();
   }, []);
   return (
     <main>
@@ -111,11 +120,30 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
           </p>
 
           <div className="flex justify-center">
-            <MdOutlineStar className="h-8 w-8 text-yellow-500" />
-            <MdOutlineStar className="h-8 w-8 text-yellow-500" />
-            <MdOutlineStar className="h-8 w-8 text-yellow-500" />
-            <MdOutlineStar className="h-8 w-8 text-yellow-500" />
-            <MdOutlineStarHalf className="h-8 w-8 text-yellow-500" />
+            {/* <MdOutlineStar className="h-8 w-8 text-yellow-500" />
+            <MdOutlineStarHalf className="h-8 w-8 text-yellow-500" /> */}
+            {
+            tourAvgRating != null ? 
+            tourAvgRating>0?
+            (
+              <> 
+                {[...Array(Math.floor(tourAvgRating))].map((_, i) => (
+                  <MdOutlineStar className="h-8 w-8 text-yellow-500" />
+                ))}
+                {tourAvgRating % 1 != 0 ? (
+                  <MdOutlineStarHalf className="h-8 w-8 text-yellow-500" />
+                ) : (
+                  ""
+                )}
+                {[...Array(5 - Math.ceil(tourAvgRating))].map((_, i) => (
+                  <MdOutlineStarBorder className="h-8 w-8 text-yellow-500" />
+                ))}
+              </>
+            ):
+            <>
+              <span className="text-gray-500">No Rating Yet</span>
+            </>:""
+            }
           </div>
 
           <Link href={`/tourist/tours/join/${params.tourId}`}>
