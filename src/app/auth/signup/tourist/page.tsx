@@ -92,7 +92,6 @@ const TouristRegistrationPage = () => {
       title: "Tourist created",
       description: "You can now login",
     });
-    localStorage.removeItem("googleUser");
     const response = {
       id: res.data.role,
       token: res.data.token,

@@ -10,7 +10,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const Navbar = () => {
-  const userRole = useUserStore((state) => state.role);
+  const userRole = useUserStore((state) => state.id);
 
   const pathname = usePathname();
   const [activeRoute, setActiveRoute] = useState("");
