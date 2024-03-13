@@ -49,6 +49,7 @@ const formSchema = z
       )
       .min(1)
       .max(50),
+      images: z.instanceof(FileList).optional().or(z.array(z.instanceof(File))).optional(),
   })
   .refine((data) => {
     if (data.startDate >= data.endDate) {
@@ -118,5 +119,29 @@ const formSchema = z
       });
     }
     return true;
-  });
+  })
+  // .refine((data) => {
+  //   if (data.images){
+  //     if (data.images.length > 5) {
+  //       return {
+  //         message: "Maximum 5 images allowed",
+  //         path: ["images"],
+  //       };
+  //     }
+  //   }
+  //   return true;
+  // })
+  // .refine((data) => {
+  //   if (data.images){
+  //     for (let i = 0; i < data.images.length; i++) {
+  //       if (!data.images[i].type.includes("image")) {
+  //         return {
+  //           message: "Only images are allowed",
+  //           path: ["images"],
+  //         };
+  //       }
+  //     }
+  //   }
+  // })
+  ;
 export default formSchema;

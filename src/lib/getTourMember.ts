@@ -1,6 +1,6 @@
-export default async function getTour(tourId: string) {
+export default async function getTourMember(tourId: string) {
   const response = await fetch(
-    `${process.env.BACKEND_URL}/api/v1/tours/${tourId}`,
+    `${process.env.BACKEND_URL}/api/v1/tours/tourists/${tourId}`,
     {
       method: "GET",
       headers: {
@@ -13,7 +13,7 @@ export default async function getTour(tourId: string) {
   // const res = await response.json()
   // console.log(response)
   if (!response.ok) {
-    throw new Error("Failed to get tour");
+    throw new Error("Failed to get tour member");
   }
   return response.json();
 }

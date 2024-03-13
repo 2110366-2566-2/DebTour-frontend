@@ -5,6 +5,7 @@ import { GrMoney } from "react-icons/gr";
 import { IoLocationOutline, IoPeopleOutline } from "react-icons/io5";
 import { LuCalendarDays } from "react-icons/lu";
 import { Button } from "./ui/button";
+import TourCardEditButton from "./TourCardEditButton";
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -46,7 +47,7 @@ const TourCard = ({ tour, isEditable }: Props) => {
       />
 
       <div className="px-8 py-6">
-        <h2 className="mb-4 text-2xl font-bold">{tour.name}</h2>
+        <h2 className="mb-4 text-2xl font-bold">{tour.tourName}</h2>
 
         <div className="flex items-center">
           <IoLocationOutline className="m-1 h-4 w-4" />
@@ -73,11 +74,7 @@ const TourCard = ({ tour, isEditable }: Props) => {
         </div>
 
         <div className="flex justify-end">
-          {isEditable && (
-            <Button variant="outline" className="">
-              Edit
-            </Button>
-          )}
+          {isEditable && <TourCardEditButton tourId={tour.tourId} />}
         </div>
       </div>
     </div>

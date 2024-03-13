@@ -1,3 +1,4 @@
+import { set } from "date-fns";
 import DatePicker from "./DatePicker";
 import { Input } from "./ui/input";
 import {
@@ -11,9 +12,28 @@ import {
 interface Props {
   heading: string;
   imgPath: string;
+  setSearchName: (name: string) => void;
+  setStartDate: (date: string) => void;
+  setEndDate: (date: string) => void;
+  setMemberCount: (count: string) => void;
+  setMinPrice: (price: string) => void;
+  setMaxPrice: (price: string) => void;
 }
 
-const TourSearchHeader = ({ heading, imgPath }: Props) => {
+const TourSearchHeader = ({
+  heading,
+  imgPath,
+  setSearchName,
+  setStartDate,
+  setEndDate,
+  setMemberCount,
+  setMinPrice,
+  setMaxPrice,
+}: Props) => {
+  const handleMemberChange = (selectedOption) => {
+    console.log(selectedOption.value); // Log the selected value
+  };
+
   return (
     <div
       className="mx-auto mb-12 mt-10 h-[400px] max-w-[1300px] rounded-[36px] bg-indigo-100 object-cover py-12"
@@ -31,23 +51,49 @@ const TourSearchHeader = ({ heading, imgPath }: Props) => {
         <Input
           className="col-span-5 rounded-2xl"
           placeholder="Search your destination or tour name"
+          onChange={(e) => setSearchName(e.target.value)}
         />
 
-        <DatePicker placeholder={"Start Date"} />
-        <DatePicker placeholder={"End Date"} />
-        <Select>
+        {/* <DatePicker placeholder={"Start Date"} /> */}
+        <Input
+          type="text"
+          className="rounded-md"
+          placeholder="Start date"
+          onChange={(e) => setStartDate(e.target.value)}
+          onFocus={(e) => (e.target.type = "date")}
+          onBlur={(e) => (e.target.type = "text")}
+        />
+        {/* <DatePicker placeholder={"End Date"} /> */}
+        <Input
+          type="text"
+          className="rounded-md"
+          placeholder="End date"
+          onChange={(e) => setEndDate(e.target.value)}
+          onFocus={(e) => (e.target.type = "date")}
+          onBlur={(e) => (e.target.type = "text")}
+        />
+        <Select
+          onValueChange={(e) => {
+            console.log(e.Max);
+          }}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Total members" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="1">1</SelectItem>
-            <SelectItem value="2-5">2-5</SelectItem>
-            <SelectItem value="6+">6+</SelectItem>
+            <SelectItem value={{ Min: "0", Max: "1" }}>1</SelectItem>
+            <SelectItem value={{ Min: "2", Max: "5" }}>2-5</SelectItem>
+            <SelectItem value={{ Min: "6", Max: "" }}>6+</SelectItem>
           </SelectContent>
         </Select>
-
-        <Input placeholder="Minimum price" />
-        <Input placeholder="Maximum price" />
+        <Input
+          placeholder="Minimum price"
+          onChange={(e) => setMinPrice(e.target.value)}
+        />
+        <Input
+          placeholder="Maximum price"
+          onChange={(e) => setMaxPrice(e.target.value)}
+        />
       </div>
     </div>
   );

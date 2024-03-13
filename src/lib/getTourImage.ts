@@ -1,6 +1,6 @@
-export default async function getTour(tourId: string) {
+export default async function getTourImage(tourId: string) {
   const response = await fetch(
-    `${process.env.BACKEND_URL}/api/v1/tours/${tourId}`,
+    `${process.env.BACKEND_URL}/api/v1/tours/images/${tourId}`,
     {
       method: "GET",
       headers: {
