@@ -15,13 +15,13 @@ export async function middleware(request: NextRequest) {
   //   return NextResponse.rewrite(new URL('/dashboard/user', request.url))
   // }if(request.nextUrl.pathname.startsWith('/agency')){
   if(request.nextUrl.pathname.startsWith('/agency')) {
-    if(!role || role.value!=='agency'){
+    if(!role || role.value!=='Agency'){
       return NextResponse.rewrite(new URL('/auth', request.url))
     }
   }
   if(request.nextUrl.pathname.startsWith('/tourist/tours/join/') 
   || request.nextUrl.pathname.startsWith('/tourist/tours/member/')){
-    if(!role || role.value!=='tourist'){
+    if(!role || role.value!=='Tourist'){
       return NextResponse.rewrite(new URL('/auth', request.url))
     }
   }
