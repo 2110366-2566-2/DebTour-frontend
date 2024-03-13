@@ -5,5 +5,6 @@ type User = {
 };
 
 export const useUserStore = create<User>(() => ({
-  role: "agency",
+  role: "guest",
 }));
+

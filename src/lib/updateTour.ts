@@ -2,7 +2,7 @@ import { z } from "zod";
 import formSchema from '@/model/formSchema';
 
 export default async function updateTour(token: string, tour: z.infer<typeof formSchema>, oldTour: z.infer<typeof formSchema>, tourId: string) {
-    const response = await fetch(`http://13.50.91.47:9000/api/v1/tours/${tourId}`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/api/v1/tours/${tourId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -19,7 +19,7 @@ export default async function updateTour(token: string, tour: z.infer<typeof for
     if(oldTour.activities == tour.activities) {
         return response.json();
     }
-    const response2 = await fetch(`http://13.50.91.47:9000/api/v1/tours/activities/${tourId}`, {
+    const response2 = await fetch(`${process.env.BACKEND_URL}/api/v1/tours/activities/${tourId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",

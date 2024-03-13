@@ -1,5 +1,5 @@
 export default async function getReviewByTourId(tourId: string) {
-    const response = await fetch(`http://13.50.91.47:9000/api/v1/reviews/tour/${tourId}`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/api/v1/reviews/tour/${tourId}`, {
         method: "GET",
         headers: {
             // "Content-Type": "application/json"

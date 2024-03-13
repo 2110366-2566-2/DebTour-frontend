@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -33,42 +33,92 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import createTourist from "@/lib/createTourist";
+import { toast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),
+  phone: z.string().min(10).max(10),
+  email: z.string().email(),
+  image: z.string().url(),
+  citizenId: z.string().min(13).max(13),
+  firstname: z.string().min(2).max(50),
+  lastname: z.string().min(2).max(50),
+  address: z.string().min(2).max(100),
+  birthdate: z.date(),
+  gender: z.enum([
+    "Male",
+    "Female",
+    "Others",
+  ]),
+  defaultPayment: z.string().min(2).max(50),
 });
 
 const TouristRegistrationPage = () => {
+  const router = useRouter()
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
+      phone: "",
+      email: "",
+      image: "",
+      citizenId: "",
+      firstname: "",
+      lastname: "",
+      address: "",
+      birthdate: new Date(),
+      gender: "Others",
+      defaultPayment: "Mobile Banking",
     },
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+    const res = await createTourist({ data: values });
+    // console.log(res);
+    if (!res.success) {
+      toast({
+        title: "Failed to create tourist",
+        description: "Please try again",
+      });
+      return;
+    }
+    toast({
+      title: "Tourist created",
+      description: "You can now login",
+    });
+    localStorage.removeItem("googleUser");
+    const response = {
+      id: res.data.role,
+      token: res.data.token,
+    }
+    const redirectUrl = `/intermediate/signin/` + `?response=${JSON.stringify(response)}`
+    // console.log(redirectUrl)
+    router.push(redirectUrl)
   }
 
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
+  useEffect(() => {
+    const googleUserStr = localStorage.getItem("googleUser");
+    const googleUser = googleUserStr ? JSON.parse(googleUserStr) : null;
+    // console.log(googleUser);
+    if (googleUser) {
+      form.reset({
+        username: googleUser.id,
+        email: googleUser.email,
+        image: googleUser.image,
+        gender: "Others",
+        defaultPayment: "Mobile Banking",
+      })
+    }
+  }
+  , []);
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  const [step, setStep] = useState(1);
 
   const handleNextStep = () => {
     setStep((prevStep) => prevStep + 1);
@@ -77,8 +127,6 @@ const TouristRegistrationPage = () => {
   const handlePrevStep = () => {
     setStep((prevStep) => prevStep - 1);
   };
-
-  const [date, setDate] = useState<Date>();
 
   return (
     <div className="absolute left-1/2  -translate-x-1/2  transform">
@@ -93,54 +141,54 @@ const TouristRegistrationPage = () => {
                 <div className="flex flex-col gap-6">
                   <FormField
                     control={form.control}
-                    name="username"
+                    name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Username</FormLabel>
+                        <FormLabel>Phone number</FormLabel>
                         <FormControl>
-                          <Input placeholder="Username" {...field} />
+                          <Input placeholder="Phone number" {...field} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
-                    name="username"
+                    name="citizenId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>Citizen ID</FormLabel>
                         <FormControl>
-                          <Input placeholder="Email" {...field} />
+                          <Input
+                            placeholder="Enter your citizen ID"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
-                    name="username"
+                    name="firstname"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>First name</FormLabel>
                         <FormControl>
-                          <Input placeholder="password" {...field} />
+                          <Input placeholder="Enter your first name" {...field} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
-                    name="username"
+                    name="lastname"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Confirm password</FormLabel>
+                        <FormLabel>Last name</FormLabel>
                         <FormControl>
-                          <Input placeholder="password" {...field} />
+                          <Input placeholder="Enter your last name" {...field} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -155,24 +203,20 @@ const TouristRegistrationPage = () => {
                 <div className="flex flex-col gap-6">
                   <FormField
                     control={form.control}
-                    name="username"
+                    name="address"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Citizen ID</FormLabel>
+                        <FormLabel>Address</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="Enter your citizen ID"
-                            {...field}
-                          />
+                          <Textarea placeholder="Write your address" {...field} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
-                    name="username"
+                    name="birthdate"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Birth date</FormLabel>
@@ -184,12 +228,12 @@ const TouristRegistrationPage = () => {
                                   variant={"outline"}
                                   className={cn(
                                     "w-[280px] justify-start text-left font-normal",
-                                    !date && "text-muted-foreground",
+                                    !field.value && "text-muted-foreground",
                                   )}
                                 >
                                   <CalendarIcon className="mr-2 h-4 w-4" />
-                                  {date ? (
-                                    format(date, "PPP")
+                                  {field.value ? (
+                                    format(field.value, "PPP")
                                   ) : (
                                     <span>Pick a date</span>
                                   )}
@@ -198,9 +242,12 @@ const TouristRegistrationPage = () => {
                               <PopoverContent className="w-auto p-0">
                                 <Calendar
                                   mode="single"
-                                  selected={date}
-                                  onSelect={setDate}
+                                  selected={field.value}
+                                  onSelect={field.onChange}
                                   initialFocus
+                                  disabled={(date) =>
+                                    date > new Date(new Date().toDateString())
+                                  }
                                 />
                               </PopoverContent>
                             </Popover>
@@ -213,19 +260,19 @@ const TouristRegistrationPage = () => {
 
                   <FormField
                     control={form.control}
-                    name="username"
+                    name="gender"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Gender</FormLabel>
                         <FormControl>
-                          <Select>
+                          <Select defaultValue={field.value} onValueChange={field.onChange}>
                             <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="---" />
+                              <SelectValue/>
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="A">Female</SelectItem>
-                              <SelectItem value="B">Male</SelectItem>
-                              <SelectItem value="C">Others</SelectItem>
+                              <SelectItem value="Male">Male</SelectItem>
+                              <SelectItem value="Female">Female</SelectItem>
+                              <SelectItem value="Others">Others</SelectItem>
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -234,36 +281,6 @@ const TouristRegistrationPage = () => {
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Address</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="Write your agency's address" />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone number</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter your phone number"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
                 </div>
               </>
             )}
@@ -290,10 +307,11 @@ const TouristRegistrationPage = () => {
                   Next
                 </Button>
               ) : (
-                <Button type="submit">Submit</Button>
+                <Button type="submit" id='submitBtn'>Submit</Button>
               )}
             </div>
           </form>
+          {/* <Button onClick={() => console.log(form.getValues())}>Log</Button> */}
         </Form>
       </div>
     </div>

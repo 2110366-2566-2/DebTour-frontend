@@ -1,6 +1,6 @@
 export default async function getTourMember(tourId: string) {
   const response = await fetch(
-    `http://13.50.91.47:9000/api/v1/tours/tourists/${tourId}`,
+    `${process.env.BACKEND_URL}/api/v1/tours/tourists/${tourId}`,
     {
       method: "GET",
       headers: {

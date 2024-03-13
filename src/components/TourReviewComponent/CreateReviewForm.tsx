@@ -23,7 +23,7 @@ export default function CreateReviewForm({ tourId }: { tourId: string }) {
     });
     async function onSubmit(values: z.infer<typeof reviewFormSchema>) {
         console.log(values);
-        const res = await createReview(values, "token");
+        const res = await createReview("token", values);
         console.log(res);
         if (!res.success) {
             toast({ title: "Failed to create review", description: "An error occurred while creating the review" });
