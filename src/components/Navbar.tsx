@@ -62,7 +62,7 @@ function Navbar({ userRole, handleSignout }: { userRole: string, handleSignout: 
         </div>
 
         <div className="ml-auto hidden gap-6 lg:flex">
-          {userRole === "guest" ? (
+          {userRole === "Guest" ? (
             <Button>
               <Link href="/auth">Log In / Sign Up</Link>
             </Button>
