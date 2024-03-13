@@ -117,7 +117,14 @@ function Navbar({userRole, handleSignout}: { userRole: string, handleSignout: ()
                                 <DropdownMenuSeparator/>
                                 <DropdownMenuGroup>
                                     <DropdownMenuItem>
-                                        Edit Profile
+                                        {userRole === "Tourist" &&
+                                            <Link href={'/tourist/profile'}>Edit Profile</Link>
+                                        }
+                                        {
+                                        userRole === "Agency" &&
+                                            <Link href={'/agency/profile'}>Edit Profile</Link>
+                                        }
+
                                     </DropdownMenuItem>
                                 </DropdownMenuGroup>
                                 {
