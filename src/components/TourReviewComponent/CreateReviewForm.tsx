@@ -10,15 +10,18 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 export default function CreateReviewForm({ tourId }: { tourId: string }) {
+    const { data: session, status } = useSession()
     const form = useForm<z.infer<typeof reviewFormSchema>>({
         resolver: zodResolver(reviewFormSchema),
         defaultValues: {
             description: "",
             ratingScore: 5,
             tourId: parseInt(tourId),
-            touristUsername: "John Smith",
+            touristUsername: session?.user?.name??"",
         }
     });
     async function onSubmit(values: z.infer<typeof reviewFormSchema>) {
@@ -73,6 +76,7 @@ export default function CreateReviewForm({ tourId }: { tourId: string }) {
                         )}
                     />
                     <Button type="submit" >Submit</Button>
+                    <Button onClick={()=>console.log(form.getValues())}>Log</Button>
                 </form>
             </Form>
         </div>
