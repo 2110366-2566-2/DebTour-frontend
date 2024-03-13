@@ -21,7 +21,7 @@ import updateTourist from "@/lib/updateTourist";
 import {redirect, useRouter} from "next/navigation";
 import {toast} from "@/components/ui/use-toast";
 
-export default function AgencyProfile() {
+export default function TouristProfile() {
     const user = useUserStore()
     const [tourist, setTourist] = useState({} as any)
 
