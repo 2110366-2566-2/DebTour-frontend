@@ -3,21 +3,20 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useUserStore } from "@/context/store";
 import { SiYourtraveldottv } from "react-icons/si";
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
 
-const Navbar = () => {
-  const userRole = useUserStore((state) => state.id);
+function Navbar({ userRole, handleSignout }: { userRole: string, handleSignout: () => void }) {
 
   const pathname = usePathname();
   const [activeRoute, setActiveRoute] = useState("");
 
   useEffect(() => {
     setActiveRoute(pathname);
-  }, [pathname]);
+  }, [pathname, userRole]);
 
   return (
     <nav className="grid min-h-[60px] w-full items-center">
@@ -68,11 +67,18 @@ const Navbar = () => {
               <Link href="/auth">Log In / Sign Up</Link>
             </Button>
           ) : (
+            <>
+            <Button onClick={async () => {
+              await handleSignout(),
+              signOut()
+            }}>
+              Signout
+            </Button>
             <img
               src="/avatar.webp"
               className="h-8 w-8 rounded-full"
               alt="avatar"
-            />
+            /></>
           )}
         </div>
 
@@ -80,6 +86,19 @@ const Navbar = () => {
           <Button size="icon" variant="outline">
             {/* menu icon */}
             <span className="sr-only">Toggle navigation menu</span>
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16m-7 6h7"
+              />
+            </svg>
           </Button>
         </div>
       </div>

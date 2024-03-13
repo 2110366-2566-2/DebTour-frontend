@@ -2,6 +2,7 @@ import NextAuth, { AuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
 import isUserExist from "@/lib/isUserExist";
+import { cookies } from "next/headers";
 export const authOptions: AuthOptions = {
     secret: process.env.NEXTAUTH_SECRET??"",
   // Configure one or more authentication providers
@@ -31,6 +32,7 @@ export const authOptions: AuthOptions = {
             return session
         },
         async signIn({ user, account, profile }) {
+            const cookieStore = cookies()
             try {
                 if(profile){
                     const googleUser = {
@@ -43,12 +45,12 @@ export const authOptions: AuthOptions = {
                     const response = await isUserExist('google', googleUser)
                     // const isExist = false
                     if (!response.success) {
-                        const redirectUrl = `/intermediate/signup/`
-                        // need to fix this in the future
-                        return redirectUrl + `?googleUser=${JSON.stringify(googleUser)}`
+                        cookieStore.set({name:'googleUser', value:JSON.stringify(googleUser), httpOnly: false})
+                        return '/auth/signup/'
                     }
-                    const redirectUrl = `/intermediate/signin/`
-                    return redirectUrl + `?response=${JSON.stringify(response)}`
+                    cookieStore.set({name:'role', value:response.id, httpOnly: true})
+                    cookieStore.set({name:'token', value:response.token, httpOnly: true})
+                    return true
                 }
                 return false
             } catch (e) {
@@ -56,7 +58,7 @@ export const authOptions: AuthOptions = {
                 return false
             }
             return false
-        }
+        },
     }
 }
 const handler = NextAuth(authOptions)

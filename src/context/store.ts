@@ -1,10 +1,13 @@
 import { create } from "zustand";
 
 type User = {
-  role: "guest" | "tourist" | "agency";
+  id: string;
+  token?: string;
 };
 
 export const useUserStore = create<User>(() => ({
-  role: "guest",
+  id: "guest",
+  token: undefined,
+  setUser: (user: User) => user,
 }));
 
