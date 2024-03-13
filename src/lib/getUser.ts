@@ -1,5 +1,6 @@
 "use server";
 import {cookies} from "next/headers";
+import {useUserStore} from "@/context/store";
 
 export default async function getUser() {
     const username = cookies().get('username')?.value
@@ -17,5 +18,6 @@ export default async function getUser() {
     if (!response.ok) {
         throw new Error("Failed to get user");
     }
+
     return response.json();
 }

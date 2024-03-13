@@ -18,15 +18,19 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import getUser from "@/lib/getUser";
-import {getCookie} from "cookies-next";
+import {useUserStore} from "@/context/store";
 
 function Navbar({userRole, handleSignout}: { userRole: string, handleSignout: () => void }) {
-    const [user, setUser] = useState({} as any);
+    const user = useUserStore();
+
+    // const [userData, setUser] = useState({} as any);
     useEffect(() => {
         async function get() {
             const res = await getUser();
-            if (res)
-                setUser(res.data);
+            if (res) {
+                // console.log(res.data);
+                user.setUser(res.data);
+            }
         }
         get();
     }, []);

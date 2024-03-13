@@ -8,6 +8,7 @@ import {useUserStore} from "@/context/store";
 
 export default function ReportIssueTable() {
     let role = useUserStore((state) => state.role);
+    let user = useUserStore()
 
     const [selectedIssue, setSelectedIssue] = useState({
         issueId: '',
@@ -26,7 +27,8 @@ export default function ReportIssueTable() {
 
     useEffect(() => {
         async function get() {
-            const res = await getIssues("token", "");
+            const res = await getIssues(user.username, user.role, user.token);
+            if (!res) return
             let temp = []
             for (let i = 0; i < res.data.length; i++) {
                 // parse date
@@ -56,7 +58,7 @@ export default function ReportIssueTable() {
         }
         get();
 
-    }, [])
+    }, [user])
     return (
         <div>
             <Table>

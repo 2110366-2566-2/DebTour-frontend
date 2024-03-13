@@ -1,13 +1,19 @@
-import { create } from "zustand";
+import {create} from "zustand";
 
 type User = {
-  id: string;
-  token?: string;
+    username?: string;
+    role: string;
+    token?: string;
+    image?: string;
+
+    setUser: (user: User) => void;
 };
 
-export const useUserStore = create<User>(() => ({
-  id: "guest",
-  token: undefined,
-  setUser: (user: User) => user,
+export const useUserStore = create<User>((set) => ({
+    username: undefined,
+    role: "guest",
+    token: undefined,
+    image: undefined,
+    setUser: (user: User) => set(user)
 }));
 

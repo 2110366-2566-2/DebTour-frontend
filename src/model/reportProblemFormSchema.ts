@@ -17,7 +17,8 @@ const reportIssueFormSchema = z.object({
         "Resolved",
         "Cancelled"
     ]),
-    image: z.string().optional()
+    image: z.string().optional(),
+    reporterUsername: z.string().min(1).max(50),
 })
 
 export default reportIssueFormSchema;

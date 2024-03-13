@@ -1,9 +1,14 @@
-export default async function getIssues(token: string, username: string) {
+export default async function getIssues(username: string | undefined, role: string, token: string | undefined) {
     let query = "";
-    if (username !== "") {
-        query = `?username=${username}`;
+    if (!username) {
+        return
     }
-    const response = await fetch(`http://13.50.91.47:9000/api/v1/issues`+query, {
+    if (role === "Tourist" || role === "Agency") {
+        query = `?username=${username}`
+    } else if (role === "Admin") {
+        query = "?username="
+    }
+    const response = await fetch(`${process.env.BACKEND_URL}/api/v1/issues` + query, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

@@ -19,14 +19,18 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Textarea} from "@/components/ui/textarea";
 import {rejects} from "assert";
 import reportIssue from "@/lib/reportIssue";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useUserStore} from "@/context/store";
+import getUser from "@/lib/getUser";
 
 export default function ReportIssueForm() {
+    const user = useUserStore()
 
     const [formOpen, setFormOpen] = useState(false)
     const form = useForm<z.infer<typeof reportProblemFormSchema>>({
         resolver: zodResolver(reportProblemFormSchema),
         defaultValues: {
+            reporterUsername: user.username,
             issueType: "Other",
             message: "",
             status: "Pending",
@@ -36,7 +40,7 @@ export default function ReportIssueForm() {
 
     async function onSubmit(values: z.infer<typeof reportProblemFormSchema>) {
         console.log(JSON.stringify(values))
-        const res = await reportIssue("tempToken", values);
+        const res = await reportIssue(user.username, user.role, user.token, values);
         if (!res.success)  {
             console.log("Failed to report issue");
         }

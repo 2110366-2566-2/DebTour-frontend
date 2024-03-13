@@ -13,7 +13,10 @@ import {Textarea} from "@/components/ui/textarea";
 import {useUserStore} from "@/context/store";
 
 export default function ReportIssueDetailDisplay({issue}: { issue: any }) {
-    const role = useUserStore((state) => state.role);
+    let role = useUserStore().role;
+    if (role === "Tourist" || role === "Agency") {
+        role = "User";
+    }
 
     const form = useForm<z.infer<typeof adminManageIssueForm>>({
         resolver: zodResolver(adminManageIssueForm),
@@ -28,7 +31,6 @@ export default function ReportIssueDetailDisplay({issue}: { issue: any }) {
 
     async function onSubmit(values: z.infer<typeof adminManageIssueForm>) {
         values.issueId = issue.issueId;
-        values.resolverAdminId = 69;
         values.resolveTimestamp = new Date().toISOString();
         console.log(JSON.stringify(values))
         const res = await updateIssue("tempToken", values);
@@ -58,13 +60,13 @@ export default function ReportIssueDetailDisplay({issue}: { issue: any }) {
                         <h1 className="font-bold">Issue Type</h1>
                         <p>{issue.issueType}</p>
                     </div>
-                    {role === "user" &&
+                    {role === "User" &&
                         <div className="flex gap-2">
                             <h1 className="font-bold">Status</h1>
                             <p>{issue.status}</p>
                         </div>
                     }
-                    {role === "admin" &&
+                    {role === "Admin" &&
                         <FormField
                             control={form.control}
                             name="status"
@@ -113,13 +115,13 @@ export default function ReportIssueDetailDisplay({issue}: { issue: any }) {
                         <h1 className="font-bold">Image</h1>
                         <img src={'data:image/jpeg;base64,'+ issue.image} />
                     </div>
-                    {role === "user" &&
+                    {role === "User" &&
                         <div>
                             <h1 className="font-bold">Resolve Message</h1>
                             <p>{issue.resolveMessage}</p>
                         </div>
                     }
-                    {role == "admin" &&
+                    {role == "Admin" &&
                         <div>
                             <h1 className="font-bold">Resolve Message</h1>
                             <FormField
@@ -137,7 +139,7 @@ export default function ReportIssueDetailDisplay({issue}: { issue: any }) {
                         </div>
                     }
                     <DialogFooter>
-                        {role === "admin" && <Button type="submit">Resolve Issue</Button>}
+                        {role === "Admin" && <Button type="submit">Resolve Issue</Button>}
                     </DialogFooter>
                 </form>
             </Form>
