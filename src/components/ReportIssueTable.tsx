@@ -6,10 +6,8 @@ import ReportIssueDetailDisplay from "@/components/ReportIssueDetailDisplay";
 import getIssues from "@/lib/getIssues";
 import {useUserStore} from "@/context/store";
 
-export default function ReportIssueTable({role}: { role: string}) {
-    if (role === 'tourist' || role === 'agency') {
-        role = 'user'
-    }
+export default function ReportIssueTable() {
+    let role = useUserStore((state) => state.role);
 
     const [selectedIssue, setSelectedIssue] = useState({
         issueId: '',
@@ -140,7 +138,7 @@ export default function ReportIssueTable({role}: { role: string}) {
                         }
                     }}
                 >
-                    <ReportIssueDetailDisplay key={selectedIssue.issueId + "display"} issue={selectedIssue} role={role}/>
+                    <ReportIssueDetailDisplay key={selectedIssue.issueId + "display"} issue={selectedIssue}/>
                 </Dialog>
             </Table>
         </div>

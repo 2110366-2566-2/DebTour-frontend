@@ -8,7 +8,7 @@ export default function ManageIssue() {
                 <h1 className="text-2xl font-semibold">User Reported Issues</h1>
             </div>
             <div className="flex justify-center">
-                <ReportIssueTable role="admin"/>
+                <ReportIssueTable/>
             </div>
         </div>
     );

@@ -10,8 +10,10 @@ import {Button} from "@/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import updateIssue from "@/lib/updateIssue";
 import {Textarea} from "@/components/ui/textarea";
+import {useUserStore} from "@/context/store";
 
-export default function ReportIssueDetailDisplay({issue, role}: { issue: any, role: string }) {
+export default function ReportIssueDetailDisplay({issue}: { issue: any }) {
+    const role = useUserStore((state) => state.role);
 
     const form = useForm<z.infer<typeof adminManageIssueForm>>({
         resolver: zodResolver(adminManageIssueForm),

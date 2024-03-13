@@ -18,7 +18,7 @@ export default function ReportIssue() {
                 <ReportIssueForm/>
             </div>
             <div className="flex justify-center">
-                <ReportIssueTable role="tourist"/>
+                <ReportIssueTable/>
             </div>
         </div>
     );
