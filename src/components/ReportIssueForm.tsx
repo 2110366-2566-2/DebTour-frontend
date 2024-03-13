@@ -50,7 +50,7 @@ export default function ReportIssueForm() {
             <DialogTrigger asChild>
                 <Button>Report an Issue</Button>
             </DialogTrigger>
-            <DialogContent className="max-w-[640px]">
+            <DialogContent className="max-w-[640px] max-h-[840px] overflow-auto">
                 <DialogHeader>
                     <DialogTitle>Report an Issue</DialogTitle>
                 </DialogHeader>
@@ -128,6 +128,15 @@ export default function ReportIssueForm() {
                                                     };
                                                 }}
                                             />
+                                            {/*preview image*/}
+                                            <div className="mt-4">
+                                                {
+                                                    field.value &&
+                                                    <img
+                                                        src={`data:image/jpeg;base64,${field.value}`}
+                                                    />
+                                                }
+                                            </div>
                                         </div>
                                     </FormControl>
                                     <FormMessage/>
