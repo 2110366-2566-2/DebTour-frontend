@@ -6,6 +6,9 @@ type User = {
     token?: string;
     image?: string;
 
+    firstName?: string;
+    lastName?: string;
+
     setUser: (user: User) => void;
 };
 
@@ -14,6 +17,8 @@ export const useUserStore = create<User>((set) => ({
     role: "guest",
     token: undefined,
     image: undefined,
+    firstName: undefined,
+    lastName: undefined,
     setUser: (user: User) => set(user)
 }));
 

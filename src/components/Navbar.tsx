@@ -91,7 +91,7 @@ function Navbar({userRole, handleSignout}: { userRole: string, handleSignout: ()
                         </Button>
                 }
                 {
-                    userRole !== "guest" &&
+                    userRole !== "Guest" &&
                     <img
                         src={user.image}
                         className="h-8 w-8 rounded-full"
@@ -100,7 +100,7 @@ function Navbar({userRole, handleSignout}: { userRole: string, handleSignout: ()
                 }
 
 
-                {userRole !== "guest" &&
+                {userRole !== "Guest" &&
                     <div className="ml-4">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
