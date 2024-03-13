@@ -48,6 +48,7 @@ export const authOptions: AuthOptions = {
                         cookieStore.set({name:'googleUser', value:JSON.stringify(googleUser), httpOnly: false})
                         return '/auth/signup/'
                     }
+                    cookieStore.set({name:'username', value:googleUser.id, httpOnly: true})
                     cookieStore.set({name:'role', value:response.id, httpOnly: true})
                     cookieStore.set({name:'token', value:response.token, httpOnly: true})
                     return true
