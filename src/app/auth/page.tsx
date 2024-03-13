@@ -45,7 +45,7 @@ const Login = () => {
             <p className="text-center font-bold">Get started with</p>
             <button 
               className="mx-auto flex w-4/5 items-center rounded-full border bg-white px-6 py-2 text-sm font-medium hover:bg-gray-200 focus:outline-none"
-              onClick={() => {localStorage.removeItem("googleUser"); signIn("google", { callbackUrl: "/"})}}>
+              onClick={() => {signIn("google", { callbackUrl: "/"})}}>
               <FcGoogle className="h-6 w-6" />
               <span className="mx-auto">Continue with Google</span>
             </button>

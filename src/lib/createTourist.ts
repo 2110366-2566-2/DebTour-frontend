@@ -1,4 +1,5 @@
 export default async function createTourist({data}: {data: any}){
+    console.log(data)
     const response = await fetch(`${process.env.BACKEND_URL}/api/v1/auth/registerTourist`, {
         method: 'POST',
         headers: {

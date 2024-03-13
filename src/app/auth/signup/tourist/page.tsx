@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -36,6 +36,7 @@ import {
 import createTourist from "@/lib/createTourist";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { getCookie, setCookie } from 'cookies-next';
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),
@@ -80,7 +81,7 @@ const TouristRegistrationPage = () => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     const res = await createTourist({ data: values });
-    // console.log(res);
+    console.log(res);
     if (!res.success) {
       toast({
         title: "Failed to create tourist",
@@ -96,15 +97,15 @@ const TouristRegistrationPage = () => {
       id: res.data.role,
       token: res.data.token,
     }
-    const redirectUrl = `/intermediate/signin/` + `?response=${JSON.stringify(response)}`
-    // console.log(redirectUrl)
-    router.push(redirectUrl)
+    setCookie('role', response.id, {httpOnly: false})
+    setCookie('token', response.token, {httpOnly: false})
+    router.push('/')
   }
 
   useEffect(() => {
-    const googleUserStr = localStorage.getItem("googleUser");
+    const googleUserStr = getCookie('googleUser');
     const googleUser = googleUserStr ? JSON.parse(googleUserStr) : null;
-    // console.log(googleUser);
+    // console.log(googleUserStr);
     if (googleUser) {
       form.reset({
         username: googleUser.id,
@@ -310,7 +311,10 @@ const TouristRegistrationPage = () => {
               )}
             </div>
           </form>
-          {/* <Button onClick={() => console.log(form.getValues())}>Log</Button> */}
+          {/* <Button onClick={() => console.log(form.getValues())}>Log</Button>
+          <Button onClick={() => console.log(getCookie('googleUser'))}>
+            Log Cookie
+            </Button> */}
         </Form>
       </div>
     </div>
