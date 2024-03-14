@@ -1,4 +1,3 @@
-"use client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { MdOutlineStar, MdOutlineStarBorder } from "react-icons/md";
@@ -22,10 +21,9 @@ import { IoLocationOutline } from "react-icons/io5";
 import { LuCalendarDays } from "react-icons/lu";
 import { IoPeopleOutline } from "react-icons/io5";
 
-import { useEffect, useState } from "react";
 import getTour from "@/lib/getTour";
 import getTourImage from "@/lib/getTourImage";
-import { Tour } from "@/app/tourist/tours/page";
+import Image from "next/image";
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   const day = date.getDate();
@@ -76,40 +74,30 @@ export interface Activity {
   location: Location;
 }
 import ReviewSection from "@/components/TourReviewComponent/ReviewSection";
-import { set } from "date-fns";
 import getTourAvgRating from "@/lib/getTourAvgRating";
+import getTours from "@/lib/getTours";
 
-const TourInfo = ({ params }: { params: { tourId: string } }) => {
-  const [tour, setTour] = useState<Tour | null>(null);
-  const [tourImage, setTourImage] = useState<{ tourId: number; images: string[] } | null>(null);
-  const [tourAvgRating, setTourAvgRating] = useState<number | null>(null);
-  useEffect(() => {
-    async function waitForGetTour() {
-      const t = await getTour(params.tourId);
-      if (t.data == null) {
-        // create empty tour array
-        const emptyArray: Tour[] = [];
-        setTour(emptyArray);
-      } else {
-        setTour(t.data);
-      }
-      console.log(t.data);
-    }
-    async function waitForGetTourImage() {
-      const i = await getTourImage(params.tourId);
-      setTourImage(i.data);
-      console.log(i.data);
-    }
-    async function waitForGetTourAvgRating() {
-      const r = await getTourAvgRating(params.tourId);
-      const rating = Math.round(r.data * 2) / 2;
-      setTourAvgRating(rating);
-      console.log(rating);
-    }
-    waitForGetTour();
-    waitForGetTourImage();
-    waitForGetTourAvgRating();
-  }, []);
+type Tour = {
+  tourId: number;
+  name: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  overviewLocation: string;
+  price: number;
+  refundDueDate: string;
+  maxMemberCount: number;
+  memberCount: number;
+  status: string;
+  agencyUsername: string;
+  activities: Activity[];
+};
+
+export default async function TourInfo({ params }: { params: { tourId: string } }){
+  const tour = await getTour(params.tourId).then((res) => res.data);
+  const tourImage = await getTourImage(params.tourId).then((res) => res.data);
+  const tourAvgRating = await getTourAvgRating(params.tourId).then((res) => Math.round(res.data*2)/2);
+  
   return (
     <main>
       <section className="mb-32 h-[350px] bg-indigo-100">
@@ -118,10 +106,7 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
           <p className="my-2 font-semibold text-indigo-700">
             Agency: {tour?.agencyUsername}
           </p>
-
           <div className="flex justify-center">
-            {/* <MdOutlineStar className="h-8 w-8 text-yellow-500" />
-            <MdOutlineStarHalf className="h-8 w-8 text-yellow-500" /> */}
             {
             tourAvgRating != null ? 
             tourAvgRating>0?
@@ -164,7 +149,7 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
               <div className="text-left text-xs">
                 <p className="text-gray-500">Duration</p>
                 <p className="font-bold">
-                  {formatDate(tour?.startDate)} - {formatDate(tour?.endDate)}
+                  {formatDate(tour?.startDate??'')} - {formatDate(tour?.endDate??'')}
                 </p>
               </div>
             </div>
@@ -193,7 +178,7 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
               <RiRefund2Line className="h-7 w-7 rounded-full p-1 shadow-lg" />
               <div className="text-left text-xs">
                 <p className="text-gray-500">Refund Due Date</p>
-                <p className="font-bold">{formatDate(tour?.refundDueDate)}</p>
+                <p className="font-bold">{formatDate(tour?.refundDueDate??'')}</p>
               </div>
             </div>
           </div>
@@ -213,11 +198,12 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
                     <div className="p-1">
                       <Card>
                         <CardContent className="flex aspect-square items-center justify-center p-6">
-                          <img
+                          <Image
                             // the src is the base64 string of the image
                             className="h-full w-full rounded-xl object-fill"
                             src={`data:image/jpeg;base64,${image}`}
                             alt="tour image"
+                            width={0} height={0}
                           />
                         </CardContent>
                       </Card>
@@ -228,11 +214,12 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
                 <div className="p-1">
                   <Card>
                     <CardContent className="flex aspect-square items-center justify-center p-6">
-                      <img
+                      <Image
                         // the src is the base64 string of the image
                         className="h-full w-full rounded-xl object-fill"
-                        src="https://source.unsplash.com/600x600/?tour"
+                        src="/header-agency.webp"
                         alt="tour image"
+                        width={0} height={0}
                       />
                     </CardContent>
                   </Card>
@@ -293,30 +280,19 @@ const TourInfo = ({ params }: { params: { tourId: string } }) => {
             <TourCard tour={tour} isEditable={false} />
           </Link> */}
         </div>
-        {/* <p className="leading-8">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Omnis
-          expedita impedit sint excepturi quis reiciendis voluptas perferendis
-          tempora distinctio eligendi corporis animi enim consectetur, et non
-          iusto voluptatum maiores odio, nesciunt accusamus! Voluptatum
-          expedita, nulla voluptates culpa cupiditate autem provident ipsum sit
-          quos ducimus quis voluptatibus aspernatur perferendis tenetur dolor
-          quibusdam! Non quis hic inventore illum atque, molestiae esse deserunt
-          deleniti iste repellendus nulla, saepe error dolorem voluptatem est
-          quasi laborum nisi provident ipsum illo excepturi. Alias itaque
-          tenetur veritatis. Aliquam, distinctio expedita eos accusamus
-          veritatis debitis blanditiis harum deleniti perferendis impedit sint
-          dolor illum ducimus soluta numquam. Sint ut sapiente molestias
-          consequuntur mollitia nisi, eos beatae, velit ipsa quia natus quaerat
-          reiciendis eius suscipit exercitationem veniam iste sunt expedita nemo
-          fugit aliquid placeat quos aspernatur. Ad voluptatem veritatis dicta
-          quasi laboriosam ipsa laudantium nostrum doloribus eveniet, obcaecati
-          voluptates sit perspiciatis, at minus in fugit ullam qui facere.
-          Voluptate, deserunt sequi dolor ratione,
-        </p> */}
       </section>
       <ReviewSection tourId={params.tourId} />
     </main>
   );
 };
-
-export default TourInfo;
+// This function gets called at build time
+export async function generateStaticParams() {
+    const tours = await getTours()
+    const paths = tours.data.map((tour:any) => ({
+      params: { id: tour.tourId },
+    }))
+  
+    // We'll pre-render only these paths at build time.
+    // { fallback: false } means other routes should 404.
+    return paths
+}

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export interface Tour {
-  tourId: 2;
+  tourId: number;
   tourName: "string";
   startDate: "string";
   endDate: "string";
