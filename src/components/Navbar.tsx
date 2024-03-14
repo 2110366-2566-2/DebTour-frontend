@@ -52,7 +52,7 @@ function Navbar() {
                     <SiYourtraveldottv className="h-8 w-8"/>
                     <span className="text-xl font-semibold">DebTour</span>
                 </Link>
-                <Button size="icon" variant="outline" onClick={() => { console.log(session); }}>Log</Button>
+                {/* <Button size="icon" variant="outline" onClick={() => { console.log(session); }}>Log</Button> */}
                 <div className="hidden w-full gap-4 px-8 lg:flex">
                     <Link
                         className={`inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium ${
