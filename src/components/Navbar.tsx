@@ -4,9 +4,9 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {SiYourtraveldottv} from "react-icons/si";
 
-import {usePathname} from "next/navigation";
-import {useEffect, useState} from "react";
-import {signOut} from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { signOut, useSession } from "next-auth/react";
 
 import {
     DropdownMenu,
@@ -20,7 +20,7 @@ import {
 import getUser from "@/lib/getUser";
 import {useUserStore} from "@/context/store";
 
-function Navbar({userRole, handleSignout}: { userRole: string, handleSignout: () => void }) {
+function Navbar() {
     const user = useUserStore();
 
     // const [userData, setUser] = useState({} as any);
@@ -37,6 +37,9 @@ function Navbar({userRole, handleSignout}: { userRole: string, handleSignout: ()
 
     const pathname = usePathname();
     const [activeRoute, setActiveRoute] = useState("");
+    
+    const { data: session, status, update } = useSession();
+    const userRole = session?.user?.role ?? "Guest";
 
     useEffect(() => {
         setActiveRoute(pathname);
@@ -49,7 +52,7 @@ function Navbar({userRole, handleSignout}: { userRole: string, handleSignout: ()
                     <SiYourtraveldottv className="h-8 w-8"/>
                     <span className="text-xl font-semibold">DebTour</span>
                 </Link>
-
+                <Button size="icon" variant="outline" onClick={() => { console.log(session); }}>Log</Button>
                 <div className="hidden w-full gap-4 px-8 lg:flex">
                     <Link
                         className={`inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium ${
@@ -93,7 +96,7 @@ function Navbar({userRole, handleSignout}: { userRole: string, handleSignout: ()
                 {
                     userRole !== "Guest" &&
                     <img
-                        src={user.image}
+                        src={session?.user?.image ?? "/avatar.png"}
                         className="h-8 w-8 rounded-full"
                         alt="avatar"
                         />
@@ -147,7 +150,6 @@ function Navbar({userRole, handleSignout}: { userRole: string, handleSignout: ()
                                 }
                                 <DropdownMenuSeparator/>
                                 <DropdownMenuItem onClick={async () => {
-                                    await handleSignout();
                                     signOut();
                                 }
                                 }>

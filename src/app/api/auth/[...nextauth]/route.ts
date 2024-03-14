@@ -21,17 +21,28 @@ export const authOptions: AuthOptions = {
             }
         })
     ],
-    // session: { strategy: 'jwt' },
+    session: { strategy: 'jwt', maxAge: 30 * 24 * 60 * 60 },
     callbacks: {
-        // async jwt({token, user}){
-		// 	return {...token, ...user}
-		// },
-        async session({ session, token }) {
-            // Add property to session, like an access_token from a provider.
-            session.user = token as any
-            return session
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id
+                token.email = user.email
+                token.name = user.name
+                token.image = user.image
+            }
+            if (token.serverToken === undefined) {
+                const response = await isUserExist('google', {id: user.id, token: token.token})
+                if (response.success) {
+                    token.role = response.id
+                    token.serverToken = response.token
+                }
+            }
+            return token
         },
-        async signIn({ user, account, profile }) {
+        async session({ session, token }) {
+            return {...session, user: token}
+        },
+        async signIn({ account, profile }) {
             const cookieStore = cookies()
             try {
                 if(profile){
@@ -43,14 +54,10 @@ export const authOptions: AuthOptions = {
                         token: profile.at_hash
                     }
                     const response = await isUserExist('google', googleUser)
-                    // const isExist = false
                     if (!response.success) {
                         cookieStore.set({name:'googleUser', value:JSON.stringify(googleUser), httpOnly: false})
                         return '/auth/signup/'
                     }
-                    cookieStore.set({name:'username', value:googleUser.id, httpOnly: true})
-                    cookieStore.set({name:'role', value:response.id, httpOnly: true})
-                    cookieStore.set({name:'token', value:response.token, httpOnly: true})
                     return true
                 }
                 return false
