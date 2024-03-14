@@ -30,10 +30,10 @@ export async function middleware(request: NextRequest) {
 // See "Matching Paths" below to learn more
 export const config = {
   matcher: [
-    "/agency/:path*",
-    // "/signup/agency/:path*",
-    // "/signup/tourist/:path*",
-    "/tourist/tours/join/:path*",
-    "/tourist/tours/member/:path*",
+    // "/agency/:path*",
+    // // "/signup/agency/:path*",
+    // // "/signup/tourist/:path*",
+    // "/tourist/tours/join/:path*",
+    // "/tourist/tours/member/:path*",
 ],
 };

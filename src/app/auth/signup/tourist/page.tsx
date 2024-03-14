@@ -93,12 +93,6 @@ const TouristRegistrationPage = () => {
       title: "Tourist created",
       description: "You can now login",
     });
-    const response = {
-      id: res.data.role,
-      token: res.data.token,
-    }
-    setCookie('role', response.id, {httpOnly: false})
-    setCookie('token', response.token, {httpOnly: false})
     router.push('/')
   }
 
