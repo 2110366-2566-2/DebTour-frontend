@@ -113,7 +113,7 @@ export default async function TourInfo({ params }: { params: { tourId: string } 
             (
               <> 
                 {[...Array(Math.floor(tourAvgRating))].map((_, i) => (
-                  <MdOutlineStar className="h-8 w-8 text-yellow-500" />
+                  <MdOutlineStar className="h-8 w-8 text-yellow-500" key={i} />
                 ))}
                 {tourAvgRating % 1 != 0 ? (
                   <MdOutlineStarHalf className="h-8 w-8 text-yellow-500" />
@@ -121,7 +121,7 @@ export default async function TourInfo({ params }: { params: { tourId: string } 
                   ""
                 )}
                 {[...Array(5 - Math.ceil(tourAvgRating))].map((_, i) => (
-                  <MdOutlineStarBorder className="h-8 w-8 text-yellow-500" />
+                  <MdOutlineStarBorder className="h-8 w-8 text-yellow-500" key={i} />
                 ))}
               </>
             ):
@@ -296,3 +296,5 @@ export async function generateStaticParams() {
     // { fallback: false } means other routes should 404.
     return paths
 }
+export const dynamicParams = false
+export const revalidate = 60
