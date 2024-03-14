@@ -1,9 +1,8 @@
 import getReviewByTourId from "@/lib/getReviewByTourId";
 import ReviewCard from "@/components/TourReviewComponent/ReviewCard";
+import { useEffect } from "react";
 
-export default async function ReviewCards({ tourId }: { tourId: string }) {
-    // await new Promise((resolve) => setTimeout(resolve, 10000));
-    const reviews = await getReviewByTourId(tourId).then((res) => res.data);
+export default async function ReviewCards({ reviews }: { reviews: any }) {
     return (
         <div className="mt-4 grid grid-flow-row-dense gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {

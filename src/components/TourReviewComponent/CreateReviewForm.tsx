@@ -12,8 +12,9 @@ import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { MdOutlineStar, MdOutlineStarOutline } from "react-icons/md";
 
-export default function CreateReviewForm({ tourId }: { tourId: string }) {
+export default function CreateReviewForm({ tourId, submitCallback }: { tourId: string, submitCallback: Function}) {
     const { data: session, status } = useSession()
     const form = useForm<z.infer<typeof reviewFormSchema>>({
         resolver: zodResolver(reviewFormSchema),
@@ -25,7 +26,7 @@ export default function CreateReviewForm({ tourId }: { tourId: string }) {
         }
     });
     async function onSubmit(values: z.infer<typeof reviewFormSchema>) {
-        console.log(values);
+        // console.log(values);
         const res = await createReview("token", values);
         console.log(res);
         if (!res.success) {
@@ -33,6 +34,7 @@ export default function CreateReviewForm({ tourId }: { tourId: string }) {
             return;
         }
         toast({ title: "Review created", description: "Your review has been created successfully" });
+        submitCallback();
     }
     return (
         <div>
@@ -62,21 +64,27 @@ export default function CreateReviewForm({ tourId }: { tourId: string }) {
                             <FormItem>
                                 <FormLabel htmlFor="ratingScore" className="block text-sm font-medium text-gray-700">Rating</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        {...field}
-                                        type="number"
-                                        id="ratingScore"
-                                        name="ratingScore"
-                                        min={1}
-                                        max={5}
-                                    />
+                                <div className="flex justify-start">
+                                    {[...Array(form.getValues().ratingScore)].map((_, i) => (
+                                        <MdOutlineStar className="h-8 w-8 text-yellow-500" 
+                                            onClick={() => form.setValue("ratingScore", i+1)}
+                                            key={i}
+                                        />
+                                    ))}
+                                    {[...Array(5-form.getValues().ratingScore)].map((_, i) => (
+                                        <MdOutlineStarOutline className="h-8 w-8 text-gray-500" 
+                                            onClick={() => form.setValue("ratingScore", form.getValues().ratingScore+i+1)}
+                                            key={i}
+                                        />
+                                    ))}
+                                </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
                     <Button type="submit" >Submit</Button>
-                    <Button onClick={()=>console.log(form.getValues())}>Log</Button>
+                    {/* <Button onClick={()=>console.log(form.getValues())}>Log</Button> */}
                 </form>
             </Form>
         </div>
