@@ -6,8 +6,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import NextAuthProvider from "@/providers/NextAuthProvider";
-import { cookies } from "next/headers";
-import { signOut } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
