@@ -36,7 +36,7 @@ import {
 import createTourist from "@/lib/createTourist";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { getCookie, setCookie } from 'cookies-next';
+import { getCookie, setCookie } from "cookies-next";
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),
@@ -48,16 +48,12 @@ const formSchema = z.object({
   lastname: z.string().min(2).max(50),
   address: z.string().min(2).max(100),
   birthdate: z.date(),
-  gender: z.enum([
-    "Male",
-    "Female",
-    "Others",
-  ]),
+  gender: z.enum(["Male", "Female", "Others"]),
   defaultPayment: z.string().min(2).max(50),
 });
 
 const TouristRegistrationPage = () => {
-  const router = useRouter()
+  const router = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -93,11 +89,11 @@ const TouristRegistrationPage = () => {
       title: "Tourist created",
       description: "You can now login",
     });
-    router.push('/')
+    router.push("/");
   }
 
   useEffect(() => {
-    const googleUserStr = getCookie('googleUser');
+    const googleUserStr = getCookie("googleUser");
     const googleUser = googleUserStr ? JSON.parse(googleUserStr) : null;
     // console.log(googleUserStr);
     if (googleUser) {
@@ -107,10 +103,9 @@ const TouristRegistrationPage = () => {
         image: googleUser.image,
         gender: "Others",
         defaultPayment: "Mobile Banking",
-      })
+      });
     }
-  }
-  , []);
+  }, []);
 
   const [step, setStep] = useState(1);
 
@@ -169,7 +164,10 @@ const TouristRegistrationPage = () => {
                       <FormItem>
                         <FormLabel>First name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your first name" {...field} />
+                          <Input
+                            placeholder="Enter your first name"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -182,7 +180,10 @@ const TouristRegistrationPage = () => {
                       <FormItem>
                         <FormLabel>Last name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your last name" {...field} />
+                          <Input
+                            placeholder="Enter your last name"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -202,7 +203,10 @@ const TouristRegistrationPage = () => {
                       <FormItem>
                         <FormLabel>Address</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Write your address" {...field} />
+                          <Textarea
+                            placeholder="Write your address"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -259,9 +263,12 @@ const TouristRegistrationPage = () => {
                       <FormItem>
                         <FormLabel>Gender</FormLabel>
                         <FormControl>
-                          <Select defaultValue={field.value} onValueChange={field.onChange}>
+                          <Select
+                            defaultValue={field.value}
+                            onValueChange={field.onChange}
+                          >
                             <SelectTrigger className="w-[180px]">
-                              <SelectValue/>
+                              <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="Male">Male</SelectItem>
@@ -274,7 +281,6 @@ const TouristRegistrationPage = () => {
                       </FormItem>
                     )}
                   />
-
                 </div>
               </>
             )}
@@ -301,7 +307,9 @@ const TouristRegistrationPage = () => {
                   Next
                 </Button>
               ) : (
-                <Button type="submit" id='submitBtn'>Submit</Button>
+                <Button type="submit" id="submitBtn">
+                  Submit
+                </Button>
               )}
             </div>
           </form>
