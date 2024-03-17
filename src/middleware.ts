@@ -5,8 +5,6 @@ import { cookies } from 'next/headers'
 // This function can be marked `async` if using `await` inside
 
 export async function middleware(request: NextRequest) {
-  const cookieStore = cookies()
-  const role = cookieStore.get('role')
   // if (request.nextUrl.pathname.startsWith('/about')) {
   //   return NextResponse.rewrite(new URL('/about-2', request.url))
   // }
@@ -14,17 +12,17 @@ export async function middleware(request: NextRequest) {
   // if (request.nextUrl.pathname.startsWith('/dashboard')) {
   //   return NextResponse.rewrite(new URL('/dashboard/user', request.url))
   // }if(request.nextUrl.pathname.startsWith('/agency')){
-  if(request.nextUrl.pathname.startsWith('/agency')) {
-    if(!role || role.value!=='Agency'){
-      return NextResponse.rewrite(new URL('/auth', request.url))
-    }
-  }
-  if(request.nextUrl.pathname.startsWith('/tourist/tours/join/') 
-  || request.nextUrl.pathname.startsWith('/tourist/tours/member/')){
-    if(!role || role.value!=='Tourist'){
-      return NextResponse.rewrite(new URL('/auth', request.url))
-    }
-  }
+  // if(request.nextUrl.pathname.startsWith('/agency')) {
+  //   if(!role || role.value!=='Agency'){
+  //     return NextResponse.rewrite(new URL('/auth', request.url))
+  //   }
+  // }
+  // if(request.nextUrl.pathname.startsWith('/tourist/tours/join/') 
+  // || request.nextUrl.pathname.startsWith('/tourist/tours/member/')){
+  //   if(!role || role.value!=='Tourist'){
+  //     return NextResponse.rewrite(new URL('/auth', request.url))
+  //   }
+  // }
 }
 
 // See "Matching Paths" below to learn more
