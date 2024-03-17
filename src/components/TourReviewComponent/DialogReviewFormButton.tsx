@@ -1,5 +1,5 @@
 import CreateReviewForm from "@/components/TourReviewComponent/CreateReviewForm";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { useState } from "react";
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 500));
