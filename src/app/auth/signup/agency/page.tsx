@@ -23,42 +23,70 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
+import { getCookie, setCookie } from "cookies-next";
+import { useEffect } from "react";
+import { toast } from "@/components/ui/use-toast";
+import createAgency from "@/lib/createAgency";
+import { format, set } from "date-fns";
 
 const formSchema = z.object({
-  username: z.string().min(2).max(50),
+  agencyName: z.string(),
+  approveTime: z.date(),
+  authorizeAdminId: z.number(),
+  authorizeStatus: z.string(),
+  bankAccount: z.string(),
+  email: z.string().email(),
+  image: z.string().url(),
+  licenseNo: z.string(),
+  phone: z.string().min(9).max(10),
+  role: z.string(),
+  username: z.string(),
 });
 
 const AgencyRegisterPage = () => {
+  const router = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      agencyName: "",
+      approveTime: new Date(),
+      authorizeAdminId: 0,
+      authorizeStatus: "",
+      bankAccount: "",
+      email: "",
+      image: "",
+      licenseNo: "",
+      phone: "0000000000",
+      role: "Agency",
       username: "",
     },
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+    // console.log("trash language");
+    // console.log(values);
+    const res = await createAgency({ data: values });
+    console.log(res);
+    if (!res.success) {
+      toast({
+        title: "Failed to create Agency",
+        description: "Please try again",
+      });
+      return;
+    }
+    toast({
+      title: "Agency created",
+      description: "You can now login",
+    });
+    router.push("/");
   }
 
-  const [step, setStep] = useState(2);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
-
-  const handleChange = (e: { target: { name: any; value: any } }) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  const [step, setStep] = useState(1);
 
   const handleNextStep = () => {
     setStep((prevStep) => prevStep + 1);
@@ -66,6 +94,48 @@ const AgencyRegisterPage = () => {
 
   const handlePrevStep = () => {
     setStep((prevStep) => prevStep - 1);
+  };
+
+  useEffect(() => {
+    console.log("First form values", form.getValues());
+    const googleUserStr = getCookie("googleUser");
+    const googleUser = googleUserStr ? JSON.parse(googleUserStr) : null;
+    console.log(googleUserStr);
+    if (googleUser) {
+      form.reset({
+        username: googleUser.id,
+        email: googleUser.email,
+        image: googleUser.image,
+        agencyName: "",
+        approveTime: new Date(),
+        authorizeAdminId: 0,
+        authorizeStatus: "",
+        bankAccount: "",
+        licenseNo: "",
+        phone: "0000000000",
+        role: "Agency",
+      });
+    } else {
+      form.reset({
+        agencyName: "",
+        approveTime: new Date(),
+        authorizeAdminId: 0,
+        authorizeStatus: "",
+        bankAccount: "",
+        email: "",
+        image: "",
+        licenseNo: "",
+        phone: "0000000000",
+        role: "Agency",
+        username: "",
+      });
+    }
+    console.log("Form values", form.getValues());
+  }, []);
+
+  // mental health checker function
+  const checkMentalHealth = () => {
+    console.log(form.getValues());
   };
 
   return (
@@ -76,12 +146,12 @@ const AgencyRegisterPage = () => {
             Register as Agency
           </h1>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            {step === 1 && (
+            {/* {step === 1 && (
               <>
                 <div className="flex flex-col gap-6">
                   <FormField
                     control={form.control}
-                    name="username"
+                    name="agencyName"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Username</FormLabel>
@@ -136,14 +206,14 @@ const AgencyRegisterPage = () => {
                   />
                 </div>
               </>
-            )}
+            )} */}
 
-            {step === 2 && (
+            {step === 1 && (
               <>
                 <div className="flex flex-col gap-6">
                   <FormField
                     control={form.control}
-                    name="username"
+                    name="agencyName"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Company Name</FormLabel>
@@ -160,7 +230,7 @@ const AgencyRegisterPage = () => {
 
                   <FormField
                     control={form.control}
-                    name="username"
+                    name="phone"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Phone number</FormLabel>
@@ -177,6 +247,22 @@ const AgencyRegisterPage = () => {
 
                   <FormField
                     control={form.control}
+                    name="bankAccount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>BankAccount</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Write your agency's bank account"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                  {/* <FormField
+                    control={form.control}
                     name="username"
                     render={({ field }) => (
                       <FormItem>
@@ -187,9 +273,9 @@ const AgencyRegisterPage = () => {
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
-                  />
+                  /> */}
 
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="username"
                     render={({ field }) => (
@@ -216,16 +302,43 @@ const AgencyRegisterPage = () => {
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
-                  />
+                  /> */}
 
-                  <FormField
+                  {/* <FormField
                     control={form.control}
-                    name="username"
+                    name="address"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Address</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Write your agency's address" />
+                          <Textarea
+                            placeholder="Write your agency's address"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  /> */}
+                </div>
+              </>
+            )}
+
+            {step === 2 && (
+              <>
+                <div className="flex flex-col gap-6">
+                  <FormField
+                    control={form.control}
+                    name="licenseNo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Company License Number</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your agency's License Number"
+                            {...field}
+                            value={field.value || ""}
+                          />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -233,12 +346,6 @@ const AgencyRegisterPage = () => {
                   />
                 </div>
               </>
-            )}
-
-            {step === 3 && (
-              <p className="text-center text-gray-500">
-                (Identification coming soon..)
-              </p>
             )}
 
             <div className="mt-8 flex justify-between">
@@ -258,12 +365,17 @@ const AgencyRegisterPage = () => {
                   Previous
                 </Button>
               )}
-              {step < 3 ? (
+              {step < 2 ? (
                 <Button type="button" onClick={handleNextStep} className="">
                   Next
                 </Button>
               ) : (
-                <Button type="submit">Submit</Button>
+                <></>
+              )}
+              {step === 2 && (
+                <Button type="submit" onClick={checkMentalHealth}>
+                  Register
+                </Button>
               )}
             </div>
           </form>
