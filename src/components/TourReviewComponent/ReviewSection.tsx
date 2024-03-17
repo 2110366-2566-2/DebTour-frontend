@@ -1,7 +1,7 @@
 "use client";
 import ReviewCards from "./ReviewCards";
 import { Suspense, use, useEffect, useState } from "react";
-import DialogReviewFormButton from "@/components/DialogReviewFormButton";
+import DialogReviewFormButton from "@/components/TourReviewComponent/DialogReviewFormButton";
 import getReviewByTourId from "@/lib/getReviewByTourId";
 export default function ReviewSection({ tourId }: { tourId: string }) {
     const [reviews, setReviews] = useState([]);
