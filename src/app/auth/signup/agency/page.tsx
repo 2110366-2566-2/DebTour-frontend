@@ -29,19 +29,22 @@ import { useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 import createAgency from "@/lib/createAgency";
 import { format, set } from "date-fns";
+import { useRef } from "react";
 
 const formSchema = z.object({
-  agencyName: z.string(),
-  approveTime: z.date(),
-  authorizeAdminId: z.number(),
-  authorizeStatus: z.string(),
-  bankAccount: z.string(),
+  agencyName: z.string().min(1),
+  approveTime: z.date().nullable(),
+  authorizeAdminId: z.number().nullable(),
+  authorizeStatus: z.string().nullable(),
+  bankName: z.string().min(1),
+  bankAccount: z.string().min(1),
   email: z.string().email(),
   image: z.string().url(),
-  licenseNo: z.string(),
+  licenseNo: z.string().min(1),
+  licenseImage: z.string().min(1),
   phone: z.string().min(9).max(10),
-  role: z.string(),
-  username: z.string(),
+  role: z.string().min(1),
+  username: z.string().min(1),
 });
 
 const AgencyRegisterPage = () => {
@@ -51,13 +54,15 @@ const AgencyRegisterPage = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       agencyName: "",
-      approveTime: new Date(),
-      authorizeAdminId: 0,
-      authorizeStatus: "",
+      approveTime: null,
+      authorizeAdminId: null,
+      authorizeStatus: null,
+      bankName: "",
       bankAccount: "",
       email: "",
       image: "",
       licenseNo: "",
+      licenseImage: "",
       phone: "0000000000",
       role: "Agency",
       username: "",
@@ -68,8 +73,7 @@ const AgencyRegisterPage = () => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    // console.log("trash language");
-    // console.log(values);
+    console.log(values);
     const res = await createAgency({ data: values });
     console.log(res);
     if (!res.success) {
@@ -95,7 +99,7 @@ const AgencyRegisterPage = () => {
   const handlePrevStep = () => {
     setStep((prevStep) => prevStep - 1);
   };
-
+  const imgIn = useRef<HTMLInputElement>(null);
   useEffect(() => {
     console.log("First form values", form.getValues());
     const googleUserStr = getCookie("googleUser");
@@ -107,24 +111,28 @@ const AgencyRegisterPage = () => {
         email: googleUser.email,
         image: googleUser.image,
         agencyName: "",
-        approveTime: new Date(),
-        authorizeAdminId: 0,
-        authorizeStatus: "",
+        approveTime: null,
+        authorizeAdminId: null,
+        authorizeStatus: null,
+        bankName: "",
         bankAccount: "",
         licenseNo: "",
+        licenseImage: "",
         phone: "0000000000",
         role: "Agency",
       });
     } else {
       form.reset({
         agencyName: "",
-        approveTime: new Date(),
-        authorizeAdminId: 0,
-        authorizeStatus: "",
+        approveTime: null,
+        authorizeAdminId: null,
+        authorizeStatus: null,
+        bankName: "",
         bankAccount: "",
         email: "",
         image: "",
         licenseNo: "",
+        licenseImage: "",
         phone: "0000000000",
         role: "Agency",
         username: "",
@@ -146,68 +154,6 @@ const AgencyRegisterPage = () => {
             Register as Agency
           </h1>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            {/* {step === 1 && (
-              <>
-                <div className="flex flex-col gap-6">
-                  <FormField
-                    control={form.control}
-                    name="agencyName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Username</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Username" {...field} />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Email" {...field} />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <Input placeholder="password" {...field} />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Confirm password</FormLabel>
-                        <FormControl>
-                          <Input placeholder="password" {...field} />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </>
-            )} */}
-
             {step === 1 && (
               <>
                 <div className="flex flex-col gap-6">
@@ -244,23 +190,34 @@ const AgencyRegisterPage = () => {
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="bankAccount"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>BankAccount</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Write your agency's bank account"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="flex gap-4">
+                    <FormField
+                      control={form.control}
+                      name="bankName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>BankAccount</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Bank name" {...field} />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="bankAccount"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>BankAccount</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Bank account" {...field} />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                   {/* <FormField
                     control={form.control}
                     name="username"
@@ -337,7 +294,39 @@ const AgencyRegisterPage = () => {
                           <Input
                             placeholder="Enter your agency's License Number"
                             {...field}
-                            value={field.value || ""}
+                            // value={field.value || ""}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="licenseImage"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Company License</FormLabel>
+                        <FormControl>
+                          <Input
+                            id="picture"
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files![0];
+                              //convert file into base64
+                              const reader = new FileReader();
+                              reader.readAsDataURL(file);
+                              reader.onload = () => {
+                                let base64 = reader.result.split(
+                                  ",",
+                                )[1] as string;
+                                form.setValue("licenseImage", base64);
+                              };
+                              reader.onerror = (error) => {
+                                console.log(error);
+                              };
+                            }}
                           />
                         </FormControl>
                         <FormMessage className="text-xs" />
