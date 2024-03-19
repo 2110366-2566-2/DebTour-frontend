@@ -22,12 +22,13 @@ import {redirect, useRouter} from "next/navigation";
 import {toast} from "@/components/ui/use-toast";
 import AgencyProfileSchema from "@/model/agencyProfileSchema";
 import updateAgency from "@/lib/updateAgency";
+import agencyProfileSchema from "@/model/agencyProfileSchema";
 
 export default function AgencyProfile() {
     const user = useUserStore()
     const [agency, setAgency] = useState({} as any)
 
-    const form = useForm<z.infer<typeof AgencyProfile>>({
+    const form = useForm<z.infer<typeof agencyProfileSchema>>({
         resolver: zodResolver(touristProfileSchema),
         defaultValues: {
             phone: agency.phone,

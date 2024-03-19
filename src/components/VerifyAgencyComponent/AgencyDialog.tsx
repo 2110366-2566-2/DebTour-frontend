@@ -1,5 +1,5 @@
 'use client'
-import { MutableRefObject, forwardRef, useEffect, useState } from "react";
+import { ForwardedRef, MutableRefObject, forwardRef, useEffect, useState } from "react";
 import { Agency } from "@/components/VerifyAgencyComponent/VerifyAgencyTable";
 import { DialogHeader, DialogFooter, Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "../ui/dialog";
 import { Button } from "../ui/button";
@@ -8,21 +8,28 @@ import Image from "next/image";
 import verifyAgency from "@/lib/verifyAgency";
 import { toast, useToast } from "../ui/use-toast";
 
-interface AgencyDialogRef {
+export interface AgencyDialogRef {
     setOpen: (open: boolean) => void;
     setAgency: (agency: Agency) => void;
 }
 
-const AgencyDialog = forwardRef<AgencyDialogRef>((props, ref) => {
+const AgencyDialog = forwardRef<AgencyDialogRef>((props, ref: ForwardedRef<AgencyDialogRef>) => {
     const [open, setOpen] = useState(false);
     const [agency, setAgency] = useState({} as Agency);
     const { toast } = useToast()
     useEffect(() => {
         if (ref) {
-            ref.current = {
-                setOpen,
-                setAgency
-            };
+            if (typeof ref === 'function') {
+                ref({
+                    setOpen,
+                    setAgency
+                });
+            } else {
+                ref.current = {
+                    setOpen,
+                    setAgency
+                };
+            }
         }
     }, [open, agency, ref]);
     async function verify(id: string, status: string) {
@@ -92,4 +99,7 @@ const AgencyDialog = forwardRef<AgencyDialogRef>((props, ref) => {
         </Dialog>
     )
 })
+
+AgencyDialog.displayName = "AgencyDialog";
+
 export default AgencyDialog;

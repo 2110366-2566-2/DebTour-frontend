@@ -1,9 +1,8 @@
 'use client'
-import { Suspense, use, useRef } from "react";
+import { MutableRefObject, useRef } from "react";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import VerifyAgencyTableBody from "@/components/VerifyAgencyComponent/VerifyAgencyTableBody";
 import { Button } from "../ui/button";
-import AgencyDialog from "./AgencyDialog";
+import AgencyDialog, { AgencyDialogRef } from "./AgencyDialog";
 
 export type Agency = {
     id: string;
@@ -90,7 +89,12 @@ export default function VerifyAgencyTable() {
                                 (agency.authorize_status === "Authorized" ? agency.authorized_date : "N/A")
                             }</TableCell>
                             <TableCell>
-                                <Button size="default" variant="outline" onClick={() => { Dialog.current.setAgency(agency); Dialog.current.setOpen(true); }}>
+                                <Button size="default" variant="outline" onClick={() => { 
+                                    if (!Dialog || !Dialog.current) return; // Added check for Dialog existence
+                                    const dialogRef = Dialog.current as MutableRefObject<AgencyDialogRef>; // Specify type explicitly
+                                    dialogRef.current.setAgency(agency); 
+                                    dialogRef.current.setOpen(true); 
+                                }}>
                                     Verify Info
                                 </Button>
                             </TableCell>

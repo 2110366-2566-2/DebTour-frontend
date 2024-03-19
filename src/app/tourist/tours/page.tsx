@@ -7,10 +7,10 @@ import { useEffect, useState } from "react";
 
 export interface Tour {
   tourId: number;
-  tourName: "string";
-  startDate: "string";
-  endDate: "string";
-  overviewLocation: "string";
+  tourName: string;
+  startDate: string;
+  endDate: string;
+  overviewLocation: string;
   memberCount: number;
   maxMemberCount: number;
   price: number;

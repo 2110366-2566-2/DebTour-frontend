@@ -124,8 +124,12 @@ export default function ReportIssueForm() {
                                                     const reader = new FileReader();
                                                     reader.readAsDataURL(file);
                                                     reader.onload = () => {
-                                                        let base64 = reader.result.split(',')[1] as string;
-                                                        form.setValue("image", base64);
+                                                        if(reader.result){
+                                                            if(typeof reader.result === "string") {
+                                                                let base64 = reader.result.split(',')[1] as string;
+                                                                form.setValue("image", base64);
+                                                            }
+                                                        }
                                                     };
                                                     reader.onerror = (error) => {
                                                         console.log(error);

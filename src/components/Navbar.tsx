@@ -7,7 +7,7 @@ import {SiYourtraveldottv} from "react-icons/si";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
-
+import Image from "next/image";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -99,10 +99,12 @@ function Navbar() {
                 }
                 {
                     userRole !== "Guest" &&
-                    <img
+                    <Image
                         src={session?.user?.image ?? "/avatar.png"}
                         className="h-8 w-8 rounded-full"
                         alt="avatar"
+                        width={0}
+                        height={0}
                         />
                 }
 

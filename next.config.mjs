@@ -5,7 +5,18 @@ const nextConfig = {
     BACKEND_URL: process.env.BACKEND_URL,
   },
   images: {
-    domains: ["localhost", "lh3.googleusercontent.com"],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '**',
+      }
+    ],
   },
 };
 
