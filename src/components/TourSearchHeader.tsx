@@ -30,7 +30,7 @@ const TourSearchHeader = ({
   setMinPrice,
   setMaxPrice,
 }: Props) => {
-  const handleMemberChange = (selectedOption) => {
+  const handleMemberChange = (selectedOption: any) => {
     console.log(selectedOption.value); // Log the selected value
   };
 
@@ -74,16 +74,21 @@ const TourSearchHeader = ({
         />
         <Select
           onValueChange={(e) => {
-            console.log(e.Max);
+            // need fixing here
+            // console.log(e.Max);
           }}
         >
           <SelectTrigger>
             <SelectValue placeholder="Total members" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={{ Min: "0", Max: "1" }}>1</SelectItem>
+            {/* need fixing */}
+            {/* <SelectItem value={{ Min: "0", Max: "1" }}>1</SelectItem>
             <SelectItem value={{ Min: "2", Max: "5" }}>2-5</SelectItem>
-            <SelectItem value={{ Min: "6", Max: "" }}>6+</SelectItem>
+            <SelectItem value={{ Min: "6", Max: "" }}>6+</SelectItem> */}
+            <SelectItem value='1'>1</SelectItem>
+            <SelectItem value='2'>2-5</SelectItem>
+            <SelectItem value='6'>6+</SelectItem>
           </SelectContent>
         </Select>
         <Input

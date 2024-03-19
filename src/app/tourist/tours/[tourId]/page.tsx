@@ -96,7 +96,11 @@ type Tour = {
 export default async function TourInfo({ params }: { params: { tourId: string } }){
   const tour = await getTour(params.tourId).then((res) => res.data);
   const tourImage = await getTourImage(params.tourId).then((res) => res.data);
-  const tourAvgRating = await getTourAvgRating(params.tourId).then((res) => Math.round(res.data*2)/2);
+  const tourAvgRating = await getTourAvgRating(params.tourId).then((res) => {
+    if(res.success==false) return null
+    if(res.data==null || res.data==0) return null
+    return Math.round(res.data*2)/2
+  });
   
   return (
     <main>
@@ -287,14 +291,20 @@ export default async function TourInfo({ params }: { params: { tourId: string } 
 };
 // This function gets called at build time
 export async function generateStaticParams() {
-    const tours = await getTours()
-    const paths = tours.data.map((tour:any) => ({
-      params: { id: tour.tourId },
-    }))
-  
-    // We'll pre-render only these paths at build time.
-    // { fallback: false } means other routes should 404.
-    return paths
+  try {
+    const tours = await getTours();
+    if (!tours || !tours.data) {
+        throw new Error("Failed to fetch tour data");
+    }
+    const paths = tours.data.map((tour: any) => ({
+        tourId: `${tour.tourId}`,
+    }));
+    // console.log(paths)
+    return paths;
+  } catch (error) {
+      console.error("Error generating static paths:", error);
+      return []; // Return an empty array to prevent build errors
+  }
 }
 export const dynamicParams = false
 export const revalidate = 60

@@ -15,8 +15,5 @@ export default async function getTourAvgRating(tourId: string) {
     if (!response.ok) {
         throw new Error("Failed to get tour average rating");
     }
-    if (response.success === false) {
-        return 0;
-    }
     return response.json();
 }

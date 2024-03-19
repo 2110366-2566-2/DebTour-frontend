@@ -1,6 +1,6 @@
 "use server";
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
 
 export default async function verifyAgency(agencyId: string, status: string) {

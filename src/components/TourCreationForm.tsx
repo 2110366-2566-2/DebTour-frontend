@@ -163,7 +163,7 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
       sentValues.activities = sentValues.activities.map((activity: any) => {
         activity.startTimestamp = new Date(activity.startTimestamp);
         activity.endTimestamp = new Date(activity.endTimestamp);
-        return activityres.data[i].resolveTimestamp;
+        return activity;
       });
     }
     // change the images to base64 string and add to the sentValues
