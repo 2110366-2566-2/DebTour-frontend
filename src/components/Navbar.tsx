@@ -17,29 +17,33 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import getUser from "@/lib/getUser";
+import getUser from "@/lib/getMe";
 import {useUserStore} from "@/context/store";
+import logout from "@/lib/logout";
+import getMe from "@/lib/getMe";
 
 function Navbar() {
+    const { data: session, status, update } = useSession();
+    const userRole = session?.user?.role ?? "Guest";
+
     const user = useUserStore();
 
-    // const [userData, setUser] = useState({} as any);
     useEffect(() => {
         async function get() {
-            const res = await getUser();
+            const res = await getMe(session?.user.id, session?.user.serverToken);
+            console.log(res);
             if (res) {
-                // console.log(res.data);
                 user.setUser(res.data);
             }
         }
-        get();
-    }, []);
+        if (userRole !== "Admin") {
+            get();
+        }
+    }, [session?.user.id]);
 
     const pathname = usePathname();
     const [activeRoute, setActiveRoute] = useState("");
     
-    const { data: session, status, update } = useSession();
-    const userRole = session?.user?.role ?? "Guest";
 
     useEffect(() => {
         setActiveRoute(pathname);
@@ -150,6 +154,8 @@ function Navbar() {
                                 }
                                 <DropdownMenuSeparator/>
                                 <DropdownMenuItem onClick={async () => {
+                                    const res = await logout(session?.user.serverToken)
+                                    console.log(res)
                                     signOut();
                                 }
                                 }>
