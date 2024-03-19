@@ -193,8 +193,8 @@ export default async function TourInfo({ params }: { params: { tourId: string } 
             <CarouselContent>
               {
               tourImage!=null && tourImage.images!=null?(
-                tourImage?.images.map((image: string) => (
-                  <CarouselItem>
+                tourImage?.images.map((image: string, index: number) => (
+                  <CarouselItem key={index}>
                     <div className="p-1">
                       <Card>
                         <CardContent className="flex aspect-square items-center justify-center p-6">
