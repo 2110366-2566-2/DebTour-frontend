@@ -16,7 +16,7 @@ import {Calendar as CalendarIcon} from "lucide-react";
 import {Calendar} from "@/components/ui/calendar";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {format} from "date-fns";
-import getUser from "@/lib/getUser";
+import getUser from "@/lib/getMe";
 import updateTourist from "@/lib/updateTourist";
 import {redirect, useRouter} from "next/navigation";
 import {toast} from "@/components/ui/use-toast";

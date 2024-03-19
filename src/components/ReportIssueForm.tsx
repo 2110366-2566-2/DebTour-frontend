@@ -21,7 +21,7 @@ import {rejects} from "assert";
 import reportIssue from "@/lib/reportIssue";
 import {useEffect, useState} from "react";
 import {useUserStore} from "@/context/store";
-import getUser from "@/lib/getUser";
+import getUser from "@/lib/getMe";
 
 export default function ReportIssueForm() {
     const user = useUserStore()

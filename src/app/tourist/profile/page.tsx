@@ -16,10 +16,10 @@ import {Calendar as CalendarIcon} from "lucide-react";
 import {Calendar} from "@/components/ui/calendar";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {format} from "date-fns";
-import getUser from "@/lib/getUser";
 import updateTourist from "@/lib/updateTourist";
 import {redirect, useRouter} from "next/navigation";
 import {toast} from "@/components/ui/use-toast";
+import getMe from "@/lib/getMe";
 
 export default function TouristProfile() {
     const user = useUserStore()
@@ -57,7 +57,7 @@ export default function TouristProfile() {
 
     useEffect(() => {
         async function get() {
-            const res = await getUser();
+            const res = await getMe();
             if (!res) return
             let temp = tourist;
             // merge temp with res.data
