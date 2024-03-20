@@ -13,6 +13,8 @@ import {useSession} from "next-auth/react";
 export default function ReportIssue() {
     const {data: session, status, update} = useSession();
     const role = session?.user?.role ?? "Guest";
+    const [reload, setReload] = useState(false);
+
     if (role === "Guest") {
         return (
             <div className="container flex justify-center h-[640px] items-center">
@@ -24,10 +26,10 @@ export default function ReportIssue() {
         <div className="container flex flex-col gap-6 w-1/2">
             <div className="flex justify-between mt-10">
                 <h1 className="text-2xl font-semibold">My Reported Issues</h1>
-                <ReportIssueForm/>
+                <ReportIssueForm reload={reload} setReload={setReload}/>
             </div>
             <div className="flex justify-center">
-                <ReportIssueTable/>
+                <ReportIssueTable reload={reload} setReload={setReload}/>
             </div>
         </div>
     );

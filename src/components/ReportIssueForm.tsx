@@ -25,7 +25,7 @@ import getUser from "@/lib/getMe";
 import {useSession} from "next-auth/react";
 import {toast} from "@/components/ui/use-toast";
 
-export default function ReportIssueForm() {
+export default function ReportIssueForm({reload, setReload}: { reload: boolean, setReload: any }) {
     const {data: session, status, update} = useSession();
     const username = session?.user?.id;
     const role = session?.user?.role;
@@ -44,6 +44,7 @@ export default function ReportIssueForm() {
     });
 
     async function onSubmit(values: z.infer<typeof reportProblemFormSchema>) {
+        setFormOpen(false);
         console.log(JSON.stringify(values))
         const res = await reportIssue(username, role, token, values);
         if (!res.success)  {
@@ -54,8 +55,7 @@ export default function ReportIssueForm() {
             title: "Issue reported",
             description: "Issue has been reported successfully",
         })
-        window.location.reload();
-        setFormOpen(false);
+        setReload(!reload);
     }
 
     return (

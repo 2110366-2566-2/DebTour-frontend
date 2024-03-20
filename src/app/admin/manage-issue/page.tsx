@@ -1,11 +1,13 @@
 "use client"
 import ReportIssueTable from "@/components/ReportIssueTable";
 import {useSession} from "next-auth/react";
+import {useState} from "react";
 
 
 export default function ManageIssue() {
     const {data: session, status, update} = useSession();
     const role = session?.user?.role ?? "Guest";
+    const [reload, setReload] = useState(false);
     if (role !== "Admin") {
         return (
             <div className="container flex justify-center h-[640px] items-center">
@@ -19,7 +21,7 @@ export default function ManageIssue() {
                     <h1 className="text-2xl font-semibold">User Reported Issues</h1>
                 </div>
                 <div className="flex justify-center">
-                    <ReportIssueTable/>
+                    <ReportIssueTable reload={reload} setReload={setReload}/>
                 </div>
             </div>
         );

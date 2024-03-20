@@ -14,13 +14,19 @@ import {useUserStore} from "@/context/store";
 import {toast} from "@/components/ui/use-toast";
 import {useSession} from "next-auth/react";
 
-export default function ReportIssueDetailDisplay({issue}: { issue: any }) {
+export default function ReportIssueDetailDisplay({
+                                                     issue,
+                                                     setSelectedIssue,
+                                                     reload,
+                                                     setReload
+                                                 }: { issue: any, setSelectedIssue: any, reload: boolean, setReload: any }) {
     let {data: session, status, update} = useSession();
     let role = session?.user.role;
     const token = session?.user.serverToken;
     if (role === "Tourist" || role === "Agency") {
         role = "User";
     }
+
 
     const form = useForm<z.infer<typeof adminManageIssueForm>>({
         resolver: zodResolver(adminManageIssueForm),
@@ -34,6 +40,18 @@ export default function ReportIssueDetailDisplay({issue}: { issue: any }) {
     })
 
     async function onSubmit(values: z.infer<typeof adminManageIssueForm>) {
+        setSelectedIssue({
+            issueId: '',
+            issueType: '',
+            status: '',
+            message: '',
+            image: '',
+            reporterUsername: '',
+            reportTimestamp: '',
+            resolverAdminId: 0,
+            resolveMessage: '',
+            resolveTimestamp: ''
+        });
         values.issueId = issue.issueId;
         values.resolveTimestamp = new Date().toISOString();
         console.log(JSON.stringify(values))
@@ -46,7 +64,7 @@ export default function ReportIssueDetailDisplay({issue}: { issue: any }) {
             title: "Issue updated",
             description: "Issue has been updated successfully",
         })
-        window.location.reload();
+        setReload(!reload);
     }
 
     return (
@@ -55,7 +73,7 @@ export default function ReportIssueDetailDisplay({issue}: { issue: any }) {
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-4"
-                    >
+                >
                     <div className="flex gap-2">
                         <h1 className="font-bold">Issue ID</h1>
                         <p>{issue.issueId}</p>
@@ -84,7 +102,7 @@ export default function ReportIssueDetailDisplay({issue}: { issue: any }) {
                                     <Select
                                         onValueChange={field.onChange}
                                         value={field.value}
-                                        >
+                                    >
                                         <FormControl>
                                             <SelectTrigger>
                                                 <SelectValue placeholder={"Select an status"}/>
@@ -121,7 +139,7 @@ export default function ReportIssueDetailDisplay({issue}: { issue: any }) {
                     </div>
                     <div>
                         <h1 className="font-bold">Image</h1>
-                        <img src={'data:image/jpeg;base64,'+ issue.image} />
+                        <img src={'data:image/jpeg;base64,' + issue.image}/>
                     </div>
                     {role === "User" &&
                         <div>
