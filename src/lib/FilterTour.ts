@@ -32,13 +32,9 @@ export default async function FilterTour(
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        // "Authorization": `Bearer ${token}`,
-        // "Access-Control-Allow-Origin": "*"
       },
     },
   );
-  // const res = await response.json()
-  // console.log(response)
   if (!response.ok) {
     throw new Error("Failed to get tour");
   }

@@ -12,7 +12,7 @@ export default async function getIssues(username: string | undefined, role: stri
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            // "Authorization": `Bearer ${token}`,
+            "Authorization": `Bearer ${token}`,
 
         },
     });

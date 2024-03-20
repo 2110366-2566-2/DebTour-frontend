@@ -7,7 +7,7 @@ export default async function updateIssue(token: string, issue: z.infer<typeof a
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
-            // "Authorization": `Bearer ${token}`,
+            "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(issue),
     });

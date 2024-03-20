@@ -3,21 +3,12 @@
 import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
 
-export default async function verifyAgency(agencyId: string, status: string) {
+export default async function verifyAgency(username: string, status: string) {
     const session = await getServerSession(authOptions);
-    console.log(session)
-    if (!session) {
+    if (!session || session.user.role !== "Admin") {
         return {
             redirect: {
                 destination: "/login",
-                permanent: false,
-            },
-        };
-    }
-    if (session.user.role !== "Admin") {
-        return {
-            redirect: {
-                destination: "/",
                 permanent: false,
             },
         };
@@ -26,10 +17,10 @@ export default async function verifyAgency(agencyId: string, status: string) {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
-            // "Authorization": `Bearer ${session.serverToken}`,
+            "Authorization": `Bearer ${session.user.serverToken}`,
         },
         body: JSON.stringify({
-            agencyId,
+            username,
             status
         }),
     });

@@ -15,6 +15,7 @@ export default async function updateAgency(username: string | undefined, token: 
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(d)
     });

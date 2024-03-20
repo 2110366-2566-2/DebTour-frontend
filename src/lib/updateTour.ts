@@ -1,12 +1,24 @@
+'use server'
 import { z } from "zod";
 import formSchema from '@/model/formSchema';
+import { authOptions } from "@/utils/authOptions";
+import { getServerSession } from "next-auth";
 
-export default async function updateTour(token: string, tour: z.infer<typeof formSchema>, oldTour: z.infer<typeof formSchema>, tourId: string) {
+export default async function updateTour(tour: z.infer<typeof formSchema>, oldTour: z.infer<typeof formSchema>, tourId: string) {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== "Agency") {
+        return {
+            redirect: {
+                destination: "/login",
+                permanent: false,
+            },
+        };
+    }
     const response = await fetch(`${process.env.BACKEND_URL}/api/v1/tours/${tourId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
-            // "Authorization": `Bearer ${token}`,
+            "Authorization": `Bearer ${session.user.serverToken}`,
         },
         body: JSON.stringify(tour),
     });

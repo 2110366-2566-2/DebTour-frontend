@@ -7,6 +7,7 @@ export default async function getTourist(username: string | undefined, token: st
         method: "GET",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
         },
     });
 
