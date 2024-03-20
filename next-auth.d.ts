@@ -10,7 +10,14 @@ declare module "next-auth" {
             role: string,
             token: string,
             serverToken: string
+            picture: string
         }
+    }
+    interface User {
+        id: string,
+        name: string,
+        email: string,
+        image: string
     }
 }
 

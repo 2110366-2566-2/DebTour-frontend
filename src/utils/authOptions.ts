@@ -49,12 +49,12 @@ export const authOptions: AuthOptions = {
         async signIn({ account, profile }) {
             const cookieStore = cookies()
             try {
-                if(profile && 'at_hash' in profile) {
+                if(profile && 'at_hash' in profile && 'picture' in profile) {
                     const googleUser = {
                         id: profile.sub,
                         email: profile.email,
                         name: profile.name,
-                        image: profile.image??'',
+                        image: profile.picture??'',
                         token: profile.at_hash
                     }
                     const response = await isUserExist('google', googleUser)

@@ -11,9 +11,10 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import deleteTour from "@/lib/deleteTour";
+import { toast } from "@/components/ui/use-toast";
 
 import { useRouter } from 'next/navigation'
-export default function DeleteBtn({token, tourId}: Readonly<{token: string, tourId: string}>) {
+export default function DeleteBtn({tourId}: Readonly<{tourId: string}>) {
     const router = useRouter()
     
     return (
@@ -30,8 +31,16 @@ export default function DeleteBtn({token, tourId}: Readonly<{token: string, tour
                     </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={async ()=>{await deleteTour(token,tourId).then(()=>router.push("/agency/tours"))}}>Continue</AlertDialogAction>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={async ()=>{
+                            await deleteTour(tourId).then(
+                                ()=>toast({title: "Failed to create tour", description: "Please try again",})
+                            ).then(
+                                ()=>router.push("/agency/tours")
+                            )
+                        }}>
+                        Continue
+                        </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
