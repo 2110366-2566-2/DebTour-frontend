@@ -26,21 +26,6 @@ function Navbar() {
     const { data: session, status, update } = useSession();
     const userRole = session?.user?.role ?? "Guest";
 
-    const user = useUserStore();
-
-    useEffect(() => {
-        async function get() {
-            const res = await getMe(session?.user.id, session?.user.serverToken);
-            console.log(res);
-            if (res) {
-                user.setUser(res.data);
-            }
-        }
-        if (userRole !== "Admin") {
-            get();
-        }
-    }, [session?.user.id]);
-
     const pathname = usePathname();
     const [activeRoute, setActiveRoute] = useState("");
     
@@ -127,11 +112,11 @@ function Navbar() {
                                 <DropdownMenuGroup>
                                     <DropdownMenuItem>
                                         {userRole === "Tourist" &&
-                                            <Link href={'/tourist/profile'}>Edit Profile</Link>
+                                            <Link className="w-full" href={'/tourist/profile'}>Edit Profile</Link>
                                         }
                                         {
                                         userRole === "Agency" &&
-                                            <Link href={'/agency/profile'}>Edit Profile</Link>
+                                            <Link className="w-full" href={'/agency/profile'}>Edit Profile</Link>
                                         }
 
                                     </DropdownMenuItem>
@@ -139,19 +124,19 @@ function Navbar() {
                                 {
                                     (userRole === "Tourist" || userRole == "Agency") &&
                                     <DropdownMenuItem>
-                                        <Link href={'/report-issue'}>Report Issue</Link>
+                                        <Link className="w-full" href={'/report-issue'}>Report Issue</Link>
                                     </DropdownMenuItem>
                                 }
                                 {
                                     userRole === "Admin" &&
                                     <DropdownMenuItem>
-                                        <Link href={'/admin/manage-issue'}>Manage Issue</Link>
+                                        <Link className="w-full" href={'/admin/manage-issue'}>Manage Issue</Link>
                                     </DropdownMenuItem>
                                 }
                                 {
                                     userRole === "Admin" &&
                                     <DropdownMenuItem>
-                                        <Link href={'/admin/verify-agency'}>Verify Agency</Link>
+                                        <Link className="w-full" href={'/admin/verify-agency'}>Verify Agency</Link>
                                     </DropdownMenuItem>
                                 }
                                 <DropdownMenuSeparator/>

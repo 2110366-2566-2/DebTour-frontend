@@ -1,6 +1,6 @@
-export default async function getIssues(username: string | undefined, role: string, token: string | undefined) {
+export default async function getIssues(username: string | undefined, role: string | undefined, token: string | undefined) {
     let query = "";
-    if (!username) {
+    if (!username || !token || !role) {
         return
     }
     if (role === "Tourist" || role === "Agency") {
@@ -13,7 +13,6 @@ export default async function getIssues(username: string | undefined, role: stri
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`,
-
         },
     });
 
