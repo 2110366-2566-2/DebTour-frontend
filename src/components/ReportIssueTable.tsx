@@ -5,10 +5,14 @@ import {useEffect, useMemo, useState} from "react";
 import ReportIssueDetailDisplay from "@/components/ReportIssueDetailDisplay";
 import getIssues from "@/lib/getIssues";
 import {useUserStore} from "@/context/store";
+import {useSession} from "next-auth/react";
 
 export default function ReportIssueTable() {
-    let role = useUserStore((state) => state.role);
-    let user = useUserStore()
+    const {data: session, status, update} = useSession();
+    const role = session?.user?.role;
+    const username = session?.user?.id;
+    const token = session?.user?.serverToken;
+
 
     const [selectedIssue, setSelectedIssue] = useState({
         issueId: '',
@@ -27,7 +31,7 @@ export default function ReportIssueTable() {
 
     useEffect(() => {
         async function get() {
-            const res = await getIssues(user.username, user.role, user.token);
+            const res = await getIssues(username, role, token);
             if (!res) return
             let temp = []
             for (let i = 0; i < res.data.length; i++) {
@@ -58,7 +62,7 @@ export default function ReportIssueTable() {
         }
         get();
 
-    }, [user])
+    }, [username])
     return (
         <div>
             <Table>
@@ -66,8 +70,8 @@ export default function ReportIssueTable() {
                 <TableHeader>
                     <TableRow>
                         <TableHead className="w-[100px]">Issue ID</TableHead>
-                        {role === 'admin' && <TableHead>Reporter</TableHead>}
-                        {role === 'admin' && <TableHead>Resolver Admin ID</TableHead>}
+                        {role === 'Admin' && <TableHead>Reporter</TableHead>}
+                        {role === 'Admin' && <TableHead>Resolver Admin ID</TableHead>}
                         <TableHead>Issue Type</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Report Time</TableHead>
@@ -82,8 +86,8 @@ export default function ReportIssueTable() {
                                       }
                             }>
                                 <TableCell className="w-[50px]">{issue.issueId}</TableCell>
-                                {role === 'admin' && <TableCell className="w-[150px]">{issue.reporterUsername}</TableCell>}
-                                {role === 'admin' && <TableCell className="w-[150px]">{issue.resolverAdminId}</TableCell>}
+                                {role === 'Admin' && <TableCell className="w-[150px]">{issue.reporterUsername}</TableCell>}
+                                {role === 'Admin' && <TableCell className="w-[150px]">{issue.resolverAdminId}</TableCell>}
                                 <TableCell className="w-[150px]">{issue.issueType}</TableCell>
                                 <TableCell className="w-[150px] flex gap-1 items-center">
                                     {issue.status === 'Pending' &&

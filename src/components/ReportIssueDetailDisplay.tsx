@@ -11,9 +11,13 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import updateIssue from "@/lib/updateIssue";
 import {Textarea} from "@/components/ui/textarea";
 import {useUserStore} from "@/context/store";
+import {toast} from "@/components/ui/use-toast";
+import {useSession} from "next-auth/react";
 
 export default function ReportIssueDetailDisplay({issue}: { issue: any }) {
-    let role = useUserStore().role;
+    let {data: session, status, update} = useSession();
+    let role = session?.user.role;
+    const token = session?.user.serverToken;
     if (role === "Tourist" || role === "Agency") {
         role = "User";
     }
@@ -33,16 +37,20 @@ export default function ReportIssueDetailDisplay({issue}: { issue: any }) {
         values.issueId = issue.issueId;
         values.resolveTimestamp = new Date().toISOString();
         console.log(JSON.stringify(values))
-        const res = await updateIssue("tempToken", values);
+        const res = await updateIssue(token, values);
         if (!res.success) {
             console.log("Failed to update issue");
         }
         console.log("Successfully updated issue");
+        toast({
+            title: "Issue updated",
+            description: "Issue has been updated successfully",
+        })
         window.location.reload();
     }
 
     return (
-        <DialogContent className="max-w-[840px] max-h-[840px] overflow-y-auto">
+        <DialogContent className="max-w-[840px] max-h-[740px] overflow-y-auto">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}

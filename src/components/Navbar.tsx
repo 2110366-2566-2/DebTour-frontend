@@ -26,21 +26,6 @@ function Navbar() {
     const { data: session, status, update } = useSession();
     const userRole = session?.user?.role ?? "Guest";
 
-    const user = useUserStore();
-
-    useEffect(() => {
-        async function get() {
-            const res = await getMe(session?.user.id, session?.user.serverToken);
-            console.log(res);
-            if (res) {
-                user.setUser(res.data);
-            }
-        }
-        if (userRole !== "Admin") {
-            get();
-        }
-    }, [session?.user.id]);
-
     const pathname = usePathname();
     const [activeRoute, setActiveRoute] = useState("");
     
@@ -138,7 +123,9 @@ function Navbar() {
                                 </DropdownMenuGroup>
                                 {
                                     (userRole === "Tourist" || userRole == "Agency") &&
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => {
+                                        console.log(session);
+                                    }}>
                                         <Link href={'/report-issue'}>Report Issue</Link>
                                     </DropdownMenuItem>
                                 }
