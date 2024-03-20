@@ -8,7 +8,7 @@ export default async function reportIssue(username:string | undefined, role: str
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            // "Authorization": `Bearer ${token}`,
+            "Authorization": `Bearer ${token}`,
 
         },
         body: JSON.stringify(reportIssueForm),

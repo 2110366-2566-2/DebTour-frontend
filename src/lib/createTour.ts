@@ -1,17 +1,32 @@
-export default async function createTour(token: string, tour: object) {
+'use server'
+
+import { authOptions } from "@/utils/authOptions";
+import { getServerSession } from "next-auth";
+
+export default async function createTour(tour: object) {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== "Agency") {
+        return {
+            redirect: {
+                destination: "/login",
+                permanent: false,
+            },
+        };
+    }
     const response = await fetch(`${process.env.BACKEND_URL}/api/v1/tours`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            // "Authorization": `Bearer ${token}`,
-            // "Access-Control-Allow-Origin": "*"
+            "Authorization": `Bearer ${session.user.serverToken}`,
         },
         body: JSON.stringify(tour),
     });
-    // const res = await response.json()
-    // console.log(res)
     if (!response.ok) {
-        throw new Error("Failed to create tour");
+        return {
+            success: false,
+        };
     }
-    return response.json();
+    return {
+        success: true,
+    };
 }

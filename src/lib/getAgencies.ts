@@ -1,13 +1,35 @@
+'use server'
+import { authOptions } from "@/utils/authOptions";
+import { getServerSession } from "next-auth";
+
 export default async function getAgencies(){
-    const response = await fetch(`${process.env.BACKEND_URL}/api/v1/agencies`, {
+    const session = await getServerSession(authOptions);
+
+    if (!session || session.user.role !== "Admin") {
+        return {
+            redirect: {
+                destination: "/login",
+                permanent: false,
+            },
+        };
+    }
+
+    const response = await fetch(`${process.env.BACKEND_URL}/api/v1/agencies/companyInformation`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${session.user.serverToken}`,
         },
     }
     )
     if (!response.ok) {
-        throw new Error("Failed to fetch agencies");
+        return {
+            status: 500,
+            body: "Failed to get agencies",
+        };
     }
-    return response.json()
+    return {
+        status: 200,
+        body: await response.json(),
+    };
 }

@@ -177,9 +177,8 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
         reader.readAsDataURL(images[i]);
       }
     }
-    console.log(sentValues);
     if (!tourId) {
-      const res = await createTour("token", sentValues);
+      const res = await createTour(sentValues);
       if (!res.success) {
         toast({
           title: "Failed to create tour",
@@ -194,7 +193,7 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
       return;
     } else {
       // console.log(sentValues)
-      const res = await updateTour("token", sentValues, oldValues, tourId);
+      const res = await updateTour(sentValues, oldValues, tourId);
       if (!res.success) {
         toast({
           title: "Failed to update tour",
@@ -318,7 +317,7 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
                           <Label htmlFor="deleteBtn" className="text-slate-400">
                             Delete the tour?
                           </Label>
-                          <DeleteBtn token="token" tourId={tourId} />
+                          <DeleteBtn tourId={tourId} />
                         </div>
                       ) : null}
                     </div>
@@ -625,7 +624,7 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
                     Add Image
                   </Button>
               </div>
-            <Button onClick={() => console.log(form.getValues())}>Log</Button>
+            {/* <Button onClick={() => console.log(form.getValues())}>Log</Button> */}
             <div className="flex justify-between">
               <div className="flex items-center gap-4">
                   <Button
