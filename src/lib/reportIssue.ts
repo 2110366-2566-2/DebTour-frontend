@@ -1,7 +1,7 @@
 import { z } from "zod";
 import reportIssueFormSchema from "@/model/reportProblemFormSchema";
-export default async function reportIssue(username:string | undefined, role: string, token: string | undefined, reportIssueForm: z.infer<typeof reportIssueFormSchema>) {
-    if (!username, !token) {
+export default async function reportIssue(username:string | undefined, role: string | undefined, token: string | undefined, reportIssueForm: z.infer<typeof reportIssueFormSchema>) {
+    if (!username || !token || !role) {
         return
     }
     const response = await fetch(`${process.env.BACKEND_URL}/api/v1/issues`, {

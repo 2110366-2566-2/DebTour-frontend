@@ -15,7 +15,7 @@ interface Props {
     setSearchName: (name: string) => void;
     setStartDate: (date: string) => void;
     setEndDate: (date: string) => void;
-    setMemberCount: (count: string) => void;
+    setYourTotalMembers: (count: string) => void;
     setMinPrice: (price: string) => void;
     setMaxPrice: (price: string) => void;
 }

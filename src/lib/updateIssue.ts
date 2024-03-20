@@ -2,7 +2,7 @@
 import { z } from "zod";
 import adminManageIssueForm from "@/model/adminManageIssueForm";
 
-export default async function updateIssue(token: string, issue: z.infer<typeof adminManageIssueForm>) {
+export default async function updateIssue(token: string | undefined, issue: z.infer<typeof adminManageIssueForm>) {
     if (!token) {
         throw new Error("No token provided");
     }

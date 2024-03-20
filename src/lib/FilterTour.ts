@@ -38,11 +38,11 @@ export default async function FilterTour(
     // merge 2 response by tourId
     const response1Json = await response1.json();
     const response2Json = await response2.json();
-    const mergeResponse = []
-    response1Json.data?.forEach((element1) => {
+    let mergeResponse = []  as any[]
+    response1Json.data?.forEach((element1: any) => {
         mergeResponse.push(element1)
     });
-    response2Json.data?.forEach((element2) => {
+    response2Json.data?.forEach((element2: any) => {
         let isExist = false
         mergeResponse.forEach((element1) => {
             if (element1.tourId === element2.tourId) {

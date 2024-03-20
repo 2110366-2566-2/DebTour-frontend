@@ -1,6 +1,6 @@
-export default async function getIssues(username: string | undefined, role: string, token: string | undefined) {
+export default async function getIssues(username: string | undefined, role: string | undefined, token: string | undefined) {
     let query = "";
-    if (!username || !token) {
+    if (!username || !token || !role) {
         return
     }
     if (role === "Tourist" || role === "Agency") {
