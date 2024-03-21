@@ -124,6 +124,7 @@ function Navbar() {
                             <DropdownMenuContent className="w-56">
                                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                 <DropdownMenuSeparator/>
+                                {userRole !== "Admin" && 
                                 <DropdownMenuGroup>
                                     <DropdownMenuItem>
                                         {userRole === "Tourist" &&
@@ -135,7 +136,7 @@ function Navbar() {
                                         }
 
                                     </DropdownMenuItem>
-                                </DropdownMenuGroup>
+                                </DropdownMenuGroup>}
                                 {
                                     (userRole === "Tourist" || userRole == "Agency") &&
                                     <DropdownMenuItem>
