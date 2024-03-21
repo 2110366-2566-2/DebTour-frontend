@@ -1,19 +1,21 @@
 'use client'
 import { ForwardedRef, MutableRefObject, forwardRef, useEffect, useState } from "react";
-import { Agency } from "@/app/admin/verify-agency/page";
 import { DialogHeader, DialogFooter, Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "../ui/dialog";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import verifyAgency from "@/lib/verifyAgency";
 import { toast, useToast } from "../ui/use-toast";
+import { Agency } from "./VerifyAgencyTable";
 
 export interface AgencyDialogRef {
     setOpen: (open: boolean) => void;
     setAgency: (agency: Agency) => void;
 }
-
-const AgencyDialog = forwardRef<AgencyDialogRef>((props, ref: ForwardedRef<AgencyDialogRef>) => {
+interface AgencyDialogProps {
+    reload: () => void;
+}
+const AgencyDialog = forwardRef<AgencyDialogRef, AgencyDialogProps>((props: {reload: () => void}, ref: ForwardedRef<AgencyDialogRef>) => {
     const [open, setOpen] = useState(false);
     const [agency, setAgency] = useState({} as Agency);
     const [image, setImage] = useState("");
