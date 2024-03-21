@@ -38,21 +38,21 @@ const AgencyDialog = forwardRef<AgencyDialogRef>((props, ref: ForwardedRef<Agenc
         else {
             setImage("");
         }
-        console.log(agency);
     }, [open, agency, ref]);
     async function verify(username: string, status: string) {
         const response = await verifyAgency( username, status );
         if (response.status === 200) {
             toast({
-                title: "Agency verified",
-                description: "Agency has been verified",
+                title: `Agency ${response.body.startsWith("Approved") ? "Verified" : "Unverified"}`,
+                description: response.body,
             })
             setOpen(false);
+            props.reload();
         }
         else {
             toast({
                 title: "Failed to verify",
-                description: "Failed to verify agency",
+                description: "Failed to change agency's state",
             })
         }
     }

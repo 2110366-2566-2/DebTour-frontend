@@ -13,8 +13,8 @@ export default async function verifyAgency(username: string, status: string) {
             },
         };
     }
-    const response = await fetch(`${process.env.BACKEND_URL}/api/v1/agency/verify`, {
-        method: "PATCH",
+    const response = await fetch(`${process.env.BACKEND_URL}/api/v1/agencies/verify`, {
+        method: "PUT",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${session.user.serverToken}`,
@@ -24,6 +24,7 @@ export default async function verifyAgency(username: string, status: string) {
             status
         }),
     });
+    const data = await response.json();
     if (!response.ok) {
         return {
             status: 500,
@@ -32,6 +33,6 @@ export default async function verifyAgency(username: string, status: string) {
     }
     return {
         status: 200,
-        body: "Agency verified",
+        body: data.data,
     };
 }
