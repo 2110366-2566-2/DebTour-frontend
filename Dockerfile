@@ -8,19 +8,13 @@ RUN npm ci
 
 COPY . .
 
-RUN --mount=type=secret,id=NEXTAUTH_URL \
-    export NEXTAUTH_URL=$(cat /run/secrets/NEXTAUTH_URL) && \
-    --mount=type=secret,id=NEXTAUTH_SECRET \
-    export NEXTAUTH_SECRET=$(cat /run/secrets/NEXTAUTH_SECRET) && \
-    --mount=type=secret,id=GOOGLE_CLIENT_ID \
-    export GOOGLE_CLIENT_ID=$(cat /run/secrets/GOOGLE_CLIENT_ID) && \
-    --mount=type=secret,id=GOOGLE_CLIENT_SECRET \
-    export GOOGLE_CLIENT_SECRET=$(cat /run/secrets/GOOGLE_CLIENT_SECRET) && \
-    --mount=type=secret,id=BACKEND_URL \
-    export BACKEND_URL=$(cat /run/secrets/BACKEND_URL) && \
-    npm run build
+ENV NEXTAUTH_URL=${NEXTAUTH_URL} \
+    NEXTAUTH_SECRET=${NEXTAUTH_SECRET} \
+    GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} \
+    GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} \
+    BACKEND_URL=${BACKEND_URL}
 
-EXPOSE 3000
+RUN npm run build
 
 ENV NODE_ENV=production
 
