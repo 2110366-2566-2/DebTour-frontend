@@ -3,8 +3,8 @@ import touristProfileSchema from "@/model/touristProfileSchema";
 
 
 export default async function updateTourist(username: string | undefined, token: string | undefined, data: z.infer<typeof touristProfileSchema>) {
-    if (!username) {
-        return
+    if (!username || !token) {
+        throw new Error('No token or username provided');
     }
 
     let d = {
@@ -21,7 +21,7 @@ export default async function updateTourist(username: string | undefined, token:
         image: data.image
     }
     console.log(d)
-    console.log(username)
+    console.log(username, token)
     const response = await fetch(`${process.env.BACKEND_URL}/api/v1/tourists/${username}`, {
         method: 'PUT',
         headers: {
@@ -30,6 +30,7 @@ export default async function updateTourist(username: string | undefined, token:
         },
         body: JSON.stringify(d)
     });
+    // console.log(response.json())
 
     if (!response.ok) {
         throw new Error('Failed to update tourist profile');

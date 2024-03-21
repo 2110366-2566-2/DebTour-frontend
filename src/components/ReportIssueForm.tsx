@@ -22,15 +22,20 @@ import reportIssue from "@/lib/reportIssue";
 import {useEffect, useState} from "react";
 import {useUserStore} from "@/context/store";
 import getUser from "@/lib/getMe";
+import {useSession} from "next-auth/react";
+import {toast} from "@/components/ui/use-toast";
 
-export default function ReportIssueForm() {
-    const user = useUserStore()
+export default function ReportIssueForm({reload, setReload}: { reload: boolean, setReload: any }) {
+    const {data: session, status, update} = useSession();
+    const username = session?.user?.id;
+    const role = session?.user?.role;
+    const token = session?.user?.serverToken;
 
     const [formOpen, setFormOpen] = useState(false)
     const form = useForm<z.infer<typeof reportProblemFormSchema>>({
         resolver: zodResolver(reportProblemFormSchema),
         defaultValues: {
-            reporterUsername: user.username,
+            reporterUsername: username,
             issueType: "Other",
             message: "",
             status: "Pending",
@@ -39,14 +44,18 @@ export default function ReportIssueForm() {
     });
 
     async function onSubmit(values: z.infer<typeof reportProblemFormSchema>) {
+        setFormOpen(false);
         console.log(JSON.stringify(values))
-        const res = await reportIssue(user.username, user.role, user.token, values);
+        const res = await reportIssue(username, role, token, values);
         if (!res.success)  {
             console.log("Failed to report issue");
         }
         console.log("Successfully reported issue");
-        window.location.reload();
-        setFormOpen(false);
+        toast({
+            title: "Issue reported",
+            description: "Issue has been reported successfully",
+        })
+        setReload(!reload);
     }
 
     return (
