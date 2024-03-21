@@ -1,0 +1,37 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
+
+      - name: Docker Login
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker Image
+        run: docker build -t ${{ secrets.DOCKER_REPO }} .
+
+      - name: Push Docker Image to Registry
+        run: docker push ${{ secrets.DOCKER_REPO }}:latest
+
+  deploy:
+    needs: build
+    runs-on: aws-ec2
+
+    steps:
+      - name: Pull Docker Image from Registry
+        run: docker pull ${{ secrets.DOCKER_REPO }}:latest
+
+      - name: Stop and Remove Old Container
+        run: docker rm -f $(docker ps -aq)
+
+      - name: Run New Docker Container
+        run: docker run -d -p 3000:3000 ${{ secrets.DOCKER_REPO }}
