@@ -27,14 +27,14 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Stop and Remove Old Container
+        run: docker rm -f $(docker ps -aq)
+        
       - name: Clear Docker Images
         run: docker rmi $(docker images -q)
 
       - name: Pull Docker Image from Registry
         run: docker pull ${{ secrets.DOCKER_REPO }}:latest
-
-      - name: Stop and Remove Old Container
-        run: docker rm -f $(docker ps -aq)
 
       - name: Run New Docker Container
         run: docker run -d -p 3000:3000 ${{ secrets.DOCKER_REPO }}
