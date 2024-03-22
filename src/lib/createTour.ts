@@ -1,10 +1,4 @@
-'use server'
-
-import { authOptions } from "@/utils/authOptions";
-import { getServerSession } from "next-auth";
-
-export default async function createTour(tour: object) {
-    const session = await getServerSession(authOptions);
+export default async function createTour(session:any, tour: object) {
     if (!session || session.user.role !== "Agency") {
         return {
             redirect: {
