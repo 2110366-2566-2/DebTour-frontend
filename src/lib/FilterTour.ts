@@ -5,6 +5,7 @@ export default async function FilterTour(
   MemberCount: string,
   MinPrice: string,
   MaxPrice: string,
+  AgencyUsername: string,
 ) {
   const HaveSearchName = searchName !== "";
   const HaveStartDate = StartDate !== "";
@@ -12,18 +13,25 @@ export default async function FilterTour(
   const HaveMemberCount = MemberCount !== "";
   const HaveMinPrice = MinPrice !== "";
   const HaveMaxPrice = MaxPrice !== "";
+  const HaveAgencyUsername =
+    AgencyUsername !== "" || AgencyUsername !== undefined;
   let responsebody = "";
+  let AgencyName =
+    AgencyUsername === "" || AgencyUsername === undefined
+      ? ""
+      : `${AgencyUsername}`;
   if (
     !HaveSearchName &&
     !HaveStartDate &&
     !HaveEndDate &&
     !HaveMemberCount &&
     !HaveMinPrice &&
-    !HaveMaxPrice
+    !HaveMaxPrice &&
+    !HaveAgencyUsername
   ) {
     responsebody = "";
   } else {
-    responsebody = `?name=${searchName}&startDate=${StartDate}&endDate=${EndDate}&priceFrom=${MinPrice}&priceTo=${MaxPrice}`;
+    responsebody = `?name=${searchName}&startDate=${StartDate}&endDate=${EndDate}&priceFrom=${MinPrice}&priceTo=${MaxPrice}&agencyUsername=${AgencyName}`;
   }
   console.log(responsebody);
   const response = await fetch(

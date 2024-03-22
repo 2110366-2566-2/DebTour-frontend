@@ -1,5 +1,5 @@
 export default async function createAgency({ data }: { data: any }) {
-  console.log(data);
+  console.log("This is my data", data);
   const response = await fetch(
     `${process.env.BACKEND_URL}/api/v1/auth/registerAgency`,
     {
@@ -10,6 +10,7 @@ export default async function createAgency({ data }: { data: any }) {
       body: JSON.stringify(data),
     },
   );
+  console.log(response);
   if (!response.ok) {
     throw new Error("Failed to create Agency");
   }
