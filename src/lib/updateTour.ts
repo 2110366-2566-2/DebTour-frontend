@@ -1,11 +1,7 @@
-'use server'
 import { z } from "zod";
 import formSchema from '@/model/formSchema';
-import { authOptions } from "@/utils/authOptions";
-import { getServerSession } from "next-auth";
 
-export default async function updateTour(tour: z.infer<typeof formSchema>, oldTour: z.infer<typeof formSchema>, tourId: string) {
-    const session = await getServerSession(authOptions);
+export default async function updateTour(session: any, tour: z.infer<typeof formSchema>, oldTour: z.infer<typeof formSchema>, tourId: string) {
     if (!session || session.user.role !== "Agency") {
         return {
             redirect: {
@@ -35,7 +31,7 @@ export default async function updateTour(tour: z.infer<typeof formSchema>, oldTo
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
-            // "Authorization": `Bearer ${token}`,
+            "Authorization": `Bearer ${session.user.serverToken}`,
         },
         body: JSON.stringify(tour.activities),
     });

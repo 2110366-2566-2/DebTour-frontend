@@ -12,7 +12,11 @@ export default withAuth(
 
     const role = request.nextauth.token.role
     // console.log(role)
-
+    if(request.nextUrl.pathname.startsWith('/admin/')) {
+      if(role !== 'Admin'){
+        return NextResponse.rewrite(new URL('/auth', request.url))
+      }
+    }
     if(request.nextUrl.pathname.startsWith('/agency/')
       || request.nextUrl.pathname.startsWith('/tourist/tours/member/')) {
       if(role !== 'Agency'){
@@ -44,5 +48,6 @@ export const config = {
     // "/signup/tourist/:path*",
     "/tourist/tours/join/:path*",
     "/tourist/tours/member/:path*",
+    "/admin/:path*",
 ],
 };

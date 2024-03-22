@@ -43,15 +43,9 @@ import { buttonVariants } from "@/components/ui/button";
 
 import SubmitButton from "@/components/TourCreationFormComponent/SubmitBtn";
 import NextStateButton from "./TourCreationFormComponent/NextStateBtn";
+import { useSession } from "next-auth/react";
 
-const location_types = [
-  "Hotel",
-  "Attraction",
-  "Restaurant",
-  "Meeting Point",
-  "Other",
-];
-
+const location_types = ["Hotel", "Attraction", "Restaurant", "Meeting Point", "Other"];
 interface Tour {
   name: string;
   startDate: Date;
@@ -74,7 +68,7 @@ interface Tour {
       address: string;
     };
   }[];
-  images: FileList;
+  images: string[];
 }
 
 let oldValues: Tour = {
@@ -101,13 +95,14 @@ let oldValues: Tour = {
       },
     },
   ],
-  images: [] as unknown as FileList
+  images: [] as string[],
 };
+
 
 const deleteAPIUnfinished = true; // need to check if the activity API is in development or not
 export default function TourCreationForm({ tourId }: { tourId?: string }) {
   const [step, setStep] = useState(1);
-    
+  const { data: session, status } = useSession();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -135,20 +130,17 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
           },
         },
       ],
-      images: [] as unknown as FileList,
+      images: [] as string[],
     },
   });
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "activities",
   });
+
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated. (Only run when valid)
     const tempMax = values.maxMemberCount[0];
-    const images = values.images;
-    delete values.images;
     const sentValues = JSON.parse(
       JSON.stringify(values).replace(
         /"maxMemberCount":\[\d+\]/,
@@ -166,19 +158,8 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
         return activity;
       });
     }
-    // change the images to base64 string and add to the sentValues
-    const reader = new FileReader();
-    reader.onload = function () {
-      const base64 = reader.result;
-      sentValues.images = base64;
-    };
-    if (images) {
-      for (let i = 0; i < images.length; i++) {
-        reader.readAsDataURL(images[i]);
-      }
-    }
     if (!tourId) {
-      const res = await createTour(sentValues);
+      const res = await createTour(session, sentValues);
       if (!res.success) {
         toast({
           title: "Failed to create tour",
@@ -192,8 +173,8 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
       });
       return;
     } else {
-      // console.log(sentValues)
-      const res = await updateTour(sentValues, oldValues, tourId);
+      console.log(sentValues)
+      const res = await updateTour(session, sentValues, oldValues, tourId);
       if (!res.success) {
         toast({
           title: "Failed to update tour",
@@ -208,6 +189,7 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
       return;
     }
   }
+
   async function getValue() {
     if (tourId) {
       const res = await getTour(tourId);
@@ -225,16 +207,20 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
           return activity;
         });
       }
-      // change base64 string to file and add to the values
-      const reader = new FileReader();
-      reader.onload = function () {
-        const base64 = reader.result;
-        values.images = base64;
-      };
-      if (values.images) {
-        reader.readAsDataURL(values.images);
-      }
-      console.log(values)
+      // change values.images base64 string to file and add to the images that is FileList
+      const oldImages = values.images.map((image: string) => {
+        const byteString = atob(image);
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([ab], { type: "image/jpeg" });
+        const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+        return file;
+      });
+      setImages(oldImages as unknown as FileList);
+      
       oldValues = values;
       form.reset(res.data);
     }
@@ -243,44 +229,73 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
   useEffect(() => {
     getValue();
     setImages(oldValues.images as unknown as FileList)
-  },[]);
+  }, []);
 
   const [addedImages, setAddedImages] = useState<FileList>();
   const [images, setImages] = useState<FileList>();
   const imgIn = useRef<HTMLInputElement>(null);
 
-  function addImages(newImages: FileList | undefined) {
-    if (newImages) {
-      if (!images) {
-        setImages(newImages);
-        form.setValue("images", newImages);
-      } else {
-        const updatedList = new DataTransfer();
-        for (let i = 0; i < images.length; i++) {
-          updatedList.items.add(images[i]);
-        }
-        for (let i = 0; i < newImages.length; i++) {
-          updatedList.items.add(newImages[i]);
-        }
-        setImages(updatedList.files);
-        form.setValue("images", updatedList.files);
+  async function addImages() {
+    if (addedImages) {
+      const updatedImages = new DataTransfer();
+      if (images != null) {
+        for (let i = 0; i < images.length; i++)
+          updatedImages.items.add(images[i]);
+        for (let i = 0; i < Math.min(5 - images.length, addedImages.length); i++)
+          updatedImages.items.add(addedImages[i]);
       }
-  
+      else {
+        for (let i = 0; i < Math.min(5, addedImages.length); i++)
+          updatedImages.items.add(addedImages[i]);
+      }
+      setImages(updatedImages.files);
+      await setFormImages(updatedImages.files);
       if (imgIn.current) {
         imgIn.current.value = "";
       }
     }
   }
-  function deleteImages(index: number) {
+  async function deleteImages(index: number) {
     if (images) {
-      const updatedList = new DataTransfer();
+      const updatedImages = new DataTransfer();
       for (let i = 0; i < images.length; i++) {
         if (i !== index) {
-          updatedList.items.add(images[i]);
+          updatedImages.items.add(images[i]);
         }
       }
-      setImages(updatedList.files);
-      form.setValue("images", updatedList.files);
+      setImages(updatedImages.files);
+      await setFormImages(updatedImages.files);
+    }
+  }
+  async function setFormImages(files: FileList) {
+    const List = [] as string[];
+    const promises: Promise<void>[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const promise = new Promise<void>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const base64 = reader.result;
+                if (base64 && typeof base64 === 'string') {
+                    List.push(base64.replace(/^data:image\/[a-z]+;base64,/, ''));
+                    resolve(); // Resolve the promise after processing the file
+                } else {
+                    reject(new Error("Failed to read file"));
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+        promises.push(promise);
+    }
+
+    // Wait for all promises to resolve
+    try {
+        await Promise.all(promises);
+        console.log('All files processed');
+        form.setValue("images", List);
+    } catch (error) {
+        console.error('Error processing files:', error);
     }
   }
   return (
@@ -298,335 +313,335 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
         >
           {step === 1 && (
             <>
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="flex w-full justify-between">
-                      <input
-                        className="block border-0 text-5xl font-bold decoration-1 underline-offset-2 outline-none focus:underline"
-                        placeholder="Tour Name"
-                        spellCheck="false"
-                        autoComplete="false"
-                        {...field}
-                      ></input>
-                      {tourId ? (
-                        <div className="flex items-center justify-end gap-4">
-                          <Label htmlFor="deleteBtn" className="text-slate-400">
-                            Delete the tour?
-                          </Label>
-                          <DeleteBtn tourId={tourId} />
-                        </div>
-                      ) : null}
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex flex-wrap gap-8">
-              <DateInput form={form} name="startDate" label="Start Date" />
-              <DateInput form={form} name="endDate" label="End Date" />
-              <DateInput
-                form={form}
-                name="refundDueDate"
-                label="Refund Due Date"
-              />
-            </div>
-            <FormField
-              control={form.control}
-              name="overviewLocation"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Overview Location</FormLabel>
-                  <FormControl>
-                    <Input placeholder="ex. Doi Inthanon" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="ex. This is a tour to Doi Inthanon"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Cost</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="maxMemberCount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Maximum number of people: <span>{field.value}</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Slider
-                      defaultValue={[50]}
-                      min={1}
-                      max={100}
-                      step={1}
-                      className="w-[60%] py-4"
-                      onValueChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Label>Activities</Label>
-            {/* add a button to create more input for activities */}
-            {fields.map((activity, index) => (
-              <div className="flex gap-4" key={index}>
-                {deleteAPIUnfinished && tourId ? (
-                  <Button
-                    onClick={(e) => e.preventDefault()}
-                    className="h-12 w-12 rounded-full text-2xl"
-                  >
-                    {index + 1}
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => remove(index)}
-                    className="h-12 w-12 rounded-full text-2xl"
-                  >
-                    -
-                  </Button>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex w-full justify-between">
+                        <input
+                          className="block border-0 text-5xl font-bold decoration-1 underline-offset-2 outline-none focus:underline"
+                          placeholder="Tour Name"
+                          spellCheck="false"
+                          autoComplete="false"
+                          {...field}
+                        ></input>
+                        {tourId ? (
+                          <div className="flex items-center justify-end gap-4">
+                            <Label htmlFor="deleteBtn" className="text-slate-400">
+                              Delete the tour?
+                            </Label>
+                            <DeleteBtn tourId={tourId} />
+                          </div>
+                        ) : null}
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-                <div key={activity.id} className="flex flex-wrap gap-4">
-                  <FormField
-                    control={form.control}
-                    name={`activities.${index}.name`}
-                    render={({ field }) => (
-                      <FormItem className="flex grow flex-col">
-                        <FormLabel>Activity Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="ex. Hiking" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`activities.${index}.description`}
-                    render={({ field }) => (
-                      <FormItem className="flex grow flex-col">
-                        <FormLabel>Activity Description</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="ex. Hiking in the mountains"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <DateInput
-                    form={form}
-                    name={`activities.${index}.startTimestamp`}
-                    label="Activity Start Date"
-                    grow
-                  />
-                  <DateInput
-                    form={form}
-                    name={`activities.${index}.endTimestamp`}
-                    label="Activity End Date"
-                    grow
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`activities.${index}.location.name`}
-                    render={({ field }) => (
-                      <FormItem className="flex grow flex-col">
-                        <FormLabel>Location Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="ex. Doi Inthanon" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`activities.${index}.location.latitude`}
-                    render={({ field }) => (
-                      <FormItem className="flex grow flex-col">
-                        <FormLabel>Latitude</FormLabel>
-                        <FormControl>
-                          <Input type="number" {...field} min="-90" max="90" step="0.0000001" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`activities.${index}.location.longitude`}
-                    render={({ field }) => (
-                      <FormItem className="flex grow flex-col">
-                        <FormLabel>Longitude</FormLabel>
-                        <FormControl>
-                          <Input type="number" {...field} min="-180" max="180" step="0.0000001" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`activities.${index}.location.type`}
-                    render={({ field }) => (
-                      <FormItem className="flex grow flex-col">
-                        <FormLabel>Location Type</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a location type" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {location_types.map((type) => (
-                              <SelectItem key={type + index * 10} value={type}>
-                                {type}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`activities.${index}.location.address`}
-                    render={({ field }) => (
-                      <FormItem className="flex grow flex-col">
-                        <FormLabel>Address</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="ex. 123/4 Doi Inthanon"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+              />
+              <div className="flex flex-wrap gap-8">
+                <DateInput form={form} name="startDate" label="Start Date" />
+                <DateInput form={form} name="endDate" label="End Date" />
+                <DateInput
+                  form={form}
+                  name="refundDueDate"
+                  label="Refund Due Date"
+                />
               </div>
-            ))}
-            <div className="flex items-center justify-start gap-4">
-              {deleteAPIUnfinished && tourId ? null : (
-                <>
-                  <Button
-                    onClick={(e) => {
-                      append({
-                        name: "",
-                        description: "",
-                        startTimestamp: new Date(),
-                        endTimestamp: new Date(),
-                        location: {
+              <FormField
+                control={form.control}
+                name="overviewLocation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Overview Location</FormLabel>
+                    <FormControl>
+                      <Input placeholder="ex. Doi Inthanon" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="ex. This is a tour to Doi Inthanon"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cost</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="maxMemberCount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Maximum number of people: <span>{field.value}</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Slider
+                        defaultValue={[50]}
+                        min={1}
+                        max={100}
+                        step={1}
+                        className="w-[60%] py-4"
+                        onValueChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Label>Activities</Label>
+              {/* add a button to create more input for activities */}
+              {fields.map((activity, index) => (
+                <div className="flex gap-4" key={index}>
+                  {deleteAPIUnfinished && tourId ? (
+                    <Button
+                      onClick={(e) => e.preventDefault()}
+                      className="h-12 w-12 rounded-full text-2xl"
+                    >
+                      {index + 1}
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => remove(index)}
+                      className="h-12 w-12 rounded-full text-2xl"
+                    >
+                      -
+                    </Button>
+                  )}
+                  <div key={activity.id} className="flex flex-wrap gap-4">
+                    <FormField
+                      control={form.control}
+                      name={`activities.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem className="flex grow flex-col">
+                          <FormLabel>Activity Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="ex. Hiking" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`activities.${index}.description`}
+                      render={({ field }) => (
+                        <FormItem className="flex grow flex-col">
+                          <FormLabel>Activity Description</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="ex. Hiking in the mountains"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <DateInput
+                      form={form}
+                      name={`activities.${index}.startTimestamp`}
+                      label="Activity Start Date"
+                      grow
+                    />
+                    <DateInput
+                      form={form}
+                      name={`activities.${index}.endTimestamp`}
+                      label="Activity End Date"
+                      grow
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`activities.${index}.location.name`}
+                      render={({ field }) => (
+                        <FormItem className="flex grow flex-col">
+                          <FormLabel>Location Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="ex. Doi Inthanon" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`activities.${index}.location.latitude`}
+                      render={({ field }) => (
+                        <FormItem className="flex grow flex-col">
+                          <FormLabel>Latitude</FormLabel>
+                          <FormControl>
+                            <Input type="number" {...field} min="-90" max="90" step="0.0000001" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`activities.${index}.location.longitude`}
+                      render={({ field }) => (
+                        <FormItem className="flex grow flex-col">
+                          <FormLabel>Longitude</FormLabel>
+                          <FormControl>
+                            <Input type="number" {...field} min="-180" max="180" step="0.0000001" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`activities.${index}.location.type`}
+                      render={({ field }) => (
+                        <FormItem className="flex grow flex-col">
+                          <FormLabel>Location Type</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a location type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {location_types.map((type) => (
+                                <SelectItem key={type + index * 10} value={type}>
+                                  {type}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`activities.${index}.location.address`}
+                      render={({ field }) => (
+                        <FormItem className="flex grow flex-col">
+                          <FormLabel>Address</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="ex. 123/4 Doi Inthanon"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              ))}
+              <div className="flex items-center justify-start gap-4">
+                {deleteAPIUnfinished && tourId ? null : (
+                  <>
+                    <Button
+                      onClick={(e) => {
+                        append({
                           name: "",
-                          latitude: 0,
-                          longitude: 0,
-                          type: "Other",
-                          address: "",
-                        },
-                      }),
-                        e.preventDefault();
-                    }}
-                    className="h-12 w-12 rounded-full text-2xl"
-                  >
-                    +
-                  </Button>
-                  <Label htmlFor="addActivity" className="text-slate-400">
-                    Add activity
-                  </Label>
-                </>
-              )}
-            </div>
-            <NextStateButton step={step} handleNextStep={() => setStep(2)} />
+                          description: "",
+                          startTimestamp: new Date(),
+                          endTimestamp: new Date(),
+                          location: {
+                            name: "",
+                            latitude: 0,
+                            longitude: 0,
+                            type: "Other",
+                            address: "",
+                          },
+                        }),
+                          e.preventDefault();
+                      }}
+                      className="h-12 w-12 rounded-full text-2xl"
+                    >
+                      +
+                    </Button>
+                    <Label htmlFor="addActivity" className="text-slate-400">
+                      Add activity
+                    </Label>
+                  </>
+                )}
+              </div>
+              <NextStateButton step={step} handleNextStep={() => setStep(2)} />
             </>
           )}
           {step === 2 && (
             <>
-            {/* show added images */}
-            {images &&
-            images.length > 0 ? (
-              <div className="flex flex-wrap gap-4">
-                {Array.from(images).map((image, index) => (
-                  <div key={index} className='relative'>
-                    <Image
-                      src={URL.createObjectURL(image)}
-                      alt="image"
-                      className="w-32 h-32 object-cover border-2 border-gray-700"
-                      width={0}
-                      height={0}
-                    />
-                    <Button type="button" 
-                    className="absolute top-0 right-0 bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-                    onClick={() => deleteImages(index)}>
-                      <span className="sr-only">Close menu</span>
-                      <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-            {/* show all images and there is a button in the center of all images that is shown when is hovered and when clicked delete the image*/}
-            <div className="flex items-center gap-4">
-                  {/* choose source button */}
-                  <Input type="file" multiple 
-                    onChange={
-                      (e) => setAddedImages(
-                        e.target.files && e.target.files.length > 0 ? e.target.files : undefined
-                      )
-                    } 
-                    ref={imgIn} />
-                  {/* append file that is chosen to the old images*/}
-                  <Button
-                    id="backBtn"
-                    type="button"
-                    onClick={() => addImages(addedImages)}
-                  >
-                    Add Image
-                  </Button>
-              </div>
-            {/* <Button onClick={() => console.log(form.getValues())}>Log</Button> */}
-            <div className="flex justify-between">
+              {/* show added images */}
+              {images &&
+                images.length > 0 ? (
+                <div className="flex flex-wrap gap-4">
+                  {Array.from(images).map((image, index) => (
+                    <div key={index} className='relative'>
+                      <Image
+                        src={URL.createObjectURL(image)}
+                        alt="image"
+                        className="w-32 h-32 object-cover border-2 border-gray-700"
+                        width={0}
+                        height={0}
+                      />
+                      <Button type="button"
+                        className="absolute top-0 right-0 bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                        onClick={() => deleteImages(index)}>
+                        <span className="sr-only">Close menu</span>
+                        <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+              {/* show all images and there is a button in the center of all images that is shown when is hovered and when clicked delete the image*/}
               <div className="flex items-center gap-4">
+                {/* choose source button */}
+                <Input type="file" multiple
+                  onChange={
+                    (e) => setAddedImages(
+                      e.target.files && e.target.files.length > 0 ? e.target.files : undefined
+                    )
+                  }
+                  ref={imgIn} />
+                {/* append file that is chosen to the old images*/}
+                <Button
+                  id="backBtn"
+                  type="button"
+                  onClick={() => addImages()}
+                >
+                  Add Image
+                </Button>
+              </div>
+              {/* <Button onClick={() => console.log(form.getValues())}>Log</Button> */}
+              <div className="flex justify-between">
+                <div className="flex items-center gap-4">
                   <Button
                     id="backBtn"
                     type="button"
@@ -636,11 +651,11 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
                     &lt;
                   </Button>
                   <Label htmlFor="backBtn" className="text-slate-400">
-                  Back
+                    Back
                   </Label>
+                </div>
+                <SubmitButton tourId={tourId} />
               </div>
-              <SubmitButton tourId={tourId} />
-            </div>
             </>
           )}
         </form>

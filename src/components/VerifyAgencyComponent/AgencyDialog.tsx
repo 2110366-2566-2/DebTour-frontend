@@ -1,19 +1,21 @@
 'use client'
 import { ForwardedRef, MutableRefObject, forwardRef, useEffect, useState } from "react";
-import { Agency } from "@/app/admin/verify-agency/page";
 import { DialogHeader, DialogFooter, Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "../ui/dialog";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import verifyAgency from "@/lib/verifyAgency";
 import { toast, useToast } from "../ui/use-toast";
+import { Agency } from "./VerifyAgencyTable";
 
 export interface AgencyDialogRef {
     setOpen: (open: boolean) => void;
     setAgency: (agency: Agency) => void;
 }
-
-const AgencyDialog = forwardRef<AgencyDialogRef>((props, ref: ForwardedRef<AgencyDialogRef>) => {
+interface AgencyDialogProps {
+    reload: () => void;
+}
+const AgencyDialog = forwardRef<AgencyDialogRef, AgencyDialogProps>((props: {reload: () => void}, ref: ForwardedRef<AgencyDialogRef>) => {
     const [open, setOpen] = useState(false);
     const [agency, setAgency] = useState({} as Agency);
     const [image, setImage] = useState("");
@@ -38,21 +40,21 @@ const AgencyDialog = forwardRef<AgencyDialogRef>((props, ref: ForwardedRef<Agenc
         else {
             setImage("");
         }
-        console.log(agency);
     }, [open, agency, ref]);
     async function verify(username: string, status: string) {
         const response = await verifyAgency( username, status );
         if (response.status === 200) {
             toast({
-                title: "Agency verified",
-                description: "Agency has been verified",
+                title: `Agency ${response.body.startsWith("Approved") ? "Verified" : "Unverified"}`,
+                description: response.body,
             })
             setOpen(false);
+            props.reload();
         }
         else {
             toast({
                 title: "Failed to verify",
-                description: "Failed to verify agency",
+                description: "Failed to change agency's state",
             })
         }
     }
