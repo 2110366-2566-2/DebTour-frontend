@@ -34,14 +34,14 @@ import { useRef } from "react";
 const formSchema = z.object({
   agencyName: z.string().min(1),
   approveTime: z.date().nullable(),
-  authorizeAdminId: z.number().nullable(),
+  authorizeAdminUsername: z.number().nullable(),
   authorizeStatus: z.string().nullable(),
   bankName: z.string().min(1),
   bankAccount: z.string().min(1),
   email: z.string().email(),
   image: z.string().url(),
   licenseNo: z.string().min(1),
-  licenseImage: z.string().min(1),
+  companyInformation: z.string().min(1),
   phone: z.string().min(9).max(10),
   role: z.string().min(1),
   username: z.string().min(1),
@@ -55,14 +55,14 @@ const AgencyRegisterPage = () => {
     defaultValues: {
       agencyName: "",
       approveTime: null,
-      authorizeAdminId: null,
+      authorizeAdminUsername: null,
       authorizeStatus: null,
       bankName: "",
       bankAccount: "",
       email: "",
       image: "",
       licenseNo: "",
-      licenseImage: "",
+      companyInformation: "",
       phone: "0000000000",
       role: "Agency",
       username: "",
@@ -112,12 +112,12 @@ const AgencyRegisterPage = () => {
         image: googleUser.image,
         agencyName: "",
         approveTime: null,
-        authorizeAdminId: null,
+        authorizeAdminUsername: null,
         authorizeStatus: null,
         bankName: "",
         bankAccount: "",
         licenseNo: "",
-        licenseImage: "",
+        companyInformation: "",
         phone: "0000000000",
         role: "Agency",
       });
@@ -125,14 +125,14 @@ const AgencyRegisterPage = () => {
       form.reset({
         agencyName: "",
         approveTime: null,
-        authorizeAdminId: null,
+        authorizeAdminUsername: null,
         authorizeStatus: null,
         bankName: "",
         bankAccount: "",
         email: "",
         image: "",
         licenseNo: "",
-        licenseImage: "",
+        companyInformation: "",
         phone: "0000000000",
         role: "Agency",
         username: "",
@@ -303,7 +303,7 @@ const AgencyRegisterPage = () => {
                   />
                   <FormField
                     control={form.control}
-                    name="licenseImage"
+                    name="companyInformation"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Company License</FormLabel>
@@ -318,6 +318,10 @@ const AgencyRegisterPage = () => {
                               const reader = new FileReader();
                               reader.readAsDataURL(file);
                               reader.onload = () => {
+                                let base64 = reader.result.split(
+                                  ",",
+                                )[1] as string;
+                                form.setValue("companyInformation", base64);
                                 if (reader.result) {
                                   if (typeof reader.result === "string") {
                                     let base64 = reader.result.split(

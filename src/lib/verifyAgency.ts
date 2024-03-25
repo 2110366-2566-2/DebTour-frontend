@@ -35,4 +35,37 @@ export default async function verifyAgency(username: string, status: string) {
         status: 200,
         body: data.data,
     };
+  }
+  if (session.user.role !== "Admin") {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+  const response = await fetch(
+    `${process.env.BACKEND_URL}/api/v1/agency/verify`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        // "Authorization": `Bearer ${session.serverToken}`,
+      },
+      body: JSON.stringify({
+        agencyId,
+        status,
+      }),
+    },
+  );
+  if (!response.ok) {
+    return {
+      status: 500,
+      body: "Failed to verify agency",
+    };
+  }
+  return {
+    status: 200,
+    body: "Agency verified",
+  };
 }
