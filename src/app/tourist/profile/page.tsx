@@ -16,18 +16,24 @@ import {Calendar as CalendarIcon} from "lucide-react";
 import {Calendar} from "@/components/ui/calendar";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {format} from "date-fns";
-import getUser from "@/lib/getUser";
 import updateTourist from "@/lib/updateTourist";
 import {redirect, useRouter} from "next/navigation";
 import {toast} from "@/components/ui/use-toast";
+import getMe from "@/lib/getMe";
+import {useSession} from "next-auth/react";
 
 export default function TouristProfile() {
-    const user = useUserStore()
+    const {data: session, status, update} = useSession();
+    const username = session?.user?.id;
+    const role = session?.user?.role;
+    const token = session?.user?.serverToken;
+
+
     const [tourist, setTourist] = useState({} as any)
 
     useEffect(() => {
         async function get() {
-            const res = await getTourist(user.username, user.token);
+            const res = await getTourist(username, token);
             if (!res) return
             let temp = tourist;
             // merge temp with res.data
@@ -53,11 +59,11 @@ export default function TouristProfile() {
         }
 
         get();
-    }, [user])
+    }, [username])
 
     useEffect(() => {
         async function get() {
-            const res = await getUser();
+            const res = await getMe(username, token);
             if (!res) return
             let temp = tourist;
             // merge temp with res.data
@@ -80,7 +86,7 @@ export default function TouristProfile() {
         }
 
         get();
-    }, [user])
+    }, [tourist])
 
     const form = useForm<z.infer<typeof touristProfileSchema>>({
         resolver: zodResolver(touristProfileSchema),
@@ -104,7 +110,7 @@ export default function TouristProfile() {
 
     async function onSubmit(values: z.infer<typeof touristProfileSchema>) {
         console.log(JSON.stringify(values))
-        const res = await updateTourist(user.username, user.token, values)
+        const res = await updateTourist(username, token, values)
         if (!res.success) {
             console.log("Failed to update tourist profile");
         }

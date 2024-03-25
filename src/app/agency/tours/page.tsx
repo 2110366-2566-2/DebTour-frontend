@@ -8,22 +8,24 @@ import FilterTour from "@/lib/FilterTour";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Tour } from "@/app/tourist/tours/page";
 
-export interface Tour {
-  tourId: number;
-  name: string;
-  startDate: string;
-  endDate: string;
-  description: string;
-  overviewLocation: string;
-  price: number;
-  refundDueDate: string;
-  maxMemberCount: number;
-  memberCount: number;
-  status: string;
-  agencyUsername: string;
-  createdTimestamp: string;
-}
+
+const tours: { count: number; data: Tour[] } = {
+  count: 5,
+  data: [
+    {
+      tourId: 1,
+      tourName: "Need fixing here",
+      startDate: "2024-03-01T08:00:00.000Z",
+      endDate: "2024-03-10T18:00:00.000Z",
+      overviewLocation: "Mountain Range, XYZ Region",
+      price: 15000,
+      maxMemberCount: 20,
+      memberCount: 0,
+    },
+  ],
+};
 
 const ManageTour = () => {
   const [tours, setTour] = useState<Tour[]>([]);
@@ -119,6 +121,11 @@ const ManageTour = () => {
         setMinPrice={setMinPrice}
         setMaxPrice={setMaxPrice}
       />
+      {/* need fixing */}
+      {/* <TourSearchHeader
+        heading={"Manage Tours"}
+        imgPath={"/header-agency.webp"}
+      /> */}
 
       <div className="bg-indigo-100 py-12">
         <div className="container grid grid-cols-2 justify-around ">

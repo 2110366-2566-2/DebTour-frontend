@@ -313,10 +313,7 @@ const TouristRegistrationPage = () => {
               )}
             </div>
           </form>
-          {/* <Button onClick={() => console.log(form.getValues())}>Log</Button>
-          <Button onClick={() => console.log(getCookie('googleUser'))}>
-            Log Cookie
-            </Button> */}
+          {/* <Button onClick={() => console.log(form.getValues())}>Log</Button> */}
         </Form>
       </div>
     </div>

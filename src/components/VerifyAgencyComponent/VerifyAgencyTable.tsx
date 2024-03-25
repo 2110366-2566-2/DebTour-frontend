@@ -1,65 +1,52 @@
 'use client'
-import { Suspense, use, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import VerifyAgencyTableBody from "@/components/VerifyAgencyComponent/VerifyAgencyTableBody";
 import { Button } from "../ui/button";
-import AgencyDialog from "./AgencyDialog";
+import AgencyDialog, { AgencyDialogRef } from "./AgencyDialog";
+import getAgencies from "@/lib/getAgencies";
+import { format } from "date-fns";
 
 export type Agency = {
-    id: string;
+    username: string;
     phone: string;
     email: string;
-    google_image: string;
+    image: string;
     role: string;
-    name: string;
-    license_no: string;
-    bank_account: string;
-    company_info_image: string;
-    authorized_by: string;
-    authorize_status: string;
-    authorized_date: string;
+    agencyName: string;
+    licenseNo: string;
+    bankAccount: string;
+    companyInformation: string;
+    authorizeAdminUsername: string;
+    authorizeStatus: string;
+    approveTime: string;
 }
 
 export default function VerifyAgencyTable() {
-    // const agencies = await getAgencies();
-    const agencies = [
-        {
-            id: "1",
-            phone: "1234567890",
-            email: "temp@gmail.com",
-            google_image: "https://lh3.googleusercontent.com/a/ACg8ocJmCjfnMrgZjkyzArjkQEaLLh034lCpXTxuaxOqDJ-t=s96-c",
-            role: "Agency",
-            name: "Agency 1",
-            license_no: "1234567890",
-            bank_account: "1234567890",
-            company_info_image: `https://lh3.googleusercontent.com/a/ACg8ocJmCjfnMrgZjkyzArjkQEaLLh034lCpXTxuaxOqDJ-t=s96-c`,
-            authorized_by: "1234",
-            authorize_status: "Authorized",
-            authorized_date: "2021-08-20"
-        },
-        {
-            id: "2",
-            phone: "1234567890",
-            email: "temp2@gmail.com",
-            google_image: "https://lh3.googleusercontent.com/a/ACg8ocJmCjfnMrgZjkyzArjkQEaLLh034lCpXTxuaxOqDJ-t=s96-c",
-            role: "Agency",
-            name: "Agency 2",
-            license_no: "1234567890",
-            bank_account: "1234567890",
-            company_info_image: "https://lh3.googleusercontent.com/a/ACg8ocJmCjfnMrgZjkyzArjkQEaLLh034lCpXTxuaxOqDJ-t=s96-c",
-            authorized_by: "1234",
-            authorize_status: "Unauthorized",
-            authorized_date: "2021-08-20"
-        }
-    ] as Agency[];
-    const Dialog = useRef(null);
+    const [agencies, setAgencies] = useState([] as Agency[]);
+    const fetchAgencies = async () => {
+        const res = await getAgencies().then(
+            (res) => {
+                if(res && res.status === 200) {
+                    setAgencies(res.body.data);
+                }
+            }
+        );
+    }
+    const Dialog = useRef<AgencyDialogRef>(null);
+    const sendProps = {
+        reload: fetchAgencies
+    };
+    useEffect(() => {
+        fetchAgencies();
+    }, []);
     return (
         <div>
+            <AgencyDialog ref={Dialog} {...sendProps}/>
             <Table>
                 <TableCaption>A list of Agencies</TableCaption>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>ID</TableHead>
+                        {/* <TableHead>ID</TableHead> */}
                         <TableHead>Name</TableHead>
                         <TableHead className="md:table-cell hidden">Email</TableHead>
                         <TableHead className="md:table-cell hidden">Phone</TableHead>
@@ -70,33 +57,37 @@ export default function VerifyAgencyTable() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {agencies.map((agency) => (
-                        <TableRow key={agency.id}>
-                            <TableCell>{agency.id}</TableCell>
-                            <TableCell>{agency.name}</TableCell>
+                    {agencies.map((agency: Agency) => (
+                        <TableRow key={agency.username}>
+                            {/* <TableCell>{agency.username}</TableCell> */}
+                            <TableCell>{agency.agencyName}</TableCell>
                             <TableCell className="sm:table-cell hidden">{agency.email}</TableCell>
                             <TableCell className="sm:table-cell hidden">{agency.phone}</TableCell>
                             {/* <TableCell>{agency.role}</TableCell> */}
                             {/* <TableCell>{agency.license_no}</TableCell> */}
                             {/* <TableCell>{agency.bank_account}</TableCell> */}
-                            <TableCell>{agency.authorize_status=== "Authorized" ? 
+                            <TableCell>{agency.authorizeStatus === "Approved" ?
                                 <span className="w-full rounded bg-green-500 px-4 py-1 text-white font-bold">Verified</span> : 
                                 <span className="w-full rounded bg-red-500 px-2 py-1 text-white font-bold">Unverified</span>
                             }</TableCell>
                             <TableCell className="lg:table-cell hidden">{
-                                (agency.authorize_status === "Authorized" ? agency.authorized_by : "N/A")
+                                (agency.authorizeStatus === "Approved" ? agency.authorizeAdminUsername : "N/A")
                             }</TableCell>
                             <TableCell className="lg:table-cell hidden">{
-                                (agency.authorize_status === "Authorized" ? agency.authorized_date : "N/A")
+                                (agency.authorizeStatus === "Approved" ? format(new Date(agency.approveTime), "MMMM do, yyyy H:mma") : "N/A")
                             }</TableCell>
                             <TableCell>
-                                <Button size="default" variant="outline" onClick={() => { Dialog.current.setAgency(agency); Dialog.current.setOpen(true); }}>
+                                <Button size="default" variant="outline" onClick={() => { 
+                                    if (!Dialog || !Dialog.current) return; 
+                                    const dialogRef = Dialog.current;
+                                    dialogRef.setAgency(agency); 
+                                    dialogRef.setOpen(true); 
+                                }}>
                                     Verify Info
                                 </Button>
                             </TableCell>
                         </TableRow>
                     ))}
-                    <AgencyDialog ref={Dialog}/>
                 </TableBody>
             </Table>
         </div>

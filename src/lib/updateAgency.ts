@@ -3,8 +3,8 @@ import agencyProfileSchema from "@/model/agencyProfileSchema";
 
 
 export default async function updateAgency(username: string | undefined, token: string | undefined, data: z.infer<typeof agencyProfileSchema>) {
-    if (!username) {
-        return
+    if (!username || !token) {
+        throw new Error('Username or token is undefined');
     }
 
     let d = {
@@ -15,6 +15,7 @@ export default async function updateAgency(username: string | undefined, token: 
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(d)
     });

@@ -9,7 +9,7 @@ export interface Member {
 }
 
 const TourMember = ({ params }: { params: { tourId: string } }) => {
-  const [tourMember, setTourMember] = useState<Member | null>(null);
+  const [tourMember, setTourMember] = useState<Member[] | null>(null);
   useEffect(() => {
     async function waitForGetTourMember() {
       const t = await getTourMember(params.tourId);

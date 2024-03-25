@@ -1,18 +1,33 @@
-export default async function deleteTour(token: string, tourId: string) {
-    console.log(token)
+'use server'
+
+import { authOptions } from "@/utils/authOptions";
+import { getServerSession } from "next-auth";
+
+export default async function deleteTour(tourId: string) {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== "Agency") {
+        return {
+            redirect: {
+                destination: "/login",
+                permanent: false,
+            },
+        };
+    }
     const response = await fetch(`${process.env.BACKEND_URL}/api/v1/tours/${tourId}`,
     {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
-            // "Authorization": `Bearer ${token}`,
+            "Authorization": `Bearer ${session.user.serverToken}`,
             // "Access-Control-Allow-Origin": "*"
         },
     });
-    // const res = await response.json()
-    // console.log(res.body)
     if (!response.ok) {
-        throw new Error("Failed to delete tour");
+        return {
+            success: false,
+        };
     }
-    return response.json();
+    return {
+        success: true,
+    };
 }

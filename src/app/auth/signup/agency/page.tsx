@@ -322,6 +322,17 @@ const AgencyRegisterPage = () => {
                                   ",",
                                 )[1] as string;
                                 form.setValue("companyInformation", base64);
+                                if (reader.result) {
+                                  if (typeof reader.result === "string") {
+                                    let base64 = reader.result.split(
+                                      ",",
+                                    )[1] as string;
+                                    form.setValue("licenseImage", base64);
+                                  }
+                                  if (imgIn.current) {
+                                    imgIn.current.src = reader.result as string;
+                                  }
+                                }
                               };
                               reader.onerror = (error) => {
                                 console.log(error);

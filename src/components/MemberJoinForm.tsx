@@ -32,7 +32,7 @@ export default function MemberJoinForm({tourId}: {tourId: string}) {
     })
     async function onSubmit(values: z.infer<typeof memberFormSchema>) {
         // console.log(values);
-        const res = await joinTour("tempToken", values);
+        const res = await joinTour(values);
         if(!res.success) {
             toast({ title: "Failed to join tour", description: "Please try again"});
             return;

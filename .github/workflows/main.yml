@@ -1,0 +1,40 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
+
+      - name: Docker Login
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker Image
+        run: docker build --build-arg NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --build-arg BACKEND_URL=${{ secrets.BACKEND_URL }} -t ${{ secrets.DOCKER_REPO }} .
+
+      - name: Push Docker Image to Registry
+        run: docker push ${{ secrets.DOCKER_REPO }}:latest
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+      - name: Stop and Remove Old Container
+        run: docker rm -f $(docker ps -aq)
+        
+      - name: Clear Docker Images
+        run: docker rmi $(docker images -q)
+
+      - name: Pull Docker Image from Registry
+        run: docker pull ${{ secrets.DOCKER_REPO }}:latest
+
+      - name: Run New Docker Container
+        run: docker run -d -p 3000:3000 ${{ secrets.DOCKER_REPO }}

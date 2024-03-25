@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { string, z } from "zod";
 
 const formSchema = z
   .object({
@@ -20,6 +20,7 @@ const formSchema = z
     activities: z
       .array(
         z.object({
+          tourId: z.number().int().optional(),
           activityId: z.number().int().optional(),
           name: z.string().min(1).max(50),
           description: z.string().min(1).max(500),
@@ -49,7 +50,7 @@ const formSchema = z
       )
       .min(1)
       .max(50),
-      images: z.instanceof(FileList).optional().or(z.array(z.instanceof(File))).optional(),
+      images: z.array(string()).max(5).min(1),
   })
   .refine((data) => {
     if (data.startDate >= data.endDate) {

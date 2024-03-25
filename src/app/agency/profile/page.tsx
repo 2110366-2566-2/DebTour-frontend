@@ -16,18 +16,19 @@ import {Calendar as CalendarIcon} from "lucide-react";
 import {Calendar} from "@/components/ui/calendar";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {format} from "date-fns";
-import getUser from "@/lib/getUser";
+import getUser from "@/lib/getMe";
 import updateTourist from "@/lib/updateTourist";
 import {redirect, useRouter} from "next/navigation";
 import {toast} from "@/components/ui/use-toast";
 import AgencyProfileSchema from "@/model/agencyProfileSchema";
 import updateAgency from "@/lib/updateAgency";
+import agencyProfileSchema from "@/model/agencyProfileSchema";
 
 export default function AgencyProfile() {
     const user = useUserStore()
     const [agency, setAgency] = useState({} as any)
 
-    const form = useForm<z.infer<typeof AgencyProfile>>({
+    const form = useForm<z.infer<typeof agencyProfileSchema>>({
         resolver: zodResolver(touristProfileSchema),
         defaultValues: {
             phone: agency.phone,

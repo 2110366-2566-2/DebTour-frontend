@@ -7,7 +7,7 @@ import {SiYourtraveldottv} from "react-icons/si";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
-
+import Image from "next/image";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -17,29 +17,18 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import getUser from "@/lib/getUser";
+import getUser from "@/lib/getMe";
 import {useUserStore} from "@/context/store";
+import logout from "@/lib/logout";
+import getMe from "@/lib/getMe";
 
 function Navbar() {
-    const user = useUserStore();
-
-    // const [userData, setUser] = useState({} as any);
-    useEffect(() => {
-        async function get() {
-            const res = await getUser();
-            if (res) {
-                // console.log(res.data);
-                user.setUser(res.data);
-            }
-        }
-        get();
-    }, []);
+    const { data: session, status, update } = useSession();
+    const userRole = session?.user?.role ?? "Guest";
 
     const pathname = usePathname();
     const [activeRoute, setActiveRoute] = useState("");
     
-    const { data: session, status, update } = useSession();
-    const userRole = session?.user?.role ?? "Guest";
 
     useEffect(() => {
         setActiveRoute(pathname);
@@ -95,10 +84,12 @@ function Navbar() {
                 }
                 {
                     userRole !== "Guest" &&
-                    <img
+                    <Image
                         src={session?.user?.image ?? "/avatar.png"}
                         className="h-8 w-8 rounded-full"
                         alt="avatar"
+                        width={0}
+                        height={0}
                         />
                 }
 
@@ -118,38 +109,41 @@ function Navbar() {
                             <DropdownMenuContent className="w-56">
                                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                 <DropdownMenuSeparator/>
+                                {userRole !== "Admin" && 
                                 <DropdownMenuGroup>
                                     <DropdownMenuItem>
                                         {userRole === "Tourist" &&
-                                            <Link href={'/tourist/profile'}>Edit Profile</Link>
+                                            <Link className="w-full" href={'/tourist/profile'}>Edit Profile</Link>
                                         }
                                         {
                                         userRole === "Agency" &&
-                                            <Link href={'/agency/profile'}>Edit Profile</Link>
+                                            <Link className="w-full" href={'/agency/profile'}>Edit Profile</Link>
                                         }
 
                                     </DropdownMenuItem>
-                                </DropdownMenuGroup>
+                                </DropdownMenuGroup>}
                                 {
                                     (userRole === "Tourist" || userRole == "Agency") &&
                                     <DropdownMenuItem>
-                                        <Link href={'/report-issue'}>Report Issue</Link>
+                                        <Link className="w-full" href={'/report-issue'}>Report Issue</Link>
                                     </DropdownMenuItem>
                                 }
                                 {
                                     userRole === "Admin" &&
                                     <DropdownMenuItem>
-                                        <Link href={'/admin/manage-issue'}>Manage Issue</Link>
+                                        <Link className="w-full" href={'/admin/manage-issue'}>Manage Issue</Link>
                                     </DropdownMenuItem>
                                 }
                                 {
                                     userRole === "Admin" &&
                                     <DropdownMenuItem>
-                                        <Link href={'/admin/verify-agency'}>Verify Agency</Link>
+                                        <Link className="w-full" href={'/admin/verify-agency'}>Verify Agency</Link>
                                     </DropdownMenuItem>
                                 }
                                 <DropdownMenuSeparator/>
                                 <DropdownMenuItem onClick={async () => {
+                                    const res = await logout(session?.user.serverToken)
+                                    console.log(res)
                                     signOut();
                                 }
                                 }>

@@ -7,10 +7,10 @@ import { useEffect, useState } from "react";
 
 export interface Tour {
   tourId: number;
-  tourName: "string";
-  startDate: "string";
-  endDate: "string";
-  overviewLocation: "string";
+  tourName: string;
+  startDate: string;
+  endDate: string;
+  overviewLocation: string;
   memberCount: number;
   maxMemberCount: number;
   price: number;
@@ -123,7 +123,7 @@ const Tours = () => {
   const [searchName, setSearchName] = useState("");
   const [StartDate, setStartDate] = useState("");
   const [EndDate, setEndDate] = useState("");
-  const [MemberCount, setMemberCount] = useState("");
+  const [YourTotalMembers, setYourTotalMembers] = useState("");
   const [MinPrice, setMinPrice] = useState("");
   const [MaxPrice, setMaxPrice] = useState("");
 
@@ -132,7 +132,7 @@ const Tours = () => {
       searchName: string,
       StartDate: string,
       EndDate: string,
-      MemberCount: string,
+      YourTotalMembers: string,
       MinPrice: string,
       MaxPrice: string,
     ) {
@@ -140,26 +140,26 @@ const Tours = () => {
         searchName,
         StartDate,
         EndDate,
-        MemberCount,
+        YourTotalMembers,
         MinPrice,
         MaxPrice,
       );
-      setTour(t.data);
-      console.log(t.data);
+      setTour(t);
+      console.log(t);
     }
 
     const delayDebounceFn = setTimeout(() => {
       console.log(searchName);
       console.log(StartDate);
       console.log(EndDate);
-      console.log(MemberCount);
+      console.log(YourTotalMembers);
       console.log(MinPrice);
       console.log(MaxPrice);
       waitForGetTour(
         searchName,
         StartDate,
         EndDate,
-        MemberCount,
+        YourTotalMembers,
         MinPrice,
         MaxPrice,
       );
@@ -167,7 +167,7 @@ const Tours = () => {
     }, 1000);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchName, StartDate, EndDate, MemberCount, MinPrice, MaxPrice]);
+  }, [searchName, StartDate, EndDate, YourTotalMembers, MinPrice, MaxPrice]);
   return (
     <div className="">
       <TourSearchHeader
@@ -176,7 +176,7 @@ const Tours = () => {
         setSearchName={setSearchName}
         setStartDate={setStartDate}
         setEndDate={setEndDate}
-        setMemberCount={setMemberCount}
+        setYourTotalMembers={setYourTotalMembers}
         setMinPrice={setMinPrice}
         setMaxPrice={setMaxPrice}
       />

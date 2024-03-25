@@ -1,17 +1,39 @@
 "use server";
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
 
-export default async function verifyAgency(agencyId: string, status: string) {
-  const session = await getServerSession(authOptions);
-  console.log(session);
-  if (!session) {
+export default async function verifyAgency(username: string, status: string) {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== "Admin") {
+        return {
+            redirect: {
+                destination: "/login",
+                permanent: false,
+            },
+        };
+    }
+    const response = await fetch(`${process.env.BACKEND_URL}/api/v1/agencies/verify`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session.user.serverToken}`,
+        },
+        body: JSON.stringify({
+            username,
+            status
+        }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        return {
+            status: 500,
+            body: "Failed to verify agency",
+        };
+    }
     return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
+        status: 200,
+        body: data.data,
     };
   }
   if (session.user.role !== "Admin") {
