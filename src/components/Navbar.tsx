@@ -4,9 +4,9 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {SiYourtraveldottv} from "react-icons/si";
 
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { signOut, useSession } from "next-auth/react";
+import {usePathname} from "next/navigation";
+import {useEffect, useState} from "react";
+import {signOut, useSession} from "next-auth/react";
 import Image from "next/image";
 import {
     DropdownMenu,
@@ -23,12 +23,12 @@ import logout from "@/lib/logout";
 import getMe from "@/lib/getMe";
 
 function Navbar() {
-    const { data: session, status, update } = useSession();
+    const {data: session, status, update} = useSession();
     const userRole = session?.user?.role ?? "Guest";
 
     const pathname = usePathname();
     const [activeRoute, setActiveRoute] = useState("");
-    
+
 
     useEffect(() => {
         setActiveRoute(pathname);
@@ -78,9 +78,9 @@ function Navbar() {
                 </div>
 
                 {userRole === "Guest" &&
-                        <Button>
-                            <Link href="/auth">Log In / Sign Up</Link>
-                        </Button>
+                    <Button>
+                        <Link href="/auth">Log In / Sign Up</Link>
+                    </Button>
                 }
                 {
                     userRole !== "Guest" &&
@@ -90,7 +90,7 @@ function Navbar() {
                         alt="avatar"
                         width={0}
                         height={0}
-                        />
+                    />
                 }
 
 
@@ -109,23 +109,28 @@ function Navbar() {
                             <DropdownMenuContent className="w-56">
                                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                 <DropdownMenuSeparator/>
-                                {userRole !== "Admin" && 
-                                <DropdownMenuGroup>
-                                    <DropdownMenuItem>
-                                        {userRole === "Tourist" &&
-                                            <Link className="w-full" href={'/tourist/profile'}>Edit Profile</Link>
-                                        }
-                                        {
-                                        userRole === "Agency" &&
-                                            <Link className="w-full" href={'/agency/profile'}>Edit Profile</Link>
-                                        }
+                                {userRole !== "Admin" &&
+                                    <DropdownMenuGroup>
+                                        <DropdownMenuItem>
+                                            {userRole === "Tourist" &&
+                                                <Link className="w-full" href={'/tourist/profile'}>Edit Profile</Link>
+                                            }
+                                            {
+                                                userRole === "Agency" &&
+                                                <Link className="w-full" href={'/agency/profile'}>Edit Profile</Link>
+                                            }
 
-                                    </DropdownMenuItem>
-                                </DropdownMenuGroup>}
+                                        </DropdownMenuItem>
+                                    </DropdownMenuGroup>}
                                 {
                                     (userRole === "Tourist" || userRole == "Agency") &&
                                     <DropdownMenuItem>
                                         <Link className="w-full" href={'/report-issue'}>Report Issue</Link>
+                                    </DropdownMenuItem>
+                                }
+                                {userRole === "Agency" &&
+                                    <DropdownMenuItem>
+                                        <Link className="w-full" href={'/agency/suggestion'}>Suggestion</Link>
                                     </DropdownMenuItem>
                                 }
                                 {
