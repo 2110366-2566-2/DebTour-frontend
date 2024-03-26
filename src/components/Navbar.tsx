@@ -133,6 +133,11 @@ function Navbar() {
                                         <Link className="w-full" href={'/agency/suggestion'}>Suggestion</Link>
                                     </DropdownMenuItem>
                                 }
+                                {userRole === "Tourist" &&
+                                    <DropdownMenuItem>
+                                        <Link className="w-full" href={'/tourist/suggestion'}>Suggestion</Link>
+                                    </DropdownMenuItem>
+                                }
                                 {
                                     userRole === "Admin" &&
                                     <DropdownMenuItem>
