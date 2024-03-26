@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Tour } from "@/app/tourist/tours/page";
+import { useRouter } from "next/navigation";
 
 const tours: { count: number; data: Tour[] } = {
   count: 5,
@@ -36,8 +37,12 @@ const ManageTour = () => {
   const [MaxPrice, setMaxPrice] = useState("");
 
   const { data: session, status } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
+    if (!session || session.user.role !== "Agency") {
+      router.push("/auth");
+    }
     async function waitForGetTour(
       searchName: string,
       StartDate: string,
@@ -67,28 +72,22 @@ const ManageTour = () => {
       console.log(MemberCount);
       console.log(MinPrice);
       console.log(MaxPrice);
-      waitForGetTour(
-        searchName,
-        StartDate,
-        EndDate,
-        MemberCount,
-        MinPrice,
-        MaxPrice,
-        session.user.id,
-      );
+      if (session) {
+        waitForGetTour(
+          searchName,
+          StartDate,
+          EndDate,
+          MemberCount,
+          MinPrice,
+          MaxPrice,
+          session.user.id,
+        );
+      }
       // Send Axios request here
     }, 1000);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [
-    searchName,
-    StartDate,
-    EndDate,
-    MemberCount,
-    MinPrice,
-    MaxPrice,
-    session.user.id,
-  ]);
+  }, [searchName, StartDate, EndDate, MemberCount, MinPrice, MaxPrice]);
 
   return (
     // <div className="">
@@ -116,7 +115,7 @@ const ManageTour = () => {
         setSearchName={setSearchName}
         setStartDate={setStartDate}
         setEndDate={setEndDate}
-        setMemberCount={setMemberCount}
+        setYourTotalMembers={setMemberCount}
         setMinPrice={setMinPrice}
         setMaxPrice={setMaxPrice}
       />
