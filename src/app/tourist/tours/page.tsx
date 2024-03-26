@@ -143,6 +143,7 @@ const Tours = () => {
         YourTotalMembers,
         MinPrice,
         MaxPrice,
+        "",
       );
       setTour(t);
       console.log(t);

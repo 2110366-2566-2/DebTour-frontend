@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Tour } from "@/app/tourist/tours/page";
 
-
 const tours: { count: number; data: Tour[] } = {
   count: 5,
   data: [
@@ -57,8 +56,8 @@ const ManageTour = () => {
         MaxPrice,
         AgencyUsername,
       );
-      setTour(t.data);
-      console.log(t.data);
+      setTour(t);
+      console.log(t);
     }
 
     const delayDebounceFn = setTimeout(() => {
