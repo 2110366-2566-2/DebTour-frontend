@@ -7,6 +7,7 @@ import getAllSuggestions from "@/lib/getAllSuggestions";
 
 export default function SuggestionTable() {
     const {data: session, status, update} = useSession();
+    const username = session?.user?.id;
     const role = session?.user?.role;
     const token = session?.user?.serverToken;
 
@@ -15,7 +16,7 @@ export default function SuggestionTable() {
     useEffect(() => {
         async function get() {
             setReloading(true)
-            const res = await getAllSuggestions(token);
+            const res = await getAllSuggestions(username, role, token);
             if (!res) return
             let temp = []
             for (let i = 0; i < res.data.length; i++) {
@@ -48,6 +49,7 @@ export default function SuggestionTable() {
                         <TableHead className="w-[100px]">Suggestion ID</TableHead>
                         <TableHead>Description</TableHead>
                         <TableHead>Location</TableHead>
+                        <TableHead>Type</TableHead>
                         <TableHead>Suggestion Time</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -57,6 +59,7 @@ export default function SuggestionTable() {
                             <TableCell className="w-[50px]">{suggestion.suggestionId}</TableCell>
                             <TableCell>{suggestion.description}</TableCell>
                             <TableCell>{suggestion.location.name}</TableCell>
+                            <TableCell>{suggestion.location.type}</TableCell>
                             <TableCell>{suggestion.suggestTimestamp}</TableCell>
                         </TableRow>
                     ))}
