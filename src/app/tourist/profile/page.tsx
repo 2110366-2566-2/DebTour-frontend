@@ -61,32 +61,32 @@ export default function TouristProfile() {
         get();
     }, [username])
 
-    useEffect(() => {
-        async function get() {
-            const res = await getMe(username, token);
-            if (!res) return
-            let temp = tourist;
-            // merge temp with res.data
-            for (let key in res.data) {
-                if (temp[key] === undefined) temp[key] = res.data[key];
-            }
-            form.reset({
-                phone: temp.phone,
-                address: temp.address,
-                image: temp.image,
-                citizenId: temp.citizenId,
-                firstName: temp.firstName,
-                lastName: temp.lastName,
-                email: temp.email,
-                birthDate: new Date(temp.birthDate),
-                gender: temp.gender,
-                defaultPayment: temp.defaultPayment
-            })
-            setTourist(temp);
-        }
-
-        get();
-    }, [tourist])
+    // useEffect(() => {
+    //     async function get() {
+    //         const res = await getMe(username, token);
+    //         if (!res) return
+    //         let temp = tourist;
+    //         // merge temp with res.data
+    //         for (let key in res.data) {
+    //             if (temp[key] === undefined) temp[key] = res.data[key];
+    //         }
+    //         form.reset({
+    //             phone: temp.phone,
+    //             address: temp.address,
+    //             image: temp.image,
+    //             citizenId: temp.citizenId,
+    //             firstName: temp.firstName,
+    //             lastName: temp.lastName,
+    //             email: temp.email,
+    //             birthDate: new Date(temp.birthDate),
+    //             gender: temp.gender,
+    //             defaultPayment: temp.defaultPayment
+    //         })
+    //         setTourist(temp);
+    //     }
+    //
+    //     get();
+    // }, [tourist])
 
     const form = useForm<z.infer<typeof touristProfileSchema>>({
         resolver: zodResolver(touristProfileSchema),
