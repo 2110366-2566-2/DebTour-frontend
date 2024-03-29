@@ -23,34 +23,74 @@ import {toast} from "@/components/ui/use-toast";
 import AgencyProfileSchema from "@/model/agencyProfileSchema";
 import updateAgency from "@/lib/updateAgency";
 import agencyProfileSchema from "@/model/agencyProfileSchema";
+import {useSession} from "next-auth/react";
+import getAgency from "@/lib/getAgency";
+import getMe from "@/lib/getMe";
 
 export default function AgencyProfile() {
-    const user = useUserStore()
+    const {data: session, status, update} = useSession();
+    const role = session?.user?.role;
+    const token = session?.user?.serverToken;
+    const username = session?.user?.id;
+
     const [agency, setAgency] = useState({} as any)
 
     const form = useForm<z.infer<typeof agencyProfileSchema>>({
-        resolver: zodResolver(touristProfileSchema),
+        resolver: zodResolver(agencyProfileSchema),
         defaultValues: {
             phone: agency.phone,
             email: agency.email,
             image: agency.image,
             agencyName: agency.agencyName,
             address: agency.address,
-            licenseNumber: agency.licenseNumber,
+            licenseNo: agency.licenseNo,
             bankAccount: agency.bankAccount,
-            authorizeAdminId: agency.authorizeAdminId,
+            authorizeAdminUsername: agency.authorizeAdminUsername,
             authorizeStatus: agency.authorizeStatus,
-            approveTime: agency.approvedTime,
+            // approveTime: new Date(),
         }
     })
 
-    // console.log(tourist)
+    // console.log(agency)
     // console.log(form.formState.errors)
     // console.log(form.getValues())
 
+    useEffect(() => {
+        async function get() {
+            const res = await getMe(username, token)
+            console.log(res.data)
+            if (!res) return
+            let temp = agency;
+            // merge temp with res.data
+            for (let key in res.data) {
+                if (key == "Gender") {
+                    temp["gender"] = res.data["Gender"]
+                } else
+                    temp[key] = res.data[key];
+            }
+            form.reset({
+                phone: temp.phone,
+                email: temp.email,
+                image: temp.image,
+                agencyName: temp.agencyName,
+                address: temp.address,
+                licenseNo: temp.licenseNo,
+                bankAccount: temp.bankAccount,
+                authorizeAdminUsername: temp.authorizeAdminUsername,
+                authorizeStatus: temp.authorizeStatus,
+                // approveTime: new Date(temp.approveTime),
+            })
+            setAgency(temp)
+            form.reset(res.data)
+        }
+
+        get()
+    }, [agency])
+
+
     async function onSubmit(values: z.infer<typeof AgencyProfileSchema>) {
         console.log(JSON.stringify(values))
-        const res = await updateAgency(user.username, user.token, values)
+        const res = await updateAgency(username, token, values)
         if (!res.success) {
             console.log("Failed to update agency profile");
         }
@@ -72,6 +112,22 @@ export default function AgencyProfile() {
                     <div className="flex flex-col gap-6">
                         <FormField
                             control={form.control}
+                            name="agencyName"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Agency Name</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Enter your agency name"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="text-xs"/>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
                             name="phone"
                             render={({field}) => (
                                 <FormItem>
@@ -83,40 +139,6 @@ export default function AgencyProfile() {
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="agencyName"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Citizen ID</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Enter your agency name"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="text-xs"/>
-                                </FormItem>
-                            )}
-                        />
-                        <FormField control={form.control} name="licenseNumber" render={({field}) => (
-                            <FormItem>
-                                <FormLabel>License Number</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="License Number" {...field} />
-                                </FormControl>
-                                <FormMessage className="text-xs"/>
-                            </FormItem>
-                        )}/>
-                        <FormField control={form.control} name="bankAccount" render={({field}) => (
-                            <FormItem>
-                                <FormLabel>Bank Account</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Bank Account" {...field} />
-                                </FormControl>
-                                <FormMessage className="text-xs"/>
-                            </FormItem>
-                        )}/>
 
                         <FormField
                             control={form.control}
@@ -132,6 +154,33 @@ export default function AgencyProfile() {
                             )}
                         />
 
+                        <FormField control={form.control} name="bankAccount" render={({field}) => (
+                            <FormItem>
+                                <FormLabel>Bank Account</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Bank Account" {...field} />
+                                </FormControl>
+                                <FormMessage className="text-xs"/>
+                            </FormItem>
+                        )}/>
+
+                        <FormField control={form.control} name="licenseNo" render={({field}) => (
+                            <FormItem>
+                                <FormLabel>License Number</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="License Number" {...field} />
+                                </FormControl>
+                                <FormMessage className="text-xs"/>
+                            </FormItem>
+                        )}/>
+
+                        <div className="text-sm font-medium">
+                            <h2>Authorize Status</h2>
+                            {agency.authorizeStatus == "Approved" ?
+                                (<p className="text-sm text-green-600">{agency.authorizeStatus}</p>)
+                                : (<p className="text-sm text-red-600">{agency.authorizeStatus}</p>)
+                            }
+                        </div>
                     </div>
 
                     <div className="flex justify-end mt-10">

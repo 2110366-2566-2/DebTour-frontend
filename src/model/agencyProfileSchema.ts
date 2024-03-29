@@ -6,15 +6,15 @@ const agencyProfileSchema = z.object({
     image: z.string().url(),
     agencyName: z.string().min(2).max(50),
     address: z.string().min(2).max(100),
-    licenseNumber: z.string().min(1).max(50),
+    licenseNo: z.string().min(1).max(50),
     bankAccount: z.string().min(10).max(10),
-    authorizeAdminId: z.number(),
+    authorizeAdminUsername: z.string(),
     authorizeStatus: z.enum([
         "Pending",
         "Approved",
         "Rejected",
     ]),
-    approveTime: z.date(),
+    // approveTime: z.date(),
 });
 
 export default agencyProfileSchema;
