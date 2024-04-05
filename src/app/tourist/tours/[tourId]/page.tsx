@@ -91,10 +91,11 @@ type Tour = {
   status: string;
   agencyUsername: string;
   activities: Activity[];
+  AgencyName: string;
 };
 
 export default async function TourInfo({ params }: { params: { tourId: string } }){
-  const tour = await getTour(params.tourId).then((res) => res.data);
+  const tour = await getTour(params.tourId).then((res) => res.data) as Tour;
   const tourImage = await getTourImage(params.tourId).then((res) => res.data);
   const tourAvgRating = await getTourAvgRating(params.tourId).then((res) => {
     if(res.success==false) return null
@@ -108,7 +109,7 @@ export default async function TourInfo({ params }: { params: { tourId: string } 
         <div className="container relative h-full py-12 text-center">
           <h1 className=" my-6 text-5xl font-bold">{tour?.name}</h1>
           <p className="my-2 font-semibold text-indigo-700">
-            Agency: {tour?.agencyUsername}
+            Agency: {tour?.AgencyName}
           </p>
           <div className="flex justify-center">
             {

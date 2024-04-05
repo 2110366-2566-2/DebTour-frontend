@@ -14,6 +14,7 @@ export interface Tour {
   memberCount: number;
   maxMemberCount: number;
   price: number;
+  FirstTourImage: string;
 }
 
 // export interface Tour {

@@ -6,6 +6,7 @@ import { IoLocationOutline, IoPeopleOutline } from "react-icons/io5";
 import { LuCalendarDays } from "react-icons/lu";
 import { Button } from "./ui/button";
 import TourCardEditButton from "./TourCardEditButton";
+import Image from "next/image";
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -40,8 +41,8 @@ const TourCard = ({ tour, isEditable }: Props) => {
       key={tour.tourId}
       className="m-4 grid grid-cols-[2fr,3fr] overflow-hidden rounded-3xl border border-solid border-gray-200 bg-white shadow duration-150 hover:scale-[1.03] hover:cursor-pointer"
     >
-      <img
-        src={"/chiangrai-tower.webp"}
+      <Image
+        src={tour.FirstTourImage}
         alt="sample image"
         className="h-full w-full object-cover"
       />
