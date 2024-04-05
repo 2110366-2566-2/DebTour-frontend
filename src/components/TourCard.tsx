@@ -42,7 +42,7 @@ const TourCard = ({ tour, isEditable }: Props) => {
       className="m-4 grid grid-cols-[2fr,3fr] overflow-hidden rounded-3xl border border-solid border-gray-200 bg-white shadow duration-150 hover:scale-[1.03] hover:cursor-pointer"
     >
       <Image
-        src={tour.FirstTourImage}
+        src={`data:image/jpeg;base64,${tour.FirstTourImage}`}
         alt="sample image"
         className="h-full w-full object-cover"
       />
