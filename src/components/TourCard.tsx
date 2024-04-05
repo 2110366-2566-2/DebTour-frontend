@@ -45,6 +45,8 @@ const TourCard = ({ tour, isEditable }: Props) => {
         src={`data:image/jpeg;base64,${tour.FirstTourImage}`}
         alt="sample image"
         className="h-full w-full object-cover"
+        width={0}
+        height={0}
       />
 
       <div className="px-8 py-6">
