@@ -35,8 +35,8 @@ function Navbar() {
     }, [pathname, userRole]);
 
     return (
-        <nav className="grid min-h-[60px] w-full items-center">
-            <div className="container flex items-center justify-start px-4 lg:px-6">
+        <nav className="flex min-h-[60px] w-full items-center">
+            <div className="container flex items-center justify-between px-4 lg:px-6">
                 <Link className="mr-6 flex items-center gap-3" href="/">
                     <SiYourtraveldottv className="h-8 w-8"/>
                     <span className="text-xl font-semibold">DebTour</span>
@@ -76,30 +76,6 @@ function Navbar() {
                         </Link>
                     )}
                 </div>
-                <div className="w-full sm:hidden flex justify-center">
-                    <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost">
-                            {activeRoute === "/" ? "Home" : activeRoute === "/tourist/tours" ? "Tours" : activeRoute === "/agency/tours" ? "Manage Tours" : "Menu"}
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56">
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <Link href="/">Home</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Link href="/tourist/tours">Tours</Link>
-                            </DropdownMenuItem>
-                            {userRole === "Agency" &&
-                                <DropdownMenuItem>
-                                    <Link href="/agency/tours">Manage Tours</Link>
-                                </DropdownMenuItem>
-                            }
-                        </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
                 {userRole === "Guest" &&
                     <Button>
                         <Link href="/auth">Log In / Sign Up</Link>
@@ -115,9 +91,8 @@ function Navbar() {
                         height={0}
                     />
                 }
-
-
-                {userRole !== "Guest" &&
+            </div>
+            {userRole !== "Guest" &&
                     <div className="ml-4">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -130,6 +105,19 @@ function Navbar() {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56">
+                                <DropdownMenuLabel>Navigation</DropdownMenuLabel>
+                                <DropdownMenuSeparator/>
+                                <DropdownMenuItem>
+                                    <Link className="w-full" href={'/'}>Home</Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <Link className="w-full" href={'/tourist/tours'}>Tours</Link>
+                                </DropdownMenuItem>
+                                {userRole === "Agency" &&
+                                    <DropdownMenuItem>
+                                        <Link className="w-full" href={'/agency/tours'}>Manage Tours</Link>
+                                    </DropdownMenuItem>
+                                }
                                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                 <DropdownMenuSeparator/>
                                 {userRole !== "Admin" &&
@@ -186,7 +174,6 @@ function Navbar() {
                         </DropdownMenu>
                     </div>
                 }
-            </div>
         </nav>
     );
 };

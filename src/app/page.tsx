@@ -10,6 +10,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import RecommendCard from "@/components/RecommendCard";
+import Link from "next/link";
 
 const LandingPage = () => {
   return (
@@ -35,13 +36,14 @@ const LandingPage = () => {
         </div>
 
         <div className="relative">
-          <Button
-            className="mt-16 w-[150px] font-bold uppercase duration-100 hover:scale-105"
-            variant={"outline"}
-          >
-            Get Started
-          </Button>
-
+          <Link href="/tourist/tours">
+            <Button
+              className="mt-16 w-[150px] font-bold uppercase duration-100 hover:scale-105"
+              variant={"outline"}
+            >
+              Get Started
+            </Button>
+          </Link>
           <MdArrowDropDownCircle className="absolute inset-0 top-[100px] mx-auto mt-5 flex h-7 w-7 items-center justify-center text-white" />
         </div>
       </section>
