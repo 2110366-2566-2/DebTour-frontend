@@ -42,7 +42,7 @@ function Navbar() {
                     <span className="text-xl font-semibold">DebTour</span>
                 </Link>
                 {/* <Button size="icon" variant="outline" onClick={() => { console.log(session); }}>Log</Button> */}
-                <div className="hidden w-full gap-4 px-8 lg:flex">
+                <div className="hidden w-full gap-4 px-8 sm:flex">
                     <Link
                         className={`inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium ${
                             activeRoute === "/" ? "text-primary" : "text-gray-500"
@@ -76,7 +76,30 @@ function Navbar() {
                         </Link>
                     )}
                 </div>
-
+                <div className="w-full sm:hidden flex justify-center">
+                    <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost">
+                            {activeRoute === "/" ? "Home" : activeRoute === "/tourist/tours" ? "Tours" : activeRoute === "/agency/tours" ? "Manage Tours" : "Menu"}
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56">
+                        <DropdownMenuGroup>
+                            <DropdownMenuItem>
+                                <Link href="/">Home</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Link href="/tourist/tours">Tours</Link>
+                            </DropdownMenuItem>
+                            {userRole === "Agency" &&
+                                <DropdownMenuItem>
+                                    <Link href="/agency/tours">Manage Tours</Link>
+                                </DropdownMenuItem>
+                            }
+                        </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
                 {userRole === "Guest" &&
                     <Button>
                         <Link href="/auth">Log In / Sign Up</Link>
