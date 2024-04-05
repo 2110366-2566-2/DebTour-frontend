@@ -11,22 +11,6 @@ import { Label } from "@/components/ui/label";
 import { Tour } from "@/app/tourist/tours/page";
 import { useRouter } from "next/navigation";
 
-const tours: { count: number; data: Tour[] } = {
-  count: 5,
-  data: [
-    {
-      tourId: 1,
-      tourName: "Need fixing here",
-      startDate: "2024-03-01T08:00:00.000Z",
-      endDate: "2024-03-10T18:00:00.000Z",
-      overviewLocation: "Mountain Range, XYZ Region",
-      price: 15000,
-      maxMemberCount: 20,
-      memberCount: 0,
-    },
-  ],
-};
-
 const ManageTour = () => {
   const [tours, setTour] = useState<Tour[]>([]);
   const [searchName, setSearchName] = useState("");
