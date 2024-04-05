@@ -72,7 +72,7 @@ const LandingPage = () => {
 
       {/* Recommend */}
 
-      <section className="py-20">
+      {/* <section className="py-20">
         <h2 className="mb-12 text-center text-4xl font-extrabold">
           Recommended For You
         </h2>
@@ -99,7 +99,7 @@ const LandingPage = () => {
             link={"/"}
           />
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };
