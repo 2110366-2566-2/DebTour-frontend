@@ -118,6 +118,7 @@ function Navbar() {
                                         <Link className="w-full" href={'/agency/tours'}>Manage Tours</Link>
                                     </DropdownMenuItem>
                                 }
+                                <DropdownMenuSeparator/>
                                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                 <DropdownMenuSeparator/>
                                 {userRole !== "Admin" &&
