@@ -27,7 +27,7 @@ const formatDate = (dateString: string) => {
     "November",
     "December",
   ];
-  return `${day}-${monthNames[monthIndex]}-${year}`;
+  return `${day}/${monthNames[monthIndex]}/${year}`;
 };
 
 interface Props {
@@ -39,12 +39,17 @@ const TourCard = ({ tour, isEditable }: Props) => {
   return (
     <div
       key={tour.tourId}
-      className="m-4 grid grid-cols-[2fr,3fr] overflow-hidden rounded-3xl border border-solid border-gray-200 bg-white shadow duration-150 hover:scale-[1.03] hover:cursor-pointer"
+      className="
+        m-4 grid grid-cols-[2fr,3fr] overflow-hidden rounded-3xl 
+        border border-solid border-gray-200 bg-white shadow 
+        duration-150 hover:scale-[1.03] hover:cursor-pointer
+        h-56
+      "
     >
       {
         (tour.FirstTourImage === null || tour.FirstTourImage === "No image")?
           <Image
-            src={`data:image/jpeg;base64,${tour.FirstTourImage}`}
+            src={"/chiangrai-tower.webp"}
             alt="tour image"
             className="h-full w-full object-cover"
             width={200}
@@ -52,7 +57,7 @@ const TourCard = ({ tour, isEditable }: Props) => {
           />
         :
           <Image
-            src={"/chiangrai-tower.webp"}
+            src={`data:image/jpeg;base64,${tour.FirstTourImage}`}
             alt="sample image"
             className="h-full w-full object-cover"
             width={200}
