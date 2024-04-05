@@ -14,6 +14,7 @@ export interface Tour {
   memberCount: number;
   maxMemberCount: number;
   price: number;
+  FirstTourImage: string;
 }
 
 // export interface Tour {
@@ -183,7 +184,7 @@ const Tours = () => {
       />
 
       <div className="bg-indigo-100 py-12">
-        <div className="container grid grid-cols-2 justify-around ">
+        <div className="container grid md:grid-cols-2 justify-around grid-cols-none">
           {tours?.map((tour: Tour) => (
             <Link href={`/tourist/tours/${tour.tourId}`} key={tour.tourId}>
               <TourCard tour={tour} isEditable={false} />

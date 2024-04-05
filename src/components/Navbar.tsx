@@ -35,14 +35,14 @@ function Navbar() {
     }, [pathname, userRole]);
 
     return (
-        <nav className="grid min-h-[60px] w-full items-center">
-            <div className="container flex items-center justify-start px-4 lg:px-6">
+        <nav className="flex min-h-[60px] w-full items-center">
+            <div className="container flex items-center justify-between px-4 lg:px-6">
                 <Link className="mr-6 flex items-center gap-3" href="/">
                     <SiYourtraveldottv className="h-8 w-8"/>
                     <span className="text-xl font-semibold">DebTour</span>
                 </Link>
                 {/* <Button size="icon" variant="outline" onClick={() => { console.log(session); }}>Log</Button> */}
-                <div className="hidden w-full gap-4 px-8 lg:flex">
+                <div className="hidden w-full gap-4 px-8 sm:flex">
                     <Link
                         className={`inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium ${
                             activeRoute === "/" ? "text-primary" : "text-gray-500"
@@ -76,7 +76,6 @@ function Navbar() {
                         </Link>
                     )}
                 </div>
-
                 {userRole === "Guest" &&
                     <Button>
                         <Link href="/auth">Log In / Sign Up</Link>
@@ -92,9 +91,8 @@ function Navbar() {
                         height={0}
                     />
                 }
-
-
-                {userRole !== "Guest" &&
+            </div>
+            {userRole !== "Guest" &&
                     <div className="ml-4">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -107,6 +105,19 @@ function Navbar() {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56">
+                                <DropdownMenuLabel>Navigation</DropdownMenuLabel>
+                                <DropdownMenuSeparator/>
+                                <DropdownMenuItem>
+                                    <Link className="w-full" href={'/'}>Home</Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <Link className="w-full" href={'/tourist/tours'}>Tours</Link>
+                                </DropdownMenuItem>
+                                {userRole === "Agency" &&
+                                    <DropdownMenuItem>
+                                        <Link className="w-full" href={'/agency/tours'}>Manage Tours</Link>
+                                    </DropdownMenuItem>
+                                }
                                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                 <DropdownMenuSeparator/>
                                 {userRole !== "Admin" &&
@@ -163,7 +174,6 @@ function Navbar() {
                         </DropdownMenu>
                     </div>
                 }
-            </div>
         </nav>
     );
 };
