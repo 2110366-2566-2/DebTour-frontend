@@ -41,13 +41,25 @@ const TourCard = ({ tour, isEditable }: Props) => {
       key={tour.tourId}
       className="m-4 grid grid-cols-[2fr,3fr] overflow-hidden rounded-3xl border border-solid border-gray-200 bg-white shadow duration-150 hover:scale-[1.03] hover:cursor-pointer"
     >
-      <Image
-        src={`data:image/jpeg;base64,${tour.FirstTourImage}`}
-        alt="sample image"
-        className="h-full w-full object-cover"
-        width={0}
-        height={0}
-      />
+      {
+        (tour.FirstTourImage === null || tour.FirstTourImage === "No image")?
+          <Image
+            src={`data:image/jpeg;base64,${tour.FirstTourImage}`}
+            alt="tour image"
+            className="h-full w-full object-cover"
+            width={200}
+            height={200}
+          />
+        :
+          <Image
+            src={"/chiangrai-tower.webp"}
+            alt="sample image"
+            className="h-full w-full object-cover"
+            width={200}
+            height={200}
+          />
+      }
+      
 
       <div className="px-8 py-6">
         <h2 className="mb-4 text-2xl font-bold">{tour.tourName}</h2>
