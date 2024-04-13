@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import CountUp from "react-countup";
 
 const AgencyRevenue = () => {
   return (
@@ -10,7 +13,9 @@ const AgencyRevenue = () => {
 
         <div className="absolute left-[50%] my-2 h-[3px] w-20 translate-x-[-50%] bg-violet-500" />
 
-        <p className="mt-8 text-5xl font-extrabold md:text-6xl">{`321,000 ฿`}</p>
+        <div className="mt-8 text-5xl font-extrabold md:text-6xl">
+          <CountUp end={696969.69} decimals={2} /> ฿
+        </div>
       </div>
 
       <Image
