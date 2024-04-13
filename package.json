@@ -33,6 +33,7 @@
     "next-auth": "^4.24.7",
     "next-client-cookies": "^1.1.0",
     "react": "^18",
+    "react-countup": "^6.5.3",
     "react-day-picker": "^8.10.0",
     "react-dom": "^18",
     "react-hook-form": "^7.50.1",
