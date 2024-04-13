@@ -45,7 +45,13 @@ import SubmitButton from "@/components/TourCreationFormComponent/SubmitBtn";
 import NextStateButton from "./TourCreationFormComponent/NextStateBtn";
 import { useSession } from "next-auth/react";
 
-const location_types = ["Hotel", "Attraction", "Restaurant", "Meeting Point", "Other"];
+const location_types = [
+  "Hotel",
+  "Attraction",
+  "Restaurant",
+  "Meeting Point",
+  "Other",
+];
 interface Tour {
   name: string;
   startDate: Date;
@@ -97,7 +103,6 @@ let oldValues: Tour = {
   ],
   images: [] as string[],
 };
-
 
 const deleteAPIUnfinished = true; // need to check if the activity API is in development or not
 export default function TourCreationForm({ tourId }: { tourId?: string }) {
@@ -173,7 +178,7 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
       });
       return;
     } else {
-      console.log(sentValues)
+      console.log(sentValues);
       const res = await updateTour(session, sentValues, oldValues, tourId);
       if (!res.success) {
         toast({
@@ -190,46 +195,46 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
     }
   }
 
-  async function getValue() {
-    if (tourId) {
-      const res = await getTour(tourId);
-      // console.log(res.data)
-      let values = res.data;
-      // console.log(values)
-      values.startDate = new Date(values.startDate);
-      values.endDate = new Date(values.endDate);
-      values.refundDueDate = new Date(values.refundDueDate);
-      values.maxMemberCount = [values.maxMemberCount];
-      if (values.activities != null && values.activities.length !== 0) {
-        values.activities = values.activities.map((activity: any) => {
-          activity.startTimestamp = new Date(activity.startTimestamp);
-          activity.endTimestamp = new Date(activity.endTimestamp);
-          return activity;
-        });
-      }
-      // change values.images base64 string to file and add to the images that is FileList
-      const oldImages = values.images.map((image: string) => {
-        const byteString = atob(image);
-        const ab = new ArrayBuffer(byteString.length);
-        const ia = new Uint8Array(ab);
-        for (let i = 0; i < byteString.length; i++) {
-          ia[i] = byteString.charCodeAt(i);
-        }
-        const blob = new Blob([ab], { type: "image/jpeg" });
-        const file = new File([blob], "image.jpg", { type: "image/jpeg" });
-        return file;
-      });
-      setImages(oldImages as unknown as FileList);
-      
-      oldValues = values;
-      form.reset(res.data);
-    }
-  }
-
   useEffect(() => {
+    async function getValue() {
+      if (tourId) {
+        const res = await getTour(tourId);
+        // console.log(res.data)
+        let values = res.data;
+        // console.log(values)
+        values.startDate = new Date(values.startDate);
+        values.endDate = new Date(values.endDate);
+        values.refundDueDate = new Date(values.refundDueDate);
+        values.maxMemberCount = [values.maxMemberCount];
+        if (values.activities != null && values.activities.length !== 0) {
+          values.activities = values.activities.map((activity: any) => {
+            activity.startTimestamp = new Date(activity.startTimestamp);
+            activity.endTimestamp = new Date(activity.endTimestamp);
+            return activity;
+          });
+        }
+        // change values.images base64 string to file and add to the images that is FileList
+        const oldImages = values.images.map((image: string) => {
+          const byteString = atob(image);
+          const ab = new ArrayBuffer(byteString.length);
+          const ia = new Uint8Array(ab);
+          for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+          }
+          const blob = new Blob([ab], { type: "image/jpeg" });
+          const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+          return file;
+        });
+        setImages(oldImages as unknown as FileList);
+
+        oldValues = values;
+        form.reset(res.data);
+      }
+    }
+
     getValue();
-    setImages(oldValues.images as unknown as FileList)
-  }, []);
+    setImages(oldValues.images as unknown as FileList);
+  }, [form, tourId]);
 
   const [addedImages, setAddedImages] = useState<FileList>();
   const [images, setImages] = useState<FileList>();
@@ -241,10 +246,13 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
       if (images != null) {
         for (let i = 0; i < images.length; i++)
           updatedImages.items.add(images[i]);
-        for (let i = 0; i < Math.min(5 - images.length, addedImages.length); i++)
+        for (
+          let i = 0;
+          i < Math.min(5 - images.length, addedImages.length);
+          i++
+        )
           updatedImages.items.add(addedImages[i]);
-      }
-      else {
+      } else {
         for (let i = 0; i < Math.min(5, addedImages.length); i++)
           updatedImages.items.add(addedImages[i]);
       }
@@ -272,30 +280,30 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
     const promises: Promise<void>[] = [];
 
     for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const promise = new Promise<void>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = function () {
-                const base64 = reader.result;
-                if (base64 && typeof base64 === 'string') {
-                    List.push(base64.replace(/^data:image\/[a-z]+;base64,/, ''));
-                    resolve(); // Resolve the promise after processing the file
-                } else {
-                    reject(new Error("Failed to read file"));
-                }
-            };
-            reader.readAsDataURL(file);
-        });
-        promises.push(promise);
+      const file = files[i];
+      const promise = new Promise<void>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const base64 = reader.result;
+          if (base64 && typeof base64 === "string") {
+            List.push(base64.replace(/^data:image\/[a-z]+;base64,/, ""));
+            resolve(); // Resolve the promise after processing the file
+          } else {
+            reject(new Error("Failed to read file"));
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+      promises.push(promise);
     }
 
     // Wait for all promises to resolve
     try {
-        await Promise.all(promises);
-        console.log('All files processed');
-        form.setValue("images", List);
+      await Promise.all(promises);
+      console.log("All files processed");
+      form.setValue("images", List);
     } catch (error) {
-        console.error('Error processing files:', error);
+      console.error("Error processing files:", error);
     }
   }
   return (
@@ -329,7 +337,10 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
                         ></input>
                         {tourId ? (
                           <div className="flex items-center justify-end gap-4">
-                            <Label htmlFor="deleteBtn" className="text-slate-400">
+                            <Label
+                              htmlFor="deleteBtn"
+                              className="text-slate-400"
+                            >
                               Delete the tour?
                             </Label>
                             <DeleteBtn tourId={tourId} />
@@ -495,7 +506,13 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
                         <FormItem className="flex grow flex-col">
                           <FormLabel>Latitude</FormLabel>
                           <FormControl>
-                            <Input type="number" {...field} min="-90" max="90" step="0.0000001" />
+                            <Input
+                              type="number"
+                              {...field}
+                              min="-90"
+                              max="90"
+                              step="0.0000001"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -508,7 +525,13 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
                         <FormItem className="flex grow flex-col">
                           <FormLabel>Longitude</FormLabel>
                           <FormControl>
-                            <Input type="number" {...field} min="-180" max="180" step="0.0000001" />
+                            <Input
+                              type="number"
+                              {...field}
+                              min="-180"
+                              max="180"
+                              step="0.0000001"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -531,7 +554,10 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
                             </FormControl>
                             <SelectContent>
                               {location_types.map((type) => (
-                                <SelectItem key={type + index * 10} value={type}>
+                                <SelectItem
+                                  key={type + index * 10}
+                                  value={type}
+                                >
                                   {type}
                                 </SelectItem>
                               ))}
@@ -596,24 +622,37 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
           {step === 2 && (
             <>
               {/* show added images */}
-              {images &&
-                images.length > 0 ? (
+              {images && images.length > 0 ? (
                 <div className="flex flex-wrap gap-4">
                   {Array.from(images).map((image, index) => (
-                    <div key={index} className='relative'>
+                    <div key={index} className="relative">
                       <Image
                         src={URL.createObjectURL(image)}
                         alt="image"
-                        className="w-32 h-32 object-cover border-2 border-gray-700"
+                        className="h-32 w-32 border-2 border-gray-700 object-cover"
                         width={0}
                         height={0}
                       />
-                      <Button type="button"
-                        className="absolute top-0 right-0 bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-                        onClick={() => deleteImages(index)}>
+                      <Button
+                        type="button"
+                        className="absolute right-0 top-0 inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                        onClick={() => deleteImages(index)}
+                      >
                         <span className="sr-only">Close menu</span>
-                        <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                        <svg
+                          className="h-6 w-6"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
                         </svg>
                       </Button>
                     </div>
@@ -623,19 +662,20 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
               {/* show all images and there is a button in the center of all images that is shown when is hovered and when clicked delete the image*/}
               <div className="flex items-center gap-4">
                 {/* choose source button */}
-                <Input type="file" multiple
-                  onChange={
-                    (e) => setAddedImages(
-                      e.target.files && e.target.files.length > 0 ? e.target.files : undefined
+                <Input
+                  type="file"
+                  multiple
+                  onChange={(e) =>
+                    setAddedImages(
+                      e.target.files && e.target.files.length > 0
+                        ? e.target.files
+                        : undefined,
                     )
                   }
-                  ref={imgIn} />
+                  ref={imgIn}
+                />
                 {/* append file that is chosen to the old images*/}
-                <Button
-                  id="backBtn"
-                  type="button"
-                  onClick={() => addImages()}
-                >
+                <Button id="backBtn" type="button" onClick={() => addImages()}>
                   Add Image
                 </Button>
               </div>

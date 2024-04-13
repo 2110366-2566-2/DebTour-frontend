@@ -71,7 +71,7 @@ const ManageTour = () => {
     }, 1000);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchName, StartDate, EndDate, MemberCount, MinPrice, MaxPrice]);
+  });
 
   return (
     // <div className="">

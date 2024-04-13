@@ -17,7 +17,7 @@ const TourMember = ({ params }: { params: { tourId: string } }) => {
       console.log(t.data);
     }
     waitForGetTourMember();
-  }, []);
+  }, [params.tourId]);
 
   return (
     <main className="p-16">
