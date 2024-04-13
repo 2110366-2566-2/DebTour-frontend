@@ -1,5 +1,5 @@
-const AgencyRevenue = () => {
-  return <div>AgencyRevenue</div>;
+const AllRevenue = () => {
+  return <div>AllRevenue</div>;
 };
 
-export default AgencyRevenue;
+export default AllRevenue;
