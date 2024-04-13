@@ -139,7 +139,7 @@ const AgencyRegisterPage = () => {
       });
     }
     console.log("Form values", form.getValues());
-  }, []);
+  }, [form]);
 
   // mental health checker function
   const checkMentalHealth = () => {
