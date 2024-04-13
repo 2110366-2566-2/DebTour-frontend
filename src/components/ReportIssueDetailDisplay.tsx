@@ -23,6 +23,7 @@ import {
 import updateIssue from "@/lib/updateIssue";
 import { toast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 export default function ReportIssueDetailDisplay({
   issue,
@@ -148,7 +149,7 @@ export default function ReportIssueDetailDisplay({
           </div>
           <div>
             <h1 className="font-bold">Image</h1>
-            <img src={"data:image/jpeg;base64," + issue.image} />
+            <Image src={"data:image/jpeg;base64," + issue.image} alt="" />
           </div>
           {role === "User" && (
             <div>
