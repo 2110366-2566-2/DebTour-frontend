@@ -4,8 +4,8 @@ import {
     Dialog,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import ReportIssueForm from "@/components/ReportIssueForm";
-import ReportIssueTable from "@/components/ReportIssueTable";
+import ReportIssueForm from "@/components/ReportIssueComponent/ReportIssueForm";
+import ReportIssueTable from "@/components/ReportIssueComponent/ReportIssueTable";
 import {useState} from "react";
 import {useSession} from "next-auth/react";
 

@@ -1,5 +1,5 @@
 import SuggestionFormButton from "@/components/SuggestionComponent/SuggestionFormButton";
-import SuggestionTable from "@/components/SuggestionTable";
+import SuggestionTable from "@/components/SuggestionComponent/SuggestionTable";
 
 export default function SuggestedTours() {
     return (

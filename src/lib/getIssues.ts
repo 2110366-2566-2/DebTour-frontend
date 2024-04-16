@@ -17,7 +17,7 @@ export default async function getIssues(username: string | undefined, role: stri
     });
 
     if (!response.ok) {
-        throw new Error("Failed to report issue");
+        throw new Error("Failed to get issue");
     }
 
     return response.json();
