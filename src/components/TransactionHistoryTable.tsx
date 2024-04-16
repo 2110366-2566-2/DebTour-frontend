@@ -2,30 +2,41 @@
 
 import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {useSession} from "next-auth/react";
-import {useEffect, useState} from "react";
+import {ReactNode, useEffect, useState} from "react";
 import getTransactionHistory from "@/lib/getTransactionHistory";
 import {Button} from "@/components/ui/button";
+import {
+    AlertDialog, AlertDialogAction, AlertDialogCancel,
+    AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
+import refund from "@/lib/refund";
+import {toast} from "@/components/ui/use-toast";
+
 
 export default function TransactionHistoryTable() {
     const { data: session, status, update } = useSession();
     const role = session?.user?.role;
     const username = session?.user?.id;
     const token = session?.user?.serverToken;
+    // console.log(username, token)
 
     const [transactionHistory, setTransactionHistory] = useState([] as any[])
 
     useEffect(() => {
         async function get() {
             let res = await getTransactionHistory(username, token);
-            res.data = [{
-                amount: 2500,
-                method: "Mobile Banking",
-                status: "success",
-                timestamp: "2024-03-27T14:34:34.924747Z",
-                tourId: 0,
-                transactionId: 0
-            }]
-            // if (!res) return;
+            // res.data = [{
+            //     amount: 2500,
+            //     method: "Mobile Banking",
+            //     status: "success",
+            //     timestamp: "2024-03-27T14:34:34.924747Z",
+            //     tourId: 0,
+            //     transactionId: 0
+            // }]
+            if (!res) return;
             let temp = [];
             for (let i = 0; i < res.data.length; i++) {
                 let timestamp = new Date(res.data[i].timestamp);
@@ -71,11 +82,40 @@ export default function TransactionHistoryTable() {
                                 <TableCell className="w-[100px]">{transaction.amount}</TableCell>
                                 <TableCell className="w-[100px]">{transaction.status}</TableCell>
                                 <TableCell className="w-[120px] text-xs">{transaction.timestamp}</TableCell>
-                                <TableCell>
-                                    <Button>
-                                        Refund
-                                    </Button>
-                                </TableCell>
+                                {transaction.status != "Refunded" && (
+                                    <TableCell>
+                                        <AlertDialog>
+                                            <AlertDialogTrigger asChild>
+                                                <Button variant="destructive">Refund</Button>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent>
+                                                <AlertDialogHeader>
+                                                    <AlertDialogTitle>Are you absolutely sure to refund this transaction?</AlertDialogTitle>
+                                                    <AlertDialogDescription>
+                                                        This action cannot be undone. This will permanently refund your
+                                                        transaction.
+                                                    </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                    <AlertDialogAction onClick={async () => {
+                                                        const res = await refund(transaction.transactionId, token);
+                                                        if (!res.success) {
+                                                            console.log("Failed to refund")
+                                                        }
+                                                        console.log("Successfully refund")
+                                                        toast({
+                                                                title: "Refunded",
+                                                                description: "Refund successfully"
+                                                            }
+                                                        )
+                                                        window.location.reload();
+                                                    }}>REFUND</AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
+                                    </TableCell>
+                                )}
                             </TableRow>
                         ))
                     ) : (

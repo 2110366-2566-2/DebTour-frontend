@@ -1,4 +1,3 @@
-import {undefined} from "zod";
 
 export default async function getTransactionHistory(username: string | undefined, token: string | undefined) {
     if (!username || !token) {
