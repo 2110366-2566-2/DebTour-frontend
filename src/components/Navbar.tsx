@@ -135,6 +135,12 @@ function Navbar() {
                                         </DropdownMenuItem>
                                     </DropdownMenuGroup>}
                                 {
+                                    (userRole === "Tourist") &&
+                                    <DropdownMenuItem>
+                                        <Link className="w-full" href={'/tourist/payment-history'}>Payment History</Link>
+                                    </DropdownMenuItem>
+                                }
+                                {
                                     (userRole === "Tourist" || userRole == "Agency") &&
                                     <DropdownMenuItem>
                                         <Link className="w-full" href={'/report-issue'}>Report Issue</Link>
