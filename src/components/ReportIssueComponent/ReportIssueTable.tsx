@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Dialog } from "@/components/ui/dialog";
 import { useEffect, useMemo, useState } from "react";
-import ReportIssueDetailDisplay from "@/components/ReportIssueDetailDisplay";
+import ReportIssueDetailDisplay from "@/components/ReportIssueComponent/ReportIssueDetailDisplay";
 import getIssues from "@/lib/getIssues";
 import { useUserStore } from "@/context/store";
 import { useSession } from "next-auth/react";
