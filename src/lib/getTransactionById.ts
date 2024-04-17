@@ -19,7 +19,7 @@ export default async function getTransactionById(transactionId: string) {
             "Authorization": `Bearer ${session.user.serverToken}`,
             // "Access-Control-Allow-Origin": "*"
         },
-    })
+    });
     if (!response.ok) {
         throw new Error("Failed to fetch transaction");
     }

@@ -93,7 +93,7 @@ function Navbar() {
                 }
             </div>
             {userRole !== "Guest" &&
-                    <div className="ml-4">
+                    <div className="mr-4">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button size="icon" variant="outline">
