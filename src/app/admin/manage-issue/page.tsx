@@ -1,5 +1,5 @@
 "use client"
-import ReportIssueTable from "@/components/ReportIssueTable";
+import ReportIssueTable from "@/components/ReportIssueComponent/ReportIssueTable";
 import {useSession} from "next-auth/react";
 import {useState} from "react";
 

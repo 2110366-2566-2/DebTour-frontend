@@ -131,9 +131,14 @@ function Navbar() {
                                                 userRole === "Agency" &&
                                                 <Link className="w-full" href={'/agency/profile'}>Edit Profile</Link>
                                             }
-
                                         </DropdownMenuItem>
                                     </DropdownMenuGroup>}
+                                {
+                                    (userRole === "Tourist") &&
+                                    <DropdownMenuItem>
+                                        <Link className="w-full" href={'/tourist/transaction-history'}>Transaction History</Link>
+                                    </DropdownMenuItem>
+                                }
                                 {
                                     (userRole === "Tourist" || userRole == "Agency") &&
                                     <DropdownMenuItem>
