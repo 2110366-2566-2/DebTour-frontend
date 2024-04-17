@@ -92,8 +92,13 @@ export default function AllRevenue() {
         </h1>
 
         <div className="grid grid-cols-3 gap-6">
-          {agencies &&
+          {/* {agencies &&
             agencies.map((agency: AgencyType, index: number) => (
+              <AgencyCard key={index} agency={agency} />
+            ))} */}
+
+          {dummyAgencies &&
+            dummyAgencies.map((agency: AgencyType, index: number) => (
               <AgencyCard key={index} agency={agency} />
             ))}
         </div>
