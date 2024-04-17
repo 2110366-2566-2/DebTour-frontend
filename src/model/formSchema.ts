@@ -53,6 +53,14 @@ const formSchema = z
       images: z.array(string()).max(5).min(1),
   })
   .refine((data) => {
+    if (data.startDate < new Date()) {
+      return {
+        message: "Start date must be in the future",
+        path: ["startDate"],
+      };
+    }
+  })
+  .refine((data) => {
     if (data.startDate >= data.endDate) {
       return {
         message: "Start date must be before end date",
@@ -62,10 +70,10 @@ const formSchema = z
     return true;
   })
   .refine((data) => {
-    if (data.refundDueDate >= data.startDate) {
+    if (data.refundDueDate < new Date()) {
       return {
-        message: "Refund due date must be before start date",
-        path: ["startDate", "refundDueDate"],
+        message: "Refund due date must be in the future",
+        path: ["refundDueDate"],
       };
     }
     return true;
@@ -75,6 +83,18 @@ const formSchema = z
       return { message: "Price must be more than zero", path: ["price"] };
     }
     return true;
+  })
+  .refine((data) => {
+    if (data.activities.length > 0) {
+      data.activities.forEach((activity) => {
+        if (activity.startTimestamp < new Date()) {
+          return {
+            message: "Activity start date must be in the future",
+            path: ["activities", "startTimestamp"],
+          };
+        }
+      });
+    }
   })
   .refine((data) => {
     if (data.activities.length > 0) {
