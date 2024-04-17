@@ -1,21 +1,15 @@
-"use client";
-
 import Image from "next/image";
-import CountUp from "react-countup";
 
-const AgencyRevenue = () => {
+const AgencyRevenue = async () => {
   return (
     <main className="relative min-h-[calc(100vh-60px)] text-center">
       <div className="pt-20">
         <p className="text-sm font-bold uppercase sm:text-lg">
           current revenue
         </p>
-
         <div className="absolute left-[50%] my-2 h-[3px] w-20 translate-x-[-50%] bg-violet-500" />
 
-        <div className="mt-8 text-5xl font-extrabold md:text-6xl">
-          <CountUp end={696969.69} decimals={2} /> ฿
-        </div>
+        <p className="mt-8 text-5xl font-extrabold md:text-6xl">500000 ฿</p>
       </div>
 
       <Image
