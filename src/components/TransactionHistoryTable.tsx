@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import refund from "@/lib/refund";
 import {toast} from "@/components/ui/use-toast";
+import Link from "next/link";
 
 
 export default function TransactionHistoryTable() {
@@ -28,15 +29,9 @@ export default function TransactionHistoryTable() {
     useEffect(() => {
         async function get() {
             let res = await getTransactionHistory(username, token);
-            // res.data = [{
-            //     amount: 2500,
-            //     method: "Mobile Banking",
-            //     status: "success",
-            //     timestamp: "2024-03-27T14:34:34.924747Z",
-            //     tourId: 0,
-            //     transactionId: 0
-            // }]
+            
             if (!res) return;
+            if (!res.data) return;
             let temp = [];
             for (let i = 0; i < res.data.length; i++) {
                 let timestamp = new Date(res.data[i].timestamp);
@@ -68,6 +63,7 @@ export default function TransactionHistoryTable() {
                         <TableHead>Amount</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Timestamp</TableHead>
+                        <TableHead></TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -76,7 +72,11 @@ export default function TransactionHistoryTable() {
                             <TableRow
                                 key={transaction.transactionId}
                             >
-                                <TableCell className={"w-[50px]"}>{transaction.transactionId}</TableCell>
+                                <TableCell className={"w-[50px]"}>
+                                    <Link href={`/tourist/transaction-history/${transaction.transactionId}`} replace className="text-blue-500 hover:underline">
+                                        {transaction.transactionId}
+                                    </Link>
+                                </TableCell>
                                 <TableCell className="w-[50px]">{transaction.tourId}</TableCell>
                                 <TableCell className="w-[100px]">{transaction.method}</TableCell>
                                 <TableCell className="w-[100px]">{transaction.amount}</TableCell>
