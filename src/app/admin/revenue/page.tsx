@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,11 +9,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Image from "next/image";
+import axios, { AxiosError } from "axios";
+import { useSession } from "next-auth/react";
+// import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function AllRevenue() {
-  // Assuming agencies is an array of objects containing agency information
-  const agencies = [
+  const [agencies, setAgencies] = useState<AgencyType[]>();
+  const { data: session } = useSession();
+
+  // "use client" because of realtime data
+
+  const dummyAgencies = [
     {
       agencyName: "Agency 1",
       approveTime: "...",
@@ -51,33 +60,29 @@ export default function AllRevenue() {
       phone: "555555555",
       username: "agency3",
     },
-    {
-      agencyName: "Agency 4",
-      approveTime: "...",
-      authorizeAdminUsername: "admin4",
-      authorizeStatus: "Approved",
-      bankAccount: "...",
-      bankName: "...",
-      email: "agency4@example.com",
-      image: "...",
-      licenseNo: "...",
-      phone: "666666666",
-      username: "agency4",
-    },
-    {
-      agencyName: "Agency 5",
-      approveTime: "...",
-      authorizeAdminUsername: "admin5",
-      authorizeStatus: "Pending",
-      bankAccount: "...",
-      bankName: "...",
-      email: "agency5@example.com",
-      image: "...",
-      licenseNo: "...",
-      phone: "777777777",
-      username: "agency5",
-    },
   ];
+
+  useEffect(() => {
+    const fetchAllRevenue = async () => {
+      try {
+        const token = session?.user?.serverToken;
+        const backendUrl = process.env.BACKEND_URL;
+        const response = await axios.get(`${backendUrl}/api/v1/agencies`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setAgencies(response.data.amount);
+      } catch (err) {
+        console.error("Error fetching revenue:", (err as AxiosError).message);
+      }
+    };
+
+    if (session?.user?.serverToken && session?.user?.id) {
+      fetchAllRevenue();
+    }
+  }, [session]);
 
   return (
     <main>
@@ -87,9 +92,10 @@ export default function AllRevenue() {
         </h1>
 
         <div className="grid grid-cols-3 gap-6">
-          {agencies.map((agency, index) => (
-            <AgencyCard key={index} agency={agency} />
-          ))}
+          {agencies &&
+            agencies.map((agency: AgencyType, index: number) => (
+              <AgencyCard key={index} agency={agency} />
+            ))}
         </div>
       </div>
     </main>

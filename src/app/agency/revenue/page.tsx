@@ -10,6 +10,8 @@ const AgencyRevenue = () => {
   const [agencyRevenue, setAgencyRevenue] = useState(0);
   const { data: session } = useSession();
 
+  // "use client" because of realtime data
+
   useEffect(() => {
     const fetchRevenue = async () => {
       try {
