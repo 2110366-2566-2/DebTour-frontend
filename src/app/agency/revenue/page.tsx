@@ -1,6 +1,40 @@
-import Image from "next/image";
+"use client";
 
-const AgencyRevenue = async () => {
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import axios, { AxiosError } from "axios";
+import CountUp from "react-countup";
+
+const AgencyRevenue = () => {
+  const [agencyRevenue, setAgencyRevenue] = useState(0);
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    const fetchRevenue = async () => {
+      try {
+        const token = session?.user?.serverToken;
+        const username = session?.user?.id;
+        const backendUrl = process.env.BACKEND_URL;
+        const response = await axios.get(
+          `${backendUrl}/api/v1/agencies/getRevenue/${username}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        setAgencyRevenue(response.data.amount);
+      } catch (err) {
+        console.error("Error fetching revenue:", (err as AxiosError).message);
+      }
+    };
+
+    if (session?.user?.serverToken && session?.user?.id) {
+      fetchRevenue();
+    }
+  }, [session]);
+
   return (
     <main className="relative min-h-[calc(100vh-60px)] text-center">
       <div className="pt-20">
@@ -9,7 +43,9 @@ const AgencyRevenue = async () => {
         </p>
         <div className="absolute left-[50%] my-2 h-[3px] w-20 translate-x-[-50%] bg-violet-500" />
 
-        <p className="mt-8 text-5xl font-extrabold md:text-6xl">500000 ฿</p>
+        <div className="mt-8 text-5xl font-extrabold md:text-6xl">
+          <CountUp end={agencyRevenue} decimals={2} /> ฿
+        </div>
       </div>
 
       <Image
