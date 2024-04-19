@@ -4,9 +4,8 @@ import Image from "next/image";
 import CountUp from "react-countup";
 import { Loader2 } from "lucide-react";
 
-import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 
 const AgencyRevenue = () => {

@@ -8,6 +8,10 @@ import {
 } from "@/components/ui/card";
 import { AgencyType } from "./agencyType";
 import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import AgencyCardDialog from "./AgencyCardDialog";
 
 const AgencyCard = ({ agency }: { agency: AgencyType }) => {
   const {
@@ -23,6 +27,34 @@ const AgencyCard = ({ agency }: { agency: AgencyType }) => {
     phone,
     username,
   } = agency;
+
+  const { data: session } = useSession();
+
+  async function getAgencyRevenue() {
+    const token = session?.user?.serverToken;
+    const username = session?.user?.id;
+    const backendUrl = process.env.BACKEND_URL;
+
+    const res = await axios.get(
+      `${backendUrl}/api/v1/agencies/getRevenue/${username}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return res.data.amount;
+  }
+
+  const {
+    data: agencyRevenue,
+    isLoading,
+    error,
+  } = useQuery({
+    queryFn: () => getAgencyRevenue(),
+    queryKey: ["agencyRevenue"],
+  });
 
   return (
     <Card className="w-full">
@@ -63,7 +95,7 @@ const AgencyCard = ({ agency }: { agency: AgencyType }) => {
       </CardContent>
 
       <CardFooter className="flex justify-end">
-        <Button variant="outline">Details</Button>
+        <AgencyCardDialog />
       </CardFooter>
     </Card>
   );

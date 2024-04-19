@@ -1,10 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useSession } from "next-auth/react";
 // import Image from "next/image";
-import { useEffect, useState } from "react";
 import { AgencyType } from "./agencyType";
 import { dummyAgencies } from "./dummyAgencyData";
 import AgencyCard from "./AgencyCard";
@@ -26,7 +24,6 @@ export default function AllRevenue() {
     return response.data;
   };
 
-  // Use the useQuery hook to fetch the agencies data
   const {
     data: agencies,
     isLoading,
@@ -61,9 +58,9 @@ export default function AllRevenue() {
 
         <div className="grid grid-cols-3 gap-6">
           {/* test layout with dummy data */}
-          {/* {dummyAgencies.map((agency: AgencyType, index: number) => (
+          {dummyAgencies.map((agency: AgencyType, index: number) => (
             <AgencyCard key={index} agency={agency} />
-          ))} */}
+          ))}
 
           {/* real data */}
           {agencies &&
