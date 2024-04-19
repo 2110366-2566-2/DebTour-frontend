@@ -33,18 +33,26 @@ const AgencyRevenue = () => {
   const {
     data: agencyRevenue,
     isLoading,
-    isError,
+    error,
   } = useQuery({
     queryFn: () => getAgencyRevenue(),
     queryKey: ["agencyRevenue"],
   });
 
   if (isLoading) {
-    return <Loader2 className="mx-auto h-8 w-8 animate-spin" />;
+    return (
+      <div className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
+        <Loader2 className="mx-auto h-10 w-10 animate-spin" />
+      </div>
+    );
   }
 
-  if (isError) {
-    return <div className="text-center text-red-500">Error fetching data</div>;
+  if (error) {
+    return (
+      <p className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] font-bold text-red-500">
+        Error: {error.message}
+      </p>
+    );
   }
 
   return (
