@@ -52,62 +52,29 @@ const formSchema = z
       .max(50),
       images: z.array(string()).max(5).min(1),
   })
-  .refine((data) => {
-    if (data.startDate < new Date()) {
-      return {
-        message: "Start date must be in the future",
-        path: ["startDate"],
-      };
-    }
-  })
-  .refine((data) => {
-    if (data.startDate >= data.endDate) {
-      return {
-        message: "Start date must be before end date",
-        path: ["startDate", "endDate"],
-      };
-    }
-    return true;
-  })
-  .refine((data) => {
-    if (data.refundDueDate < new Date()) {
-      return {
-        message: "Refund due date must be in the future",
-        path: ["refundDueDate"],
-      };
-    }
-    return true;
-  })
-  .refine((data) => {
-    if (data.price <= 0) {
-      return { message: "Price must be more than zero", path: ["price"] };
-    }
-    return true;
-  })
+  .refine((data) => (data.startDate >= new Date()), { message: "Start date must be in the future"})
+  .refine((data) => (data.startDate < data.endDate), { message: "Start date must be before end date"})
+  .refine((data) => (data.refundDueDate >= new Date()), { message: "Refund due date must be in the future"})
+  .refine((data) => (data.price > 0), { message: "Price must be more than zero"})
   .refine((data) => {
     if (data.activities.length > 0) {
       data.activities.forEach((activity) => {
         if (activity.startTimestamp < new Date()) {
-          return {
-            message: "Activity start date must be in the future",
-            path: ["activities", "startTimestamp"],
-          };
+          return false;
         }
       });
+      return true;
     }
-  })
+  }, { message: "Activity start date must be in the future"})
   .refine((data) => {
     if (data.activities.length > 0) {
       data.activities.forEach((activity) => {
         if (activity.startTimestamp >= activity.endTimestamp) {
-          return {
-            message: "Activity start date must be before end date",
-            path: ["activities", "startTimestamp", "endTimestamp"],
-          };
+          return false;
         }
       });
+      return true;
     }
-    return true;
   })
   .refine((data) => {
     if (data.activities.length > 0) {
@@ -116,14 +83,11 @@ const formSchema = z
           activity.location.latitude < -90 ||
           activity.location.latitude > 90
         ) {
-          return {
-            message: "Latitude must be between -90 and 90",
-            path: ["activities", "location", "latitude"],
-          };
+          return false;
         }
       });
+      return true;
     }
-    return true;
   })
   .refine((data) => {
     if (data.activities.length > 0) {
@@ -132,26 +96,12 @@ const formSchema = z
           activity.location.longitude < -180 ||
           activity.location.longitude > 180
         ) {
-          return {
-            message: "Longitude must be between -180 and 180",
-            path: ["activities", "location", "longitude"],
-          };
+          return false;
         }
       });
+      return true;
     }
-    return true;
   })
-  // .refine((data) => {
-  //   if (data.images){
-  //     if (data.images.length > 5) {
-  //       return {
-  //         message: "Maximum 5 images allowed",
-  //         path: ["images"],
-  //       };
-  //     }
-  //   }
-  //   return true;
-  // })
   // .refine((data) => {
   //   if (data.images){
   //     for (let i = 0; i < data.images.length; i++) {

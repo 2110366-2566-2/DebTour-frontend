@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export default async function joinTour(memberForm: z.infer<typeof memberFormSchema>) {
     const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "Agency") {
+    if (!session || session.user.role !== "Tourist") {
         return {
             redirect: {
                 destination: "/login",

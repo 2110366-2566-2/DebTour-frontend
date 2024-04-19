@@ -194,7 +194,19 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
       return;
     }
   }
-
+  function checkData() {
+    const result = formSchema.safeParse(form.getValues());
+    if (!result.success) {
+      console.error(result.error.errors);
+      const errorMessages = result.error.errors.map(error => error.message).join(", ");
+      toast({
+        title: "Failed to submit",
+        description: errorMessages
+      });
+    } else {
+      console.log(result.data);
+    }
+  }
   useEffect(() => {
     async function getValue() {
       if (tourId) {
@@ -679,7 +691,6 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
                   Add Image
                 </Button>
               </div>
-              {/* <Button onClick={() => console.log(form.getValues())}>Log</Button> */}
               <div className="flex justify-between">
                 <div className="flex items-center gap-4">
                   <Button
@@ -694,7 +705,7 @@ export default function TourCreationForm({ tourId }: { tourId?: string }) {
                     Back
                   </Label>
                 </div>
-                <SubmitButton tourId={tourId} />
+                <SubmitButton tourId={tourId} checkData={checkData} />
               </div>
             </>
           )}
