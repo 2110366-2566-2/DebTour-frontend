@@ -74,7 +74,7 @@ export default function TouristProfile() {
     }
 
     get();
-  });
+  }, []);
 
   // useEffect(() => {
   //     async function get() {
@@ -119,9 +119,7 @@ export default function TouristProfile() {
     },
   });
 
-  // console.log(tourist)
-  // console.log(form.formState.errors)
-  // console.log(form.getValues())
+
 
   async function onSubmit(values: z.infer<typeof touristProfileSchema>) {
     console.log(JSON.stringify(values));
