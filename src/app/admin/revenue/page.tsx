@@ -18,7 +18,7 @@ export default function AllRevenue() {
   const [agencies, setAgencies] = useState<AgencyType[]>();
   const { data: session } = useSession();
 
-  // "use client" because of realtime data
+  // We use TanStack Query for real-time client data fetching.
 
   const dummyAgencies = [
     {

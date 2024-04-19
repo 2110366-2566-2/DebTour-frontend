@@ -1,41 +1,51 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
+import CountUp from "react-countup";
+import { Loader2 } from "lucide-react";
+
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import axios, { AxiosError } from "axios";
-import CountUp from "react-countup";
+import { useQuery } from "@tanstack/react-query";
 
 const AgencyRevenue = () => {
-  const [agencyRevenue, setAgencyRevenue] = useState(0);
   const { data: session } = useSession();
 
-  // "use client" because of realtime data
+  async function getAgencyRevenue() {
+    const token = session?.user?.serverToken;
+    const username = session?.user?.id;
+    const backendUrl = process.env.BACKEND_URL;
 
-  useEffect(() => {
-    const fetchRevenue = async () => {
-      try {
-        const token = session?.user?.serverToken;
-        const username = session?.user?.id;
-        const backendUrl = process.env.BACKEND_URL;
-        const response = await axios.get(
-          `${backendUrl}/api/v1/agencies/getRevenue/${username}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-        setAgencyRevenue(response.data.amount);
-      } catch (err) {
-        console.error("Error fetching revenue:", (err as AxiosError).message);
-      }
-    };
+    const res = await axios.get(
+      `${backendUrl}/api/v1/agencies/getRevenue/${username}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
 
-    if (session?.user?.serverToken && session?.user?.id) {
-      fetchRevenue();
-    }
-  }, [session]);
+    return res.data.amount;
+  }
+
+  // We use TanStack Query for real-time client data fetching.
+  const {
+    data: agencyRevenue,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryFn: () => getAgencyRevenue(),
+    queryKey: ["agencyRevenue"],
+  });
+
+  if (isLoading) {
+    return <Loader2 className="mx-auto h-8 w-8 animate-spin" />;
+  }
+
+  if (isError) {
+    return <div className="text-center text-red-500">Error fetching data</div>;
+  }
 
   return (
     <main className="relative min-h-[calc(100vh-60px)] text-center">
