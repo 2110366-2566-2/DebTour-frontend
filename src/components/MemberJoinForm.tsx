@@ -16,9 +16,9 @@ export default function MemberJoinForm({tourId}: {tourId: string}) {
             joinedMembers: [
                 {
                     memberId: 0,
-                    firstName: "Timmie",
-                    lastName: "Tod",
-                    age: 22
+                    firstName: "",
+                    lastName: "",
+                    age: 0
                 }
             ],
             tourId: parseInt(tourId),
