@@ -2,19 +2,61 @@
 
 import Image from "next/image";
 import CountUp from "react-countup";
+import { Loader2 } from "lucide-react";
+
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import axios, { AxiosError } from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 const AgencyRevenue = () => {
+  const { data: session } = useSession();
+
+  async function getAgencyRevenue() {
+    const token = session?.user?.serverToken;
+    const username = session?.user?.id;
+    const backendUrl = process.env.BACKEND_URL;
+
+    const res = await axios.get(
+      `${backendUrl}/api/v1/agencies/getRevenue/${username}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return res.data.amount;
+  }
+
+  // We use TanStack Query for real-time client data fetching.
+  const {
+    data: agencyRevenue,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryFn: () => getAgencyRevenue(),
+    queryKey: ["agencyRevenue"],
+  });
+
+  if (isLoading) {
+    return <Loader2 className="mx-auto h-8 w-8 animate-spin" />;
+  }
+
+  if (isError) {
+    return <div className="text-center text-red-500">Error fetching data</div>;
+  }
+
   return (
     <main className="relative min-h-[calc(100vh-60px)] text-center">
       <div className="pt-20">
         <p className="text-sm font-bold uppercase sm:text-lg">
           current revenue
         </p>
-
         <div className="absolute left-[50%] my-2 h-[3px] w-20 translate-x-[-50%] bg-violet-500" />
 
         <div className="mt-8 text-5xl font-extrabold md:text-6xl">
-          <CountUp end={696969.69} decimals={2} /> ฿
+          <CountUp end={agencyRevenue} decimals={2} /> ฿
         </div>
       </div>
 

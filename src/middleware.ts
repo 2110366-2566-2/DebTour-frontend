@@ -42,6 +42,6 @@ export const config = {
 
     "/tourist/tours/join/:path*",
     "/tourist/tours/member/:path*",
-    "/admin/:path*",
+    // "/admin/:path*",
   ],
 };
