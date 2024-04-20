@@ -16,10 +16,6 @@ const AgencyRevenue = () => {
     const username = session?.user?.id;
     const backendUrl = process.env.BACKEND_URL;
 
-    console.log("token", token);
-    console.log("username", username);
-    console.log("backendUrl", backendUrl);
-
     const res = await axios.get(
       `${backendUrl}/api/v1/agencies/getRevenue/${username}`,
       {
@@ -29,7 +25,7 @@ const AgencyRevenue = () => {
       },
     );
 
-    return res.data.amount;
+    return res.data.revenue;
   }
 
   // We use TanStack Query for real-time client data fetching.
@@ -73,10 +69,11 @@ const AgencyRevenue = () => {
 
       <Image
         src={"/get-revenue.svg"}
-        width={400}
-        height={400}
         alt="get your revenue via email"
-        className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]"
+        width={500}
+        height={500}
+        priority={true}
+        className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] p-4"
       />
 
       <div className="absolute bottom-20 left-[50%] translate-x-[-50%]">
