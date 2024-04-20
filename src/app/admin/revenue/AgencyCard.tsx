@@ -8,6 +8,11 @@ import {
 } from "@/components/ui/card";
 import { AgencyType } from "./agencyType";
 import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import AgencyCardDialog from "./AgencyCardDialog";
+import { Loader2 } from "lucide-react";
 
 const AgencyCard = ({ agency }: { agency: AgencyType }) => {
   const {
@@ -63,7 +68,7 @@ const AgencyCard = ({ agency }: { agency: AgencyType }) => {
       </CardContent>
 
       <CardFooter className="flex justify-end">
-        <Button variant="outline">Details</Button>
+        <AgencyCardDialog />
       </CardFooter>
     </Card>
   );

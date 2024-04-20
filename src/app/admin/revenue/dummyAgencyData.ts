@@ -39,3 +39,14 @@ export const dummyAgencies = [
     username: "agency3",
   },
 ];
+
+export const dummyOneAgency = {
+  amount: 50,
+  method: "credit_card",
+  status: "success",
+  stripeID: "ch_1Hzy7v2eZvKYlo2CNQ5VLN0q",
+  timestamp: "2024-04-19T12:30:00Z",
+  tourId: 123,
+  touristUsername: "john_doe",
+  transactionId: 456789,
+};

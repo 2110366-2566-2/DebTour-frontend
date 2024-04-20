@@ -4,9 +4,8 @@ import Image from "next/image";
 import CountUp from "react-countup";
 import { Loader2 } from "lucide-react";
 
-import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 
 const AgencyRevenue = () => {
@@ -16,6 +15,10 @@ const AgencyRevenue = () => {
     const token = session?.user?.serverToken;
     const username = session?.user?.id;
     const backendUrl = process.env.BACKEND_URL;
+
+    console.log("token", token);
+    console.log("username", username);
+    console.log("backendUrl", backendUrl);
 
     const res = await axios.get(
       `${backendUrl}/api/v1/agencies/getRevenue/${username}`,
