@@ -35,13 +35,13 @@ export default withAuth(
 // See "Matching Paths" below to learn more
 export const config = {
   matcher: [
-    // "/agency/:path*",
+    "/agency/:path*",
 
     // "/signup/agency/:path*",
     // "/signup/tourist/:path*",
 
     "/tourist/tours/join/:path*",
     "/tourist/tours/member/:path*",
-    // "/admin/:path*",
+    "/admin/:path*",
   ],
 };

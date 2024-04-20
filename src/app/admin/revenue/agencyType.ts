@@ -9,5 +9,6 @@ export interface AgencyType {
   image: string;
   licenseNo: string;
   phone: string;
+  role: string;
   username: string;
 }
