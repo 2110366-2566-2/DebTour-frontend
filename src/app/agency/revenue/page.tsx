@@ -28,7 +28,6 @@ const AgencyRevenue = () => {
     return res.data.revenue;
   }
 
-  // We use TanStack Query for real-time client data fetching.
   const {
     data: agencyRevenue,
     isLoading,

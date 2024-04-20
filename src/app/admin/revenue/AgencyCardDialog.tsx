@@ -15,12 +15,11 @@ import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 
-const AgencyCardDialog = () => {
+const AgencyCardDialog = ({ username }: { username: string }) => {
   const { data: session } = useSession();
 
   async function getAgencyRevenue() {
     const token = session?.user?.serverToken;
-    const username = session?.user?.id;
     const backendUrl = process.env.BACKEND_URL;
 
     const res = await axios.get(
@@ -32,7 +31,7 @@ const AgencyCardDialog = () => {
       },
     );
 
-    return res.data.amount;
+    return res;
   }
 
   const {
@@ -44,30 +43,45 @@ const AgencyCardDialog = () => {
     queryKey: ["agencyRevenue"],
   });
 
-  const {
-    amount,
-    method,
-    status,
-    stripeID,
-    timestamp,
-    tourId,
-    touristUsername,
-    transactionId,
-  } = agencyRevenue;
-
   if (isLoading) {
     return (
-      <div className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
-        <Loader2 className="mx-auto h-10 w-10 animate-spin" />
-      </div>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Details</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Agency Revenue Details</DialogTitle>
+            <DialogDescription>
+              {`A concise information of an agency's income sources`}
+            </DialogDescription>
+          </DialogHeader>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <DialogFooter></DialogFooter>
+        </DialogContent>
+      </Dialog>
     );
   }
 
   if (error) {
     return (
-      <p className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] font-bold text-red-500">
-        Error: {error.message}
-      </p>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Details</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Agency Revenue Details</DialogTitle>
+            <DialogDescription>
+              {`A concise information of an agency's income sources`}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mx-auto my-auto flex justify-center text-center text-red-500">
+            {error.message}
+          </div>
+          <DialogFooter></DialogFooter>
+        </DialogContent>
+      </Dialog>
     );
   }
 
@@ -88,17 +102,13 @@ const AgencyCardDialog = () => {
             <Label htmlFor="amount" className="text-right">
               Amount
             </Label>
-            <p id="amount" className="col-span-3">
-              {amount}
-            </p>
+            <p id="amount" className="col-span-3"></p>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="method" className="text-right">
               Payment Method
             </Label>
-            <p id="method" className="col-span-3">
-              {method}
-            </p>
+            <p id="method" className="col-span-3"></p>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="status" className="text-right">
@@ -112,41 +122,31 @@ const AgencyCardDialog = () => {
             <Label htmlFor="stripeID" className="text-right">
               Stripe ID
             </Label>
-            <p id="stripeID" className="col-span-3">
-              {stripeID}
-            </p>
+            <p id="stripeID" className="col-span-3"></p>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="timestamp" className="text-right">
               Timestamp
             </Label>
-            <p id="timestamp" className="col-span-3">
-              {timestamp}
-            </p>
+            <p id="timestamp" className="col-span-3"></p>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="tourId" className="text-right">
               Tour ID
             </Label>
-            <p id="tourId" className="col-span-3">
-              {tourId}
-            </p>
+            <p id="tourId" className="col-span-3"></p>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="touristUsername" className="text-right">
               Tourist Username
             </Label>
-            <p id="touristUsername" className="col-span-3">
-              {touristUsername}
-            </p>
+            <p id="touristUsername" className="col-span-3"></p>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="transactionId" className="text-right">
               Transaction ID
             </Label>
-            <p id="transactionId" className="col-span-3">
-              {transactionId}
-            </p>
+            <p id="transactionId" className="col-span-3"></p>
           </div>
         </div>
         <DialogFooter></DialogFooter>
