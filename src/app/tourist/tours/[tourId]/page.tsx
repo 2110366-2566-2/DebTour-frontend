@@ -76,6 +76,8 @@ export interface Activity {
 import ReviewSection from "@/components/TourReviewComponent/ReviewSection";
 import getTourAvgRating from "@/lib/getTourAvgRating";
 import getTours from "@/lib/getTours";
+import { authOptions } from "@/utils/authOptions";
+import { getServerSession } from "next-auth/next";
 
 type Tour = {
   tourId: number;
@@ -95,6 +97,7 @@ type Tour = {
 };
 
 export default async function TourInfo({ params }: { params: { tourId: string } }){
+  const session = await getServerSession(authOptions);
   const tour = await getTour(params.tourId).then((res) => res.data) as Tour;
   const tourImage = await getTourImage(params.tourId).then((res) => res.data);
   const tourAvgRating = await getTourAvgRating(params.tourId).then((res) => {
@@ -102,7 +105,6 @@ export default async function TourInfo({ params }: { params: { tourId: string } 
     if(res.data==null || res.data==0) return null
     return Math.round(res.data*2)/2
   });
-  
   return (
     <main>
       <section className="mb-32 h-[350px] bg-indigo-100">
@@ -135,10 +137,17 @@ export default async function TourInfo({ params }: { params: { tourId: string } 
             </>:""
             }
           </div>
-
-          <Link href={`/tourist/tours/join/${params.tourId}`}>
-            <Button className="my-6">Join Tour</Button>
-          </Link>
+          {
+            (session?.user?.role=="Tourist")?
+              (tour?.memberCount<tour?.maxMemberCount)?
+                <Link href={`/tourist/tours/join/${params.tourId}`}>
+                  <Button className="my-6">Join Tour</Button>
+                </Link>
+                :
+                <Button className="my-6 bg-gray-600" disabled>Join Tour</Button>
+                :
+                null
+          }
 
           <div className="absolute bottom-[-50px] left-0 right-0 mx-auto flex h-[100px] max-w-[1000px] items-center justify-evenly gap-2  rounded-2xl bg-white shadow-xl">
             <div className="grid max-w-[200px] grid-cols-[30px,1fr] items-center gap-3">
