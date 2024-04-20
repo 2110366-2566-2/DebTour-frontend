@@ -10,8 +10,40 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { dummyOneAgency } from "./dummyAgencyData";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { Loader2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 const AgencyCardDialog = () => {
+  const { data: session } = useSession();
+
+  async function getAgencyRevenue() {
+    const token = session?.user?.serverToken;
+    const username = session?.user?.id;
+    const backendUrl = process.env.BACKEND_URL;
+
+    const res = await axios.get(
+      `${backendUrl}/api/v1/agencies/getRevenue/${username}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return res.data.amount;
+  }
+
+  const {
+    data: agencyRevenue,
+    isLoading,
+    error,
+  } = useQuery({
+    queryFn: () => getAgencyRevenue(),
+    queryKey: ["agencyRevenue"],
+  });
+
   const {
     amount,
     method,
@@ -21,7 +53,23 @@ const AgencyCardDialog = () => {
     tourId,
     touristUsername,
     transactionId,
-  } = dummyOneAgency;
+  } = agencyRevenue;
+
+  if (isLoading) {
+    return (
+      <div className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
+        <Loader2 className="mx-auto h-10 w-10 animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] font-bold text-red-500">
+        Error: {error.message}
+      </p>
+    );
+  }
 
   return (
     <Dialog>

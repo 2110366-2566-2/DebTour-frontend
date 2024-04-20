@@ -33,21 +33,21 @@ export default function AllRevenue() {
     queryKey: ["agencies"],
   });
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
-  //       <Loader2 className="mx-auto h-10 w-10 animate-spin" />
-  //     </div>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <div className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
+        <Loader2 className="mx-auto h-10 w-10 animate-spin" />
+      </div>
+    );
+  }
 
-  // if (error) {
-  //   return (
-  //     <p className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] font-bold text-red-500">
-  //       Error: {error.message}
-  //     </p>
-  //   );
-  // }
+  if (error) {
+    return (
+      <p className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] font-bold text-red-500">
+        Error: {error.message}
+      </p>
+    );
+  }
 
   return (
     <main>
@@ -58,9 +58,9 @@ export default function AllRevenue() {
 
         <div className="grid grid-cols-3 gap-6">
           {/* test layout with dummy data */}
-          {dummyAgencies.map((agency: AgencyType, index: number) => (
+          {/* {dummyAgencies.map((agency: AgencyType, index: number) => (
             <AgencyCard key={index} agency={agency} />
-          ))}
+          ))} */}
 
           {/* real data */}
           {agencies &&

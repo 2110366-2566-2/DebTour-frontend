@@ -12,6 +12,7 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import AgencyCardDialog from "./AgencyCardDialog";
+import { Loader2 } from "lucide-react";
 
 const AgencyCard = ({ agency }: { agency: AgencyType }) => {
   const {
@@ -27,34 +28,6 @@ const AgencyCard = ({ agency }: { agency: AgencyType }) => {
     phone,
     username,
   } = agency;
-
-  const { data: session } = useSession();
-
-  async function getAgencyRevenue() {
-    const token = session?.user?.serverToken;
-    const username = session?.user?.id;
-    const backendUrl = process.env.BACKEND_URL;
-
-    const res = await axios.get(
-      `${backendUrl}/api/v1/agencies/getRevenue/${username}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-
-    return res.data.amount;
-  }
-
-  const {
-    data: agencyRevenue,
-    isLoading,
-    error,
-  } = useQuery({
-    queryFn: () => getAgencyRevenue(),
-    queryKey: ["agencyRevenue"],
-  });
 
   return (
     <Card className="w-full">
