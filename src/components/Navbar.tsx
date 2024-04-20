@@ -87,6 +87,19 @@ function Navbar() {
               Revenue
             </Link>
           )}
+
+          {userRole === "Admin" && (
+            <Link
+              className={`inline-flex h-10 items-center justify-center rounded-md px-4 text-sm font-medium ${
+                activeRoute === "/admin/revenue"
+                  ? "text-primary"
+                  : "text-gray-500"
+              } hover:text-primary focus:outline-none`}
+              href="/admin/revenue"
+            >
+              Revenue
+            </Link>
+          )}
         </div>
         {userRole === "Guest" && (
           <Button>
