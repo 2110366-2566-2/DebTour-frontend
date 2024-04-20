@@ -36,7 +36,7 @@ const AgencyCard = ({ agency }: { agency: AgencyType }) => {
         </Avatar>
 
         <div className="text-center">
-          <CardTitle className="mb-2">{agencyName}</CardTitle>
+          <CardTitle className="mb-2">{agencyName || "-"}</CardTitle>
           <CardDescription className="py-2">
             {authorizeStatus === "Approved" ? (
               <Badge className="hover:none bg-green-600">

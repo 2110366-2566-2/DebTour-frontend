@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { dummyOneAgency } from "./dummyAgencyData";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
@@ -31,7 +30,7 @@ const AgencyCardDialog = ({ username }: { username: string }) => {
       },
     );
 
-    return res;
+    return res.data.data;
   }
 
   const {
@@ -42,6 +41,8 @@ const AgencyCardDialog = ({ username }: { username: string }) => {
     queryFn: () => getAgencyRevenue(),
     queryKey: ["agencyRevenue"],
   });
+
+  // console.log("agencyRevenue", agencyRevenue);
 
   if (isLoading) {
     return (
@@ -78,6 +79,28 @@ const AgencyCardDialog = ({ username }: { username: string }) => {
           </DialogHeader>
           <div className="mx-auto my-auto flex justify-center text-center text-red-500">
             {error.message}
+          </div>
+          <DialogFooter></DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  if (!agencyRevenue) {
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Details</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Agency Revenue Details</DialogTitle>
+            <DialogDescription>
+              {`A concise information of an agency's income sources`}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mx-auto my-auto flex justify-center text-center">
+            This agency has no revenue information.
           </div>
           <DialogFooter></DialogFooter>
         </DialogContent>
