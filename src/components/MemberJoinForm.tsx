@@ -1,4 +1,5 @@
 "use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -8,8 +9,9 @@ import Link from "next/link";
 import memberFormSchema from "@/model/memberFormSchema";
 import joinTour from "@/lib/joinTour";
 import { toast } from "@/components/ui/use-toast";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 
 export default function MemberJoinForm({ tourId }: { tourId: string }) {
   const form = useForm<z.infer<typeof memberFormSchema>>({
@@ -32,6 +34,7 @@ export default function MemberJoinForm({ tourId }: { tourId: string }) {
     control: form.control,
     name: "joinedMembers",
   });
+
   async function onSubmit(values: z.infer<typeof memberFormSchema>) {
     // console.log(values);
     const res = await joinTour(values);
@@ -47,36 +50,61 @@ export default function MemberJoinForm({ tourId }: { tourId: string }) {
 
   const { data: session } = useSession();
   const token = session?.user.serverToken;
-  const username = session?.user.name;
+  const username = session?.user.id;
 
-  function handleSubmit() {
-    axios
-      .post(
-        "https://debtour.me/api/v1/transactionPayments",
-        {
-          amount: 100,
-          method: "credit",
-          status: "complete",
-          tourId: tourId,
-          touristUsername: username,
-        },
-        {
+  const backendUrl = process.env.BACKEND_URL;
+  const successUrlPath = `${backendUrl}/api/v1/payment-response/success`;
+  const cancelUrlPath = `${backendUrl}/api/v1/payment-response/cancel`;
+
+  const apiUrl = `${backendUrl}/api/v1/transactionPayments?successURL=${successUrlPath}&cancelURL=${cancelUrlPath}`;
+
+  const [checkoutUrl, setCheckoutUrl] = useState("");
+  const [tourAmount, setTourAmount] = useState(0);
+
+  useEffect(() => {
+    const getTourAmountAndCheckout = async () => {
+      try {
+        const res = await axios.get(`${backendUrl}/api/v1/tours/${tourId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
           },
-        },
-      )
-      .then((response) => {
-        console.log(
-          "Transaction payment submitted successfully:",
-          response.data,
+        });
+
+        const price = res.data.data.price;
+        setTourAmount(price);
+
+        await fetchCheckoutUrl();
+      } catch (err) {
+        console.log("Error:", (err as AxiosError).message);
+      }
+    };
+
+    const fetchCheckoutUrl = async () => {
+      try {
+        const res = await axios.post(
+          apiUrl,
+          {
+            amount: tourAmount,
+            method: "debit",
+            tourId: Number(tourId),
+            touristUsername: username,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
-      })
-      .catch((error) => {
-        console.error("Error submitting transaction payment:", error);
-      });
-  }
+        setCheckoutUrl(res.data.data);
+      } catch (err) {
+        console.log("Error:", (err as AxiosError).message);
+      }
+    };
+
+    if (token) {
+      getTourAmountAndCheckout();
+    }
+  }, [apiUrl, backendUrl, token, tourAmount, tourId, username]);
 
   return (
     <form
@@ -170,7 +198,13 @@ export default function MemberJoinForm({ tourId }: { tourId: string }) {
           Back
         </Link>
 
-        <Button type="submit" onClick={handleSubmit}>
+        <Button
+          type="button"
+          disabled={!checkoutUrl}
+          onClick={() => {
+            window.location.href = checkoutUrl;
+          }}
+        >
           Proceed to Payment
         </Button>
       </div>
