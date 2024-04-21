@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { AgencyType } from "./agencyType";
+import { AgencyType } from "./type";
 import AgencyCard from "./AgencyCard";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
@@ -13,11 +13,15 @@ export default function AllRevenue() {
   const getAllAgencies = async (): Promise<AgencyType[]> => {
     const token = session?.user?.serverToken;
     const backendUrl = process.env.BACKEND_URL;
+
+    console.log(token);
+
     const response = await axios.get(`${backendUrl}/api/v1/agencies`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+
     return response.data.data;
   };
 

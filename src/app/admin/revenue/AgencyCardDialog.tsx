@@ -14,6 +14,8 @@ import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import TransactionHistoryCard from "./TransactionHistoryCard";
 import { Key } from "react";
+import { dummyAgencyTransactionList } from "./dummyAgencyData";
+import { AgencyTransactionType } from "./type";
 
 const AgencyCardDialog = ({ username }: { username: string }) => {
   const { data: session } = useSession();
@@ -97,13 +99,26 @@ const AgencyCardDialog = ({ username }: { username: string }) => {
             {`A concise information of an agency's income sources`}
           </DialogDescription>
         </DialogHeader>
+
+        {/* dummy data */}
         {agenciesRevenue ? (
+          dummyAgencyTransactionList.map(
+            (a: AgencyTransactionType, index: Key) => (
+              <TransactionHistoryCard key={index} agencyRevenue={a} />
+            ),
+          )
+        ) : (
+          <p>This agency has no revenue history.</p>
+        )}
+
+        {/* real data */}
+        {/* {agenciesRevenue ? (
           agenciesRevenue.map((a: any, index: Key) => (
             <TransactionHistoryCard key={index} agencyRevenue={a} />
           ))
         ) : (
           <p>This agency has no revenue history.</p>
-        )}
+        )} */}
 
         <DialogFooter></DialogFooter>
       </DialogContent>
