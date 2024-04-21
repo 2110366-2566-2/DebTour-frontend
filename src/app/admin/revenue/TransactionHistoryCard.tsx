@@ -1,7 +1,12 @@
 import { Label } from "@/components/ui/label";
 import { format, parseISO } from "date-fns";
+import { AgencyTransactionType } from "./type";
 
-const TransactionHistoryCard = ({ agencyRevenue }: { agencyRevenue: any }) => {
+const TransactionHistoryCard = ({
+  agencyRevenue,
+}: {
+  agencyRevenue: AgencyTransactionType;
+}) => {
   const {
     amount,
     method,
@@ -14,70 +19,56 @@ const TransactionHistoryCard = ({ agencyRevenue }: { agencyRevenue: any }) => {
   } = agencyRevenue;
 
   return (
-    <div className="my-4 grid gap-4 py-4">
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="amount" className="text-right">
+    <div className="mb-8 grid rounded-xl border border-gray-200 px-4 py-4 duration-100 hover:bg-gray-100">
+      <div className="grid grid-cols-10 items-center gap-4">
+        <Label htmlFor="amount" className="col-span-3 text-right">
           Amount
         </Label>
-        <p id="amount" className="col-span-3">
-          {amount || "-"}
-        </p>
+        <p id="amount">{amount || "-"}</p>
       </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="method" className="text-right">
-          Payment Method
+      <div className="grid grid-cols-10 items-center gap-4">
+        <Label htmlFor="method" className="col-span-3 text-right">
+          Payment method
         </Label>
-        <p id="method" className="col-span-3">
-          {method || "-"}
-        </p>
+        <p id="method">{method || "-"}</p>
       </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="status" className="text-right">
+      <div className="grid grid-cols-10 items-center gap-4">
+        <Label htmlFor="status" className="col-span-3  text-right">
           Status
         </Label>
-        <p id="status" className="col-span-3">
-          {status || "-"}
-        </p>
+        <p id="status">{status || "-"}</p>
       </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="stripeID" className="text-right">
+      <div className="grid grid-cols-10 items-center gap-4">
+        <Label htmlFor="stripeID" className="col-span-3 text-right">
           Stripe ID
         </Label>
-        <p id="stripeID" className="col-span-3">
-          {stripeID || "-"}
-        </p>
+        <p id="stripeID">{stripeID || "-"}</p>
       </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="timestamp" className="text-right">
+      <div className="grid grid-cols-10 items-center gap-4">
+        <Label htmlFor="timestamp" className="col-span-3 text-right">
           Timestamp
         </Label>
-        <p id="timestamp" className="col-span-3">
+        <p id="timestamp">
           {timestamp ? format(parseISO(timestamp), "yyyy-MM-dd HH:mm:ss") : "-"}
         </p>
       </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="tourId" className="text-right">
+      <div className="grid grid-cols-10 items-center gap-4">
+        <Label htmlFor="tourId" className="col-span-3 text-right">
           Tour ID
         </Label>
-        <p id="tourId" className="col-span-3">
-          {tourId || "-"}
-        </p>
+        <p id="tourId">{tourId || "-"}</p>
       </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="touristUsername" className="text-right">
+      <div className="grid grid-cols-10 items-center gap-4">
+        <Label htmlFor="touristUsername" className="col-span-3 text-right">
           Tourist Username
         </Label>
-        <p id="touristUsername" className="col-span-3">
-          {touristUsername || "-"}
-        </p>
+        <p id="touristUsername">{touristUsername || "-"}</p>
       </div>
-      <div className="grid grid-cols-4 items-center gap-4">
-        <Label htmlFor="transactionId" className="text-right">
+      <div className="grid grid-cols-10 items-center gap-4">
+        <Label htmlFor="transactionId" className="col-span-3 text-right">
           Transaction ID
         </Label>
-        <p id="transactionId" className="col-span-3">
-          {transactionId || "-"}
-        </p>
+        <p id="transactionId">{transactionId || "-"}</p>
       </div>
     </div>
   );
