@@ -53,8 +53,12 @@ export default function MemberJoinForm({ tourId }: { tourId: string }) {
   const username = session?.user.id;
 
   const backendUrl = process.env.BACKEND_URL;
-  const successUrlPath = `${backendUrl}/api/v1/payment-response/success`;
-  const cancelUrlPath = `${backendUrl}/api/v1/payment-response/cancel`;
+  const frontendUrl = process.env.FRONT_URL || "http://localhost:3000";
+
+  // console.log("front", frontendUrl);
+
+  const successUrlPath = `${frontendUrl}/payment-response/success`;
+  const cancelUrlPath = `${frontendUrl}/payment-response/cancel`;
 
   const apiUrl = `${backendUrl}/api/v1/transactionPayments?successURL=${successUrlPath}&cancelURL=${cancelUrlPath}`;
 
