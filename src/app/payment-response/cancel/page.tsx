@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const CancelPayment = () => {
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] = useState(10);
 
   useEffect(() => {
     const timer = setInterval(() => {
