@@ -87,39 +87,48 @@ const AgencyCardDialog = ({ username }: { username: string }) => {
     );
   }
 
+  const sortByTimestamp = (a: any, b: any) => {
+    return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline">Details</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
+
+      <DialogContent className="max-h-[600px] min-w-[500px] overflow-auto p-8 text-sm">
+        <DialogHeader className="">
           <DialogTitle>Agency Revenue Details</DialogTitle>
           <DialogDescription>
-            {`A concise information of an agency's income sources`}
+            <p>{`A concise information of an agency's income sources`}</p>
+            <p className="mt-8 font-bold">{`${agenciesRevenue?.length || 0} transactions`}</p>
           </DialogDescription>
         </DialogHeader>
 
-        {/* dummy data */}
-        {agenciesRevenue ? (
-          dummyAgencyTransactionList.map(
-            (a: AgencyTransactionType, index: Key) => (
+        <div className="">
+          {/* dummy data */}
+          {/* {dummyAgencyTransactionList
+            .sort(sortByTimestamp)
+            .reverse()
+            .map((a: AgencyTransactionType, index: Key) => (
               <TransactionHistoryCard key={index} agencyRevenue={a} />
-            ),
-          )
-        ) : (
-          <p>This agency has no revenue history.</p>
-        )}
+            ))} */}
 
-        {/* real data */}
-        {/* {agenciesRevenue ? (
-          agenciesRevenue.map((a: any, index: Key) => (
-            <TransactionHistoryCard key={index} agencyRevenue={a} />
-          ))
-        ) : (
-          <p>This agency has no revenue history.</p>
-        )} */}
-
+          {/* real data */}
+          {agenciesRevenue ? (
+            agenciesRevenue
+              .sort(sortByTimestamp)
+              .reverse()
+              .map((a: AgencyTransactionType, index: Key) => (
+                <TransactionHistoryCard key={index} agencyRevenue={a} />
+              ))
+          ) : (
+            <p className="my-4 text-center">
+              This agency has no revenue history.
+            </p>
+          )}
+        </div>
         <DialogFooter></DialogFooter>
       </DialogContent>
     </Dialog>
