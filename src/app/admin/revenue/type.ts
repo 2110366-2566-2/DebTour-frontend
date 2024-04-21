@@ -12,3 +12,14 @@ export interface AgencyType {
   role: string;
   username: string;
 }
+
+export interface AgencyTransactionType {
+  amount: number;
+  method: string;
+  status: string;
+  stripeID: string;
+  timestamp: string;
+  tourId: string | number;
+  touristUsername: string;
+  transactionId: string | number;
+}

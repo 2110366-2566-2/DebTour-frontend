@@ -6,7 +6,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { AgencyType } from "./agencyType";
+import { AgencyType } from "./type";
 import AgencyCardDialog from "./AgencyCardDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
