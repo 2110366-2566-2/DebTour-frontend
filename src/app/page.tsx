@@ -1,14 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { Button } from "@/components/ui/button";
 import { MdArrowDropDownCircle } from "react-icons/md";
-import { MdOutlineKeyboardArrowRight } from "react-icons/md";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import RecommendCard from "@/components/RecommendCard";
 import Link from "next/link";
 
@@ -65,14 +57,14 @@ const LandingPage = () => {
           <img
             src="/landingPage/tour.webp"
             className="mx-auto h-full max-h-[370px] w-full object-cover md:max-h-[500px] lg:max-h-full"
-            alt=""
+            alt="tour group"
           />
         </div>
       </section>
 
       {/* Recommend */}
 
-      {/* <section className="py-20">
+      <section className="py-20">
         <h2 className="mb-12 text-center text-4xl font-extrabold">
           Recommended For You
         </h2>
@@ -99,7 +91,7 @@ const LandingPage = () => {
             link={"/"}
           />
         </div>
-      </section> */}
+      </section>
     </div>
   );
 };
