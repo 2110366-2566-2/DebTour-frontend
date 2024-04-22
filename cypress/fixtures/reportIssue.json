@@ -1,17 +1,17 @@
 [
   {
     "Message": "Pun want Youtube premium",
-    "Image": "UHVuIHdhbnQgWW91dHViZSBwcmVtaXVt",
+    "Image": "cypress/fixtures/test.png",
     "Validation": "valid"
   },
   {
     "Message": "",
-    "Image": "UHVuIHdhbnQgWW91dHViZSBwcmVtaXVt",
+    "Image": "cypress/fixtures/test.png",
     "Validation": "invalid"
   },
   {
     "Message": "Pun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premium",
-    "Image": "UHVuIHdhbnQgWW91dHViZSBwcmVtaXVt",
+    "Image": "cypress/fixtures/test.png",
     "Validation": "invalid"
   },
   {
