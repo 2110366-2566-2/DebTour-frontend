@@ -8,7 +8,7 @@ const memberFormSchema = z.object({
             lastName: z.string().min(1).max(50),
             age: z.number().or(z.string().regex(/\d+/).transform(Number))
         })
-    ),
+    ).min(1),
     tourId: z.number().int().optional(),
     touristUsername: z.string().min(1).max(50)
 }).refine((data) => {
