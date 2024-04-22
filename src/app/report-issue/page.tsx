@@ -15,14 +15,14 @@ export default function ReportIssue() {
     const role = session?.user?.role ?? "Guest";
     const [reload, setReload] = useState(false);
 
-    if (role === "Guest") {
-        return (
-            <div className="container flex justify-center h-[640px] items-center">
-                <h1 className="text-2xl font-semibold">Please login to report an issue</h1>
-            </div>
-        )
-    }
-    else return (
+    // if (role === "Guest") {
+    //     return (
+    //         <div className="container flex justify-center h-[640px] items-center">
+    //             <h1 className="text-2xl font-semibold">Please login to report an issue</h1>
+    //         </div>
+    //     )
+    // }
+    return (
         <div className="container flex flex-col gap-6 w-1/2">
             <div className="flex justify-between mt-10">
                 <h1 className="text-2xl font-semibold">My Reported Issues</h1>
