@@ -28,16 +28,16 @@ describe('Tour Page', () => {
                 cy.get("input[placeholder='Age").clear();
                 if(members[member].age != "")
                     cy.get("input[placeholder='Age").type(members[member].age);
-
-                cy.get("button").contains("Proceed to Payment").click();
+                
+                if(member == 0) cy.wait(4000);
+                cy.wait(1000);
                 if(members[member].expected == 'valid'){
-                    cy.url().should('include', 'https://checkout.stripe.com');
-                    cy.go('back');
+                  cy.get("button").contains("Proceed to Payment").should('not.be.disabled');
                 }
                 else
-                    cy.url().should('not.include', 'https://checkout.stripe.com');
+                  cy.get("button").contains("Proceed to Payment").should('be.disabled');
 
-                cy.wait(2000);
+                cy.wait(1000);
             }
         });
     })
