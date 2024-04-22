@@ -1,0 +1,115 @@
+[
+ {
+   "phone": "0901234567",
+   "citizenID": "1234567890123",
+   "firstname": "Tawatwee",
+   "lastname": "Aiemareerat",
+   "address": "122 Moo 6 Chonburi ",
+   "expected": "valid"
+ },
+ {
+   "phone": "X901234567",
+   "citizenID": "1234567890123",
+   "firstname": "Tawatwee",
+   "lastname": "Aiemareerat",
+   "address": "122 Moo 6 Chonburi ",
+   "expected": "invalid"
+ },
+ {
+   "phone": "901234567",
+   "citizenID": "1234567890123",
+   "firstname": "Tawatwee",
+   "lastname": "Aiemareerat",
+   "address": "122 Moo 6 Chonburi ",
+   "expected": "invalid"
+ },
+ {
+   "phone": "09012345678",
+   "citizenID": "1234567890123",
+   "firstname": "Tawatwee",
+   "lastname": "Aiemareerat",
+   "address": "122 Moo 6 Chonburi ",
+   "expected": "invalid"
+ },
+ {
+   "phone": "0901234567",
+   "citizenID": "123456789012",
+   "firstname": "Tawatwee",
+   "lastname": "Aiemareerat",
+   "address": "122 Moo 6 Chonburi ",
+   "expected": "invalid"
+ },
+ {
+   "phone": "0901234567",
+   "citizenID": "12345678901234",
+   "firstname": "Tawatwee",
+   "lastname": "Aiemareerat",
+   "address": "122 Moo 6 Chonburi ",
+   "expected": "invalid"
+ },
+ {
+   "phone": "0901234567",
+   "citizenID": "1234567890123",
+   "firstname": "Tawatwee5555",
+   "lastname": "Aiemareerat",
+   "address": "122 Moo 6 Chonburi ",
+   "expected": "invalid"
+ },
+ {
+   "phone": "0901234567",
+   "citizenID": "1234567890123",
+   "firstname": "T",
+   "lastname": "Aiemareerat",
+   "address": "122 Moo 6 Chonburi ",
+   "expected": "invalid"
+ },
+ {
+   "phone": "0901234567",
+   "citizenID": "1234567890123",
+   "firstname": "TawatweeTawatweeTawatweeTawatweeTawatweeTawatweeTawatweeTawatweeTawatweeTawatweeTawatwee",
+   "lastname": "Aiemareerat",
+   "address": "122 Moo 6 Chonburi ",
+   "expected": "invalid"
+ },
+ {
+   "phone": "0901234567",
+   "citizenID": "1234567890123",
+   "firstname": "Tawatwee",
+   "lastname": "Aiemareerat5555",
+   "address": "122 Moo 6 Chonburi ",
+   "expected": "invalid"
+ },
+ {
+   "phone": "0901234567",
+   "citizenID": "1234567890123",
+   "firstname": "Tawatwee",
+   "lastname": "A",
+   "address": "122 Moo 6 Chonburi ",
+   "expected": "invalid"
+ },
+ {
+   "phone": "0901234567",
+   "citizenID": "1234567890123",
+   "firstname": "Tawatwee",
+   "lastname": "AiemareeratAiemareeratAiemareeratAiemareeratAiemareeratAiemareeratAiemareeratAiemareeratAiemareerat",
+   "address": "122 Moo 6 Chonburi ",
+   "expected": "invalid"
+ },
+ {
+   "phone": "0901234567",
+   "citizenID": "1234567890123",
+   "firstname": "Tawatwee",
+   "lastname": "Aiemareerat",
+   "address": "",
+   "expected": "invalid"
+ },
+ {
+   "phone": "0901234567",
+   "citizenID": "1234567890123",
+   "firstname": "Tawatwee",
+   "lastname": "Aiemareerat",
+   "address": "122 Moo 6 Chonburi 122 Moo 6 Chonburi 122 Moo 6 Chonburi 122 Moo 6 Chonburi 122 Moo 6 Chonburi 122 Moo 6 Chonburi 122 Moo 6 Chonburi 122 Moo 6 Chonburi 122 Moo 6 Chonburi 122 Moo 6 Chonburi ",
+   "expected": "invalid"
+ }
+]
+]

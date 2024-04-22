@@ -1,0 +1,17 @@
+{
+  "user": {
+    "email": "tawatwee@gmail.com",
+    "exp": 1713951047,
+    "iat": 1713778247,
+    "id": "108050038324523841290",
+    "image": "https://lh3.googleusercontent.com/a/ACg8ocJLU57xGxw2xyTV_Z6cgscbpID0sm1HpZgTPc75kcCIMYUSyoEL=s96-c",
+    "jti": "d9840585-2a36-4e03-a537-626ca19a6c48",
+    "name": "Pun Tw",
+    "picture": "https://lh3.googleusercontent.com/a/ACg8ocJLU57xGxw2xyTV_Z6cgscbpID0sm1HpZgTPc75kcCIMYUSyoEL=s96-c",
+    "role": "Tourist",
+    "serverToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjEwODA1MDAzODMyNDUyMzg0MTI5MCIsImlzdXNlciI6dHJ1ZSwiZXhwIjoxNzEzOTQyMzU5LCJpYXQiOjE3MTM3Njk1NTksImlzcyI6IkJpa2FzaCJ9.gyZaXH4Ew-1kC9VgT1rpk5zM-qMIdPCSmUF-eqsAwiY",
+    "sub": "108050038324523841290"
+  },
+  "expires": "2024-04-24T09:31:08.320Z",
+  "accessToken": "abcdefghijklmnopqrst"
+}

@@ -1,0 +1,50 @@
+[
+ {
+   "firstname": "Tawatwee",
+   "lastname": "Aiemar",
+   "age": 40,
+   "expected": "valid"
+ },
+ {
+   "firstname": "",
+   "lastname": "Aiemar",
+   "age": 40,
+   "expected": "invalid"
+ },
+ {
+   "firstname": "TawatweeTawatweeTawatweeTawatweeTawatweeTawatweeTawatweeTawatweeTawatweeTawatweeTawatweeTawatwee",
+   "lastname": "Aiemar",
+   "age": 40,
+   "expected": "invalid"
+ },
+ {
+   "firstname": "Tawatwee5555",
+   "lastname": "Aiemar",
+   "age": 40,
+   "expected": "invalid"
+ },
+ {
+   "firstname": "Tawatwee",
+   "lastname": "",
+   "age": 40,
+   "expected": "invalid"
+ },
+ {
+   "firstname": "Tawatwee",
+   "lastname": "AiemarAiemarAiemarAiemarAiemarAiemarAiemarAiemarAiemarAiemarAiemarAiemarAiemarAiemarAiemarAiemarAiemarAiemarAiemarAiemar",
+   "age": 40,
+   "expected": "invalid"
+ },
+ {
+   "firstname": "Tawatwee",
+   "lastname": "Aiemar555",
+   "age": 40,
+   "expected": "invalid"
+ },
+ {
+   "firstname": "Tawatwee",
+   "lastname": "Aiemar",
+   "age": 0,
+   "expected": "invalid"
+ }
+]

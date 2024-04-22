@@ -5,6 +5,7 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
+      baseUrl: "https://deb-tour.vercel.app",
   },
 
   component: {

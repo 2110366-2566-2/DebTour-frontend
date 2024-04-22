@@ -1,0 +1,17 @@
+[
+  {
+    "Description": "Pun so good",
+    "RatingScore": 5,
+    "Validation": "valid"
+  },
+  {
+    "Description": "",
+    "RatingScore": 2,
+    "Validation": "invalid"
+  },
+  {
+    "Description": "Pun so goodPun so goodPun so goodPun so goodPun so goodPun so goodPun so goodPun so goodPun so goodPun so goodPun so good",
+    "RatingScore": 4,
+    "Validation": "invalid"
+  }
+]
