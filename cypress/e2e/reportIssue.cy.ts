@@ -22,6 +22,7 @@ describe('Report Issue', () => {
                 cy.wait(2000)
                 if (issue[i].Validation == 'valid') {
                     cy.get('#radix-\\:R16uula\\: > form > div.flex.flex-col-reverse.sm\\:flex-row.sm\\:justify-end.sm\\:space-x-2 > button').click({force: true})
+                    cy.wait(2000)
                     cy.get('div').contains('Issue reported').should('exist')
                 } else {
                     cy.get("p[id^=':r'][id$=':-form-item-message']").should("exist");
