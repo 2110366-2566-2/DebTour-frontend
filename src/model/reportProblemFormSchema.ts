@@ -10,7 +10,7 @@ const reportIssueFormSchema = z.object({
         "Feature Request",
         "Other"
     ]),
-    message: z.string().min(1).max(5000),
+    message: z.string().min(1).max(250),
     status: z.enum([
         "Pending",
         "In Progress",

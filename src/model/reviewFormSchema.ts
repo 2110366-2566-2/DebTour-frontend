@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const reviewFormSchema = z.object({
-    description: z.string().min(1).max(1000),
+    description: z.string().min(1).max(100),
     ratingScore: z.number().or(z.string().regex(/\d+/).transform(Number)),
     tourId: z.number().int(),
     touristUsername: z.string().min(1).max(50),
