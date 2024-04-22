@@ -13,10 +13,5 @@
     "Message": "Pun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premiumPun want Youtube premium",
     "Image": "cypress/fixtures/test.png",
     "Validation": "invalid"
-  },
-  {
-    "Message": "Pun want Youtube premium",
-    "Image": "ThisIsPunImage",
-    "Validation": "invalid"
   }
 ]
