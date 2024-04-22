@@ -1,7 +1,9 @@
 "use client";
+
 import TourCard from "@/components/TourCard";
-import TourSearchHeader from "@/components/TourSearchHeader";
+import { Input } from "@/components/ui/input";
 import FilterTour from "@/lib/FilterTour";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -17,175 +19,143 @@ export interface Tour {
   FirstTourImage: string;
 }
 
-// export interface Tour {
-//   tourId: number;
-//   name: string;
-//   startDate: string;
-//   endDate: string;
-//   description: string;
-//   overviewLocation: string;
-//   price: number;
-//   refundDueDate: string;
-//   maxMemberCount: number;
-//   memberCount: number;
-//   status: string;
-//   agencyUsername: string;
-//   createdTimestamp: string;
-// }
-
-// const toursMoc: { count: number; data: Tour[] } = {
-//   count: 5,
-//   data: [
-//     {
-//       tourId: 9,
-//       name: "Mountain Trek Expedition",
-//       startDate: "2024-03-01T08:00:00.000Z",
-//       endDate: "2024-03-10T18:00:00.000Z",
-//       description:
-//         "Embark on an adventurous trek through breathtaking mountain trails.",
-//       overviewLocation: "Mountain Range, XYZ Region",
-//       price: 15000,
-//       refundDueDate: "2024-02-20T23:59:59.000Z",
-//       maxMemberCount: 20,
-//       memberCount: 0,
-//       status: "Available",
-//       agencyUsername: "adventure_tours",
-//       createdTimestamp: "2024-02-13T09:15:00.000Z",
-//     },
-//     {
-//       tourId: 10,
-//       name: "City Nightlife Tour",
-//       startDate: "2024-02-25T18:00:00.000Z",
-//       endDate: "2024-02-26T02:00:00.000Z",
-//       description:
-//         "Experience the vibrant nightlife of the city with guided tours and club hopping.",
-//       overviewLocation: "Downtown, CityName",
-//       price: 8000,
-//       refundDueDate: "2024-02-20T23:59:59.000Z",
-//       maxMemberCount: 30,
-//       memberCount: 0,
-//       status: "Available",
-//       agencyUsername: "nightlife_experts",
-//       createdTimestamp: "2024-02-13T09:30:00.000Z",
-//     },
-//     {
-//       tourId: 11,
-//       name: "Historical Walking Tour",
-//       startDate: "2024-03-05T10:00:00.000Z",
-//       endDate: "2024-03-05T14:00:00.000Z",
-//       description:
-//         "Explore the rich history and architecture of the city's landmarks.",
-//       overviewLocation: "Old Town District, CityName",
-//       price: 5000,
-//       refundDueDate: "2024-02-20T23:59:59.000Z",
-//       maxMemberCount: 25,
-//       memberCount: 0,
-//       status: "Available",
-//       agencyUsername: "history_walks_inc",
-//       createdTimestamp: "2024-02-13T10:00:00.000Z",
-//     },
-//     {
-//       tourId: 12,
-//       name: "Beach Day Escape",
-//       startDate: "2024-03-15T09:00:00.000Z",
-//       endDate: "2024-03-15T17:00:00.000Z",
-//       description:
-//         "Relax and unwind on the sunny beaches with various water activities.",
-//       overviewLocation: "Sandy Shores Beach, Coastal Area",
-//       price: 10000,
-//       refundDueDate: "2024-02-25T23:59:59.000Z",
-//       maxMemberCount: 40,
-//       memberCount: 0,
-//       status: "Available",
-//       agencyUsername: "beach_getaways",
-//       createdTimestamp: "2024-02-13T10:30:00.000Z",
-//     },
-//     {
-//       tourId: 13,
-//       name: "Cultural Cuisine Tour",
-//       startDate: "2024-03-10T12:00:00.000Z",
-//       endDate: "2024-03-10T16:00:00.000Z",
-//       description:
-//         "Indulge in a culinary journey exploring diverse local cuisines and flavors.",
-//       overviewLocation: "Food District, CityName",
-//       price: 7500,
-//       refundDueDate: "2024-02-28T23:59:59.000Z",
-//       maxMemberCount: 15,
-//       memberCount: 0,
-//       status: "Available",
-//       agencyUsername: "taste_explorers",
-//       createdTimestamp: "2024-02-13T11:00:00.000Z",
-//     },
-//   ],
-// };
+interface SearchParamsType {
+  tours: Tour[];
+  searchName: string;
+  startDate: string;
+  endDate: string;
+  yourTotalMembers: string;
+  minPrice: string;
+  maxPrice: string;
+  agencyUsername: string;
+}
 
 const Tours = () => {
-  const [tours, setTour] = useState<Tour[]>([]);
-  const [searchName, setSearchName] = useState("");
-  const [StartDate, setStartDate] = useState("");
-  const [EndDate, setEndDate] = useState("");
-  const [YourTotalMembers, setYourTotalMembers] = useState("");
-  const [MinPrice, setMinPrice] = useState("");
-  const [MaxPrice, setMaxPrice] = useState("");
+  const [searchParams, setSearchParams] = useState<SearchParamsType>({
+    tours: [],
+    searchName: "",
+    startDate: "",
+    endDate: "",
+    yourTotalMembers: "",
+    minPrice: "",
+    maxPrice: "",
+    agencyUsername: "",
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    searchName,
+    startDate,
+    endDate,
+    yourTotalMembers,
+    minPrice,
+    maxPrice,
+    agencyUsername,
+  } = searchParams;
 
   useEffect(() => {
-    async function waitForGetTour(
-      searchName: string,
-      StartDate: string,
-      EndDate: string,
-      YourTotalMembers: string,
-      MinPrice: string,
-      MaxPrice: string,
-    ) {
-      const t = await FilterTour(
-        searchName,
-        StartDate,
-        EndDate,
-        YourTotalMembers,
-        MinPrice,
-        MaxPrice,
-        "",
-      );
-      setTour(t);
-      console.log(t);
-    }
+    const fetchTours = async () => {
+      setIsLoading(true);
 
-    const delayDebounceFn = setTimeout(() => {
-      console.log(searchName);
-      console.log(StartDate);
-      console.log(EndDate);
-      console.log(YourTotalMembers);
-      console.log(MinPrice);
-      console.log(MaxPrice);
-      waitForGetTour(
+      const filteredTours = await FilterTour(
         searchName,
-        StartDate,
-        EndDate,
-        YourTotalMembers,
-        MinPrice,
-        MaxPrice,
+        startDate,
+        endDate,
+        yourTotalMembers,
+        minPrice,
+        maxPrice,
+        agencyUsername,
       );
-      // Send Axios request here
-    }, 1000);
+      setSearchParams((prevSearchParams) => ({
+        ...prevSearchParams,
+        tours: filteredTours,
+      }));
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchName, StartDate, EndDate, YourTotalMembers, MinPrice, MaxPrice]);
+      setIsLoading(false); // Set loading state to false after fetching
+    };
+
+    fetchTours();
+  }, [
+    searchName,
+    startDate,
+    endDate,
+    yourTotalMembers,
+    minPrice,
+    maxPrice,
+    agencyUsername,
+  ]);
+
+  const handleInputChange = (key: string, value: string) => {
+    setSearchParams({ ...searchParams, [key]: value });
+  };
+
   return (
     <div className="">
-      <TourSearchHeader
-        heading={"Find your adventure"}
-        imgPath={"/sea-bg.webp"}
-        setSearchName={setSearchName}
-        setStartDate={setStartDate}
-        setEndDate={setEndDate}
-        setYourTotalMembers={setYourTotalMembers}
-        setMinPrice={setMinPrice}
-        setMaxPrice={setMaxPrice}
-      />
+      <div
+        className="mx-auto mb-12 mt-10 h-[400px] max-w-[1300px] rounded-[36px] bg-indigo-100 object-cover py-12"
+        style={{
+          backgroundImage: `url("/sea-bg.webp")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <h1 className="mb-10 text-center text-[54px] font-extrabold capitalize text-white drop-shadow">
+          Find your adventure
+        </h1>
 
-      <div className="bg-indigo-100 py-12">
-        <div className="container grid md:grid-cols-2 justify-around grid-cols-none">
-          {tours?.map((tour: Tour) => (
+        <div className="mx-auto grid max-w-[800px] grid-cols-5 gap-x-2 gap-y-8">
+          <Input
+            className="col-span-5 rounded-2xl"
+            placeholder="Search your destination or tour name"
+            onChange={(e) => handleInputChange("searchName", e.target.value)}
+          />
+
+          <Input
+            type="text"
+            className="rounded-md"
+            placeholder="Start date"
+            onChange={(e) => handleInputChange("startDate", e.target.value)}
+            onFocus={(e) => (e.target.type = "date")}
+            onBlur={(e) => (e.target.type = "text")}
+          />
+
+          <Input
+            type="text"
+            className="rounded-md"
+            placeholder="End date"
+            onChange={(e) => handleInputChange("endDate", e.target.value)}
+            onFocus={(e) => (e.target.type = "date")}
+            onBlur={(e) => (e.target.type = "text")}
+          />
+
+          <Input
+            placeholder="Your total members"
+            onChange={(e) =>
+              handleInputChange("yourTotalMembers", e.target.value)
+            }
+          />
+
+          <Input
+            placeholder="Minimum price"
+            onChange={(e) => handleInputChange("minPrice", e.target.value)}
+          />
+
+          <Input
+            placeholder="Maximum price"
+            onChange={(e) => handleInputChange("maxPrice", e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="min-h-[500px] bg-indigo-100 py-12">
+        {isLoading && <Loader2 className="mx-auto h-10 w-10 animate-spin" />}
+
+        {!isLoading && searchParams.tours.length === 0 && (
+          <p className="text-center">No search result</p>
+        )}
+
+        <div className="container grid grid-cols-none justify-around md:grid-cols-2">
+          {searchParams.tours.map((tour: Tour) => (
             <Link href={`/tourist/tours/${tour.tourId}`} key={tour.tourId}>
               <TourCard tour={tour} isEditable={false} />
             </Link>

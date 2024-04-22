@@ -1,8 +1,7 @@
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { Button } from "./ui/button";
 import Link from "next/link";
-
-/* eslint-disable @next/next/no-img-element */
+import Image from "next/image";
 
 interface RecommendCardType {
   name: string;
@@ -13,9 +12,16 @@ interface RecommendCardType {
 
 const RecommendCard = ({ name, imgPath, alt, link }: RecommendCardType) => {
   return (
-    <div className="relative mx-auto h-[400px] w-[300px] overflow-hidden rounded-3xl duration-100 hover:scale-105">
+    <div className="relative mx-auto h-[400px] w-[300px] overflow-hidden rounded-3xl duration-100 hover:scale-[1.02]">
       <div className="absolute inset-0 overflow-hidden rounded-3xl shadow-md">
-        <img className="h-full w-full object-cover" src={imgPath} alt={alt} />
+        <div>
+          <Image
+            className="h-full w-full object-cover"
+            src={imgPath}
+            alt={alt}
+            fill
+          />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent duration-100 hover:opacity-50"></div>
       </div>
 

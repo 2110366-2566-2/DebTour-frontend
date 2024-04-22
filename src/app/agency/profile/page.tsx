@@ -36,7 +36,7 @@ export default function AgencyProfile() {
       email: agency.email,
       image: agency.image,
       agencyName: agency.agencyName,
-      address: agency.address,
+      // address: agency.address,
       licenseNo: agency.licenseNo,
       bankAccount: agency.bankAccount,
       authorizeAdminUsername: agency.authorizeAdminUsername,
@@ -52,7 +52,7 @@ export default function AgencyProfile() {
   useEffect(() => {
     async function get() {
       const res = await getMe(username, token);
-      console.log(res.data);
+      // console.log(res.data);
       if (!res) return;
       let temp = agency;
       // merge temp with res.data
@@ -66,7 +66,7 @@ export default function AgencyProfile() {
         email: temp.email,
         image: temp.image,
         agencyName: temp.agencyName,
-        address: temp.address,
+        // address: temp.address,
         licenseNo: temp.licenseNo,
         bankAccount: temp.bankAccount,
         authorizeAdminUsername: temp.authorizeAdminUsername,
@@ -74,11 +74,10 @@ export default function AgencyProfile() {
         // approveTime: new Date(temp.approveTime),
       });
       setAgency(temp);
-      form.reset(res.data);
     }
 
     get();
-  });
+  }, []);
 
   async function onSubmit(values: z.infer<typeof AgencyProfileSchema>) {
     console.log(JSON.stringify(values));
@@ -126,19 +125,19 @@ export default function AgencyProfile() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Address</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Write your address" {...field} />
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
+            {/*<FormField*/}
+            {/*  control={form.control}*/}
+            {/*  name="address"*/}
+            {/*  render={({ field }) => (*/}
+            {/*    <FormItem>*/}
+            {/*      <FormLabel>Address</FormLabel>*/}
+            {/*      <FormControl>*/}
+            {/*        <Textarea placeholder="Write your address" {...field} />*/}
+            {/*      </FormControl>*/}
+            {/*      <FormMessage className="text-xs" />*/}
+            {/*    </FormItem>*/}
+            {/*  )}*/}
+            {/*/>*/}
 
             <FormField
               control={form.control}
