@@ -12,6 +12,7 @@ import { toast } from "@/components/ui/use-toast";
 import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
+import { Loader2 } from "lucide-react";
 
 export default function MemberJoinForm({ tourId }: { tourId: string }) {
   const form = useForm<z.infer<typeof memberFormSchema>>({
@@ -22,7 +23,7 @@ export default function MemberJoinForm({ tourId }: { tourId: string }) {
           memberId: 0,
           firstName: "",
           lastName: "",
-          age: 0,
+          age: undefined,
         },
       ],
       tourId: parseInt(tourId),
@@ -36,17 +37,29 @@ export default function MemberJoinForm({ tourId }: { tourId: string }) {
   });
 
   async function onSubmit(values: z.infer<typeof memberFormSchema>) {
-    // console.log(values);
+    console.log("values", values);
     const res = await joinTour(values);
     if (!res.success) {
-      toast({ title: "Failed to join tour", description: "Please try again" });
+      toast({
+        title: "Failed to join tour",
+        description: "Please try again",
+      });
       return;
     }
+
     toast({
       title: "Successfully joined tour",
       description: "You are now a member of this tour",
     });
+
+    proceedToPayment();
   }
+
+  const proceedToPayment = () => {
+    if (checkoutUrl) {
+      window.location.href = checkoutUrl;
+    }
+  };
 
   const { data: session } = useSession();
   const token = session?.user.serverToken;
@@ -207,12 +220,11 @@ export default function MemberJoinForm({ tourId }: { tourId: string }) {
 
         <Button
           type="button"
-          disabled={!checkoutUrl}
-          onClick={() => {
-            window.location.href = checkoutUrl;
-          }}
+          disabled={!form.formState.isValid || !checkoutUrl}
+          onClick={proceedToPayment}
         >
           Proceed to Payment
+          {!checkoutUrl && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
         </Button>
       </div>
     </form>
