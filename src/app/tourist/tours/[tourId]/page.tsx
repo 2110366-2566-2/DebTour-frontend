@@ -138,7 +138,7 @@ export default async function TourInfo({ params }: { params: { tourId: string } 
             }
           </div>
           {
-            (session?.user?.role=="Tourist")?
+            (session?.user?.role!="Agency" && session?.user?.role!="Admin")?
               (tour?.memberCount<tour?.maxMemberCount)?
                 <Link href={`/tourist/tours/join/${params.tourId}`}>
                   <Button className="my-6">Join Tour</Button>

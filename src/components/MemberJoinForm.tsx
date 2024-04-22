@@ -53,8 +53,11 @@ export default function MemberJoinForm({ tourId }: { tourId: string }) {
   const username = session?.user.id;
 
   const backendUrl = process.env.BACKEND_URL;
-  const frontendUrl = process.env.FRONT_URL || "http://localhost:3000";
+  const frontendUrl = "https://deb-tour.vercel.app";
 
+  // console.log("process.env.BACKEND_URL",process.env.BACKEND_URL)
+  // console.log("process.env.FRONT_URL", process.env.FRONT_URL)
+  // console.log("back", backendUrl);
   // console.log("front", frontendUrl);
 
   const successUrlPath = `${frontendUrl}/payment-response/success`;
