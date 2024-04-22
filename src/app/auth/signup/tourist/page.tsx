@@ -41,12 +41,12 @@ import { useSession } from "next-auth/react";
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),
-  phone: z.string().min(10).max(10),
+  phone: z.string().min(10).max(10).regex(/^\d+$/, "Phone number must contain only digits"),
   email: z.string().email(),
   image: z.string().url(),
-  citizenId: z.string().min(13).max(13),
-  firstname: z.string().min(2).max(50),
-  lastname: z.string().min(2).max(50),
+  citizenId: z.string().min(13).max(13).regex(/^\d+$/, "Citizen ID must contain only digits"),
+  firstname: z.string().min(2).max(50).regex(/^[a-zA-Z]+$/, "First name must contain only alphabets"),
+  lastname: z.string().min(2).max(50).regex(/^[a-zA-Z]+$/, "Last name must contain only alphabets"),
   address: z.string().min(2).max(100),
   birthdate: z.date(),
   gender: z.enum(["Male", "Female", "Others"]),
